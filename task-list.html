@@ -3,7 +3,8 @@
 <div data-bb-type="screen" data-bb-effect="fade" xmlns="http://www.w3.org/1999/html">
     <div data-bb-type="scroll-panel" style="height:1040px;">
         <div data-bb-type="image-list" data-bb-images="none">
-            <div data-bb-type="item" data-bb-title="明天晚上陪女朋友吃晚饭" data-bb-accent-text="Project Name">
+            <div data-bb-type="item" data-bb-title="明天晚上陪女朋友吃晚饭" data-bb-accent-text="Project Name"
+                onclick="document.getElementById('task-operation-context-menu').menu.show({title:'Task',description: '明天晚上陪女朋友吃晚饭',selected:this});">
                 @tag1 @tag2 @标签1 @标签2
             </div>
             <div data-bb-type="item" data-bb-title="明天早上给老板发关于PBC的邮件" data-bb-accent-text="Work">
@@ -24,9 +25,11 @@
         <input name="new-task" type="text" value="" style="width:740px;" placeholder="Create a new task">
     </div>
 
-    <div data-bb-type="context-menu">
-        <div data-bb-type="action" data-bb-img="resources/edit-task.png">Edit Task Detail</div>
-        <div data-bb-type="action" data-bb-img="resources/delete-task.png">Delete Task</div>
+    <div data-bb-type="context-menu" id="task-operation-context-menu">
+        <div data-bb-type="action" data-bb-img="resources/mark-as-done.png">Mark as Done</div>
+        <div data-bb-type="action" data-bb-img="resources/postpone-task.png">Postpone</div>
+        <div data-bb-type="action" data-bb-img="resources/edit-task.png">Edit</div>
+        <div data-bb-type="action" data-bb-img="resources/delete-task.png" data-bb-pin="true">Delete</div>
     </div>
 
     <div data-bb-type="action-bar" data-bb-back-caption="Back">
