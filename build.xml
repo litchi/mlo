@@ -1,0 +1,12 @@
+<project default="deploy" basedir=".">
+    <target name="help">
+        <echo>use [ant deploy] to deploy to remote server</echo>
+    </target>
+    <property name = "build.production.src"        location = "."/>
+    <property name = "build.remote.ip"              value   = "172.16.177.134"/>
+    <target name="deploy">
+        <scp todir="root:password@${build.remote.ip}:/var/www/gtd">
+            <fileset dir="${build.production.src}" excludes="**/*.swp,.git,**/*.bak,.DS_Store"/>
+        </scp>                 
+    </target>
+</project>
