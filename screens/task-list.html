@@ -1,22 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
-<!--
-* Copyright 2010-2011 Research In Motion Limited.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
--->
 
 <div data-bb-type="screen" data-bb-effect="fade" xmlns="http://www.w3.org/1999/html">
-    <div data-bb-type="title" data-bb-caption="Main Page" data-bb-back-caption="Back"></div>
     <div data-bb-type="scroll-panel" style="height:1040px;">
         <div data-bb-type="image-list" data-bb-images="none">
             <div data-bb-type="item" data-bb-title="明天晚上陪女朋友吃晚饭" data-bb-accent-text="Project Name">
@@ -26,7 +10,7 @@
                 @Office
             </div>
             <div data-bb-type="item" data-bb-title="Send a email to US team about the SSL certification"
-                 data-bb-accent-text="Courage">@Call @Urgent @TCL
+                data-bb-accent-text="Courage">@Call @Urgent @TCL
             </div>
             <div data-bb-type="item" data-bb-title="Captain America" data-bb-accent-text="Justice">That shield
                 rocks!
@@ -44,7 +28,7 @@
                 @Office
             </div>
             <div data-bb-type="item" data-bb-title="Send a email to US team about the SSL certification"
-                 data-bb-accent-text="Courage">@Call @Urgent @TCL
+                data-bb-accent-text="Courage">@Call @Urgent @TCL
             </div>
             <div data-bb-type="item" data-bb-title="Captain America" data-bb-accent-text="Justice">That shield
                 rocks!
@@ -61,28 +45,39 @@
         <input name="new-task" type="text" value="" style="width:740px;" placeholder="Create a new task">
     </div>
 
+    <div data-bb-type="context-menu">
+        <div data-bb-type="action" data-bb-img="images/actionBar/cog_dark_theme.png">Email Work</div>
+        <div data-bb-type="action" data-bb-img="images/actionBar/cog_dark_theme.png">Invite to Meeting</div>
+        <div data-bb-type="action" data-bb-img="images/actionBar/cog_dark_theme.png">Call Work</div>
+        <div data-bb-type="action" data-bb-img="images/actionBar/cog_dark_theme.png">View details</div>
+        <div data-bb-type="action" data-bb-img="images/actionBar/cog_dark_theme.png" onclick="alert('Delete');">Delete</div>
+    </div>
+
     <div data-bb-type="action-bar" data-bb-back-caption="Back">
-        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="true"
-             data-bb-img="resources/next-action.png" data-bb-accent-text="Next Action">Next Action
+        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
+            onclick="bb.pushScreen('screens/task-list.html','next-action',{'type': 'next-action'});"
+            data-bb-img="resources/next-action.png" data-bb-accent-text="Next Action">Next Action
         </div>
         <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
-             data-bb-img="resources/inbox.png" data-bb-accent-text="Inbox">Inbox
+            onclick="bb.pushScreen('screens/task-list.html','next-action',{'type': 'inbox'});"
+            data-bb-img="resources/inbox.png" data-bb-accent-text="Inbox">Inbox
         </div>
         <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
-             data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/due.png" data-bb-accent-text="Due">
+            onclick="bb.pushScreen('screens/task-list.html','next-action',{'type': 'due'});"
+            data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/due.png" data-bb-accent-text="Due">
             Due
         </div>
         <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
-             data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/project.png"
-             data-bb-accent-text="Project">
+            data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/project.png"
+            data-bb-accent-text="Project">
             Project
         </div>
         <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
-             data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/tags.png" data-bb-accent-text="Tags">
+            data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/tags.png" data-bb-accent-text="Tags">
             Tags
         </div>
         <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
-             data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/someday-maybe.png" data-bb-accent-text="Someday & Maybe">
+            data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/someday-maybe.png" data-bb-accent-text="Someday & Maybe">
         </div>
     </div>
 </div>

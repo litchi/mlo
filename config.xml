@@ -14,16 +14,18 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 -->
-<widget xmlns:rim="http://www.blackberry.com/ns/widgets" id="BetterLife" version="0.0.1" rim:header="RIM-Widget:rim/widget" xmlns="http://www.w3.org/ns/widgets">
+<widget xmlns:rim="http://www.blackberry.com/ns/widgets" id="Peaceful" version="0.0.1" rim:header="RIM-Widget:rim/widget" xmlns="http://www.w3.org/ns/widgets">
     <rim:navigation mode="focus" />
-    <name>Better Life</name>
-    <description>A GTD application could bring you better life </description>
+    <name>Peaceful</name>
+    <description>A GTD application could bring you peaceful and better life </description>
     <author href="https://larry.ixiezi.com">Liu Xiangqian</author>
     <icon src="resources/icon.png" />
     <icon src="resources/icon.png" rim:hover="true" />
-    <content src="index.html" />
     <access uri="http://chart.apis.google.com" subdomains="true" />
+    <content src="index.html" />
     <feature id="blackberry.push" />
     <feature id="blackberry.identity" />
     <feature id="blackberry.app" />
+    <feature id="blackberry.app.event"/>
+    <feature id="blackberry.system.event" />
 </widget>
