@@ -1,0 +1,102 @@
+<div data-bb-type="screen" style="height:1280px;">
+    <style>
+        #group {
+            border: 2px solid #379082; 
+            -webkit-border-top-left-radius: 0px;
+            -webkit-border-top-right-radius: 50px;
+            -webkit-border-bottom-left-radius: 0px;
+            -webkit-border-bottom-right-radius: 50px;
+            float:left;
+            width:38%;
+            margin-left:0px;
+            height:1025px;
+            margin-bottom:15px;
+        }
+        #task-list {
+            border: 2px solid #379082; 
+            -webkit-border-top-left-radius: 40px;
+            -webkit-border-top-right-radius: 0px;
+            -webkit-border-bottom-left-radius: 40px;
+            -webkit-border-bottom-right-radius: 0px;
+            float:right;
+            width:65%;
+            background-color:#EEE;
+            margin-left:-100px;
+            height:100%;
+            height:1025px;
+            margin-bottom:15px;
+        }
+    </style>
+    <div id="group" onclick="document.getElementById('task-list').style.width='25%';document.getElementById('group').style.width='77%';">
+        <div style="text-align:center">Projects</div>
+        <div data-bb-type="scroll-panel" style="height:980px;">
+            <div data-bb-type="image-list" data-bb-images="none">
+                <div data-bb-type="item" data-bb-title="Cisco" onclick="document.getElementById('task-list').style.width='80%';document.getElementById('group').style.width='22%';"></div>
+                <div data-bb-type="item" data-bb-title="想做的事情"></div>
+                <div data-bb-type="item" data-bb-title="写一本书"></div>
+                <div data-bb-type="item" data-bb-title="父亲和母亲"></div>
+                <div data-bb-type="item" data-bb-title="Got to Paris"></div>
+            </div>
+        </div>
+    </div>
+    <div id="task-list" onclick="document.getElementById('task-list').style.width='80%';document.getElementById('group').style.width='22%';">
+        <div style="text-align:center">Task List</div>
+        <div data-bb-type="scroll-panel">
+            <div data-bb-type="image-list" data-bb-images="none">
+                <div data-bb-type="item" data-bb-title="明天晚上陪女朋友吃晚饭"
+                    onclick="document.getElementById('task-operation-context-menu').menu.show({title:'Task',description: '明天晚上陪女朋友吃晚饭',selected:this});">
+                    @tag1 @tag2 @标签1 @标签2
+                </div>
+                <div data-bb-type="item" data-bb-title="明天早上给老板发关于PBC的邮件">
+                    @Email @Important @Office
+                </div>
+                <div data-bb-type="item" data-bb-title="Send a email to US team about the SSL certification">
+                    @Call @Urgent @TCL
+                </div>
+                <div data-bb-type="item" data-bb-title="明天早上给老板发关于PBC的邮件">
+                    @Email @Important @Office
+                </div>
+                <div data-bb-type="item" data-bb-title="Send a email to US team about the SSL certification" onclick="bb.pushScreen('edit-task.html','edit-task')">
+                    @Call @Urgent @TCL
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-bb-type="context-menu" id="task-operation-context-menu">
+        <div data-bb-type="action" data-bb-img="resources/mark-as-done.png">Mark as Done</div>
+        <div data-bb-type="action" data-bb-img="resources/postpone-task.png">Postpone</div>
+        <div data-bb-type="action" data-bb-img="resources/edit-task.png" onclick="bb.pushScreen('edit-task.html','edit-task')">Edit</div>
+        <div data-bb-type="action" data-bb-img="resources/delete-task.png" data-bb-pin="true">Delete</div>
+    </div>
+    <div style="text-align:center:margin:auto" align="center">
+        <input name="new-task" type="text" value="" style="width:740px;" placeholder="Create new task">
+    </div>
+    <div data-bb-type="action-bar" data-bb-back-caption="Back">
+        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('task-list.html','next-action',{'type': 'next-action'});" data-bb-img="resources/next-action.png" data-bb-accent-text="Next Action">
+            Next Action
+        </div>
+        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
+            onclick="bb.pushScreen('task-list.html','inbox',{'type': 'inbox'});"
+            data-bb-img="resources/inbox.png" data-bb-accent-text="Inbox">
+            Inbox
+        </div>
+        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
+            onclick="bb.pushScreen('task-list.html','next-action',{'type': 'due'});"
+            data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/due.png" data-bb-accent-text="Due">
+            Due
+        </div>
+        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
+            data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/project.png"
+            onclick="bb.pushScreen('task-group.html','project',{'type': 'project'});"
+            data-bb-accent-text="Project">
+            Project
+        </div>
+        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
+            data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/tags.png" data-bb-accent-text="Tags">
+            Tags
+        </div>
+        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
+            data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/someday-maybe.png" data-bb-accent-text="Someday & Maybe">
+        </div>
+    </div>
+</div>
