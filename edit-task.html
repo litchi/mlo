@@ -1,0 +1,86 @@
+<div data-bb-type="screen">
+    <style>
+        .cell {
+            font-size: 40px;
+        }
+        .td-label {
+            font-size: 40px;
+            width:20%;
+            vertical-align:middle;
+            padding-right:20px;
+        }
+    </style>
+    <div id="foo" data-bb-type="title" data-bb-caption="Edit Task" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
+        onactionclick="alert('Save Clicked')"></div>
+    <div data-bb-type="round-panel">
+        <div data-bb-type="panel-header">
+            Basic Information
+        </div>
+        <div data-bb-type="label-control-container">
+            <table>
+                <tr>
+                    <td colspan="3" style="font-size:40px;vertical-align:top;">
+                        <input type="text" value="Have dinner together with the whole team" id="task-title">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-label" style="padding-top:50px;font-size:40px;vertical-align:top;">Project</td>
+                    <td colspan="2">
+                        <select id="project">
+                            <option value="project_id_1" selected="true">No Project(Inbox)</option>
+                            <option value="project_id_2">项目2</option>
+                            <option value="project_id_1">Project 1</option>
+                            <option value="project_id_2">项目3</option>
+                            <option value="project_id_3">I am a long</option>
+                            <option value="project_id_4">我是一个更长</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-label">Due</td>
+                    <td style="padding-left:23px;"><input type="datetime" value="" id="due-date-time"/> </td>
+                    <td><div data-bb-type="toggle" data-bb-checked="true" data-bb-on="Remind Me" data-bb-off="No Remind" id="is-reminder-on"/></div> </td>
+                </tr>
+                <tr>
+                    <td class="td-label">Context</td>
+                    <td colspan="2" style="padding-left:23px"><input type="text" value="TCL Customer Email" id="tags"/> </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div data-bb-type="round-panel" style="margin-top:10px;">
+        <div data-bb-type="panel-header">
+            Additional Information
+        </div>
+        <div data-bb-type="label-control-container">
+            <table style="margin-left:50px;">
+                <tr>
+                    <tr>
+                        <td class="cell"> Is Next Action </td>
+                        <td class="cell">
+                            <div data-bb-type="toggle" data-bb-checked="false" data-bb-on="Yes" data-bb-off="No" id="is-next-action"/></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="cell"> Is Someday & Maybe </td>
+                        <td class="cell">
+                            <div data-bb-type="toggle" data-bb-checked="false" data-bb-on="Yes" data-bb-off="No" id="is-someday-maybe"/></div>
+                        </td>
+                    </tr>
+                </table>
+                <!--
+                -<div data-bb-type="round-panel">
+                    -    <div data-bb-type="panel-header">
+                        -        Edit Notes
+                        -    </div>
+                    -    <div data-bb-type="label-control-container">
+                        -        <div data-bb-type="row">
+                            -            <div data-bb-type="label">Notes</div>
+                            -            <textarea rows="4" id="note" cols="29" style="font-size:40px;"></textarea>
+                            -        </div>    
+                        -    </div>
+                    -</div>   
+                -->
+            </div>
+        </div>
+    </div>

@@ -17,15 +17,14 @@
 <widget xmlns:rim="http://www.blackberry.com/ns/widgets" id="Peaceful" version="0.0.1" rim:header="RIM-Widget:rim/widget" xmlns="http://www.w3.org/ns/widgets">
     <rim:navigation mode="focus" />
     <name>Peaceful</name>
-    <description>A GTD application could bring you peaceful and better life </description>
+    <description>A GTD application could bring you peaceful and better life</description>
     <author href="https://larry.ixiezi.com">Liu Xiangqian</author>
     <icon src="resources/icon.png" />
     <icon src="resources/icon.png" rim:hover="true" />
     <access uri="http://chart.apis.google.com" subdomains="true" />
-    <content src="index.html" />
+    <access uri="http://172.16.177.134" subdomains="true" />
+    <content src="http://172.16.177.134/gtd/index.html" />
     <feature id="blackberry.push" />
     <feature id="blackberry.identity" />
     <feature id="blackberry.app" />
-    <feature id="blackberry.app.event"/>
-    <feature id="blackberry.system.event" />
 </widget>
