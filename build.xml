@@ -1,6 +1,7 @@
-<project default="deploy" basedir=".">
+<project default="deploy-bb" basedir=".">
     <target name="help">
-        <echo>Run [ant deploy] to deploy to remote server</echo>
+        <echo>Run [ant deploy-ws] to deploy to remote server</echo>
+        <echo>Run [ant deploy-bb] to deploy to blackberry 10 simulator</echo>
         <echo>Run [ant clean] to clean target directory</echo>
     </target>
     <property name = "build.production.src"        location = "."/>
@@ -41,13 +42,13 @@
         </copy>
     </target>
 
-    <target name="deploy" depends="pre.process.copy">
+    <target name="deploy-ws" depends="pre.process.copy">
         <scp todir="root:password@${build.remote.ip}:/var/www/gtd">
             <fileset dir="${build.production.target}" excludes="**/*.swp,.git,**/*.bak,.DS_Store"/>
         </scp>                 
     </target>
 
-    <target name="deploy-bb" depends="deploy">
+    <target name="deploy-bb" depends="deploy-ws">
         <exec executable="/bin/sh">
             <arg line='-c "bb_launch.sh target"'/>
         </exec>
