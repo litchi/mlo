@@ -4,7 +4,7 @@
     -webkit-border-top-right-radius: 50px;
     -webkit-border-bottom-left-radius: 0px;
     -webkit-border-bottom-right-radius: 50px;
-    float:left;
+    /*float:left;*/
     width:32%;
     height:1000px;
     margin:25px 0 15px 0;
@@ -16,14 +16,12 @@
     -webkit-border-top-right-radius: 0px;
     -webkit-border-bottom-left-radius: 40px;
     -webkit-border-bottom-right-radius: 0px;
-    float:right;
+    /*float:right;*/
     width:70%;
     background-color:#EEE;
     height:1015px;
-    margin:10px 0 15px -100px;
-}
-
-#group-edit-button {
-    background-color:#EEE;
-    border: 1px solid #379082; 
+    margin:10px 0 15px 0;
+    position:absolute;
+    top:0px;
+    left:240px;
 }

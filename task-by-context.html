@@ -1,11 +1,11 @@
 ﻿<div data-bb-type="screen" style="height:1280px;">
     <script type="text/javascript" id='task-group-js' src="js/task-group.js"></script>
     <link rel="stylesheet" type="text/css" href="css/task-group.css"></link>
-    <div id="group" onclick="adjustTaskGroupWidth('70%','32%');">
+    <div id="group" onclick="adjustTaskGroupWidth('70%','32%','520');">
         <div style="margin-left:15px;font-size:40px"> Contexts </div>
         <div data-bb-type="scroll-panel" style="height:980px;">
             <div data-bb-type="image-list" data-bb-images="none">
-                <div data-bb-type="item" data-bb-title="Email" onclick="adjustTaskGroupWidth('32%','70%')"></div>
+                <div data-bb-type="item" data-bb-title="Email" onclick="adjustTaskGroupWidth('32%','70%','240')"></div>
                 <div data-bb-type="item" data-bb-title="Phone"></div>
                 <div data-bb-type="item" data-bb-title="Bank"></div>
                 <div data-bb-type="item" data-bb-title="Errand"></div>
@@ -16,8 +16,7 @@
             </div>
         </div>
     </div>
-    <div id="task-list" onclick="adjustTaskGroupWidth('32%','70%')">
-        <!--<div style="text-align:center;font-size:40px;margin-bottom:20px;">Task List</div>-->
+    <div id="task-list" onclick="adjustTaskGroupWidth('32%','70%','240')">
         <div data-bb-type="scroll-panel">
             <div data-bb-type="image-list" data-bb-images="none">
                 <div data-bb-type="item" data-bb-title="明天晚上陪女朋友吃晚饭"
@@ -40,10 +39,10 @@
         </div>
     </div>
 
-@task-context-menu@
+    @task-context-menu@
 
-@task-create-inputbox@
+    @task-create-inputbox@
 
-@actionbar@
+    @actionbar@
 
 </div>
