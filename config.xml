@@ -2,7 +2,7 @@
 <widget xmlns:rim="http://www.blackberry.com/ns/widgets" id="Peaceful" version="0.0.1" rim:header="RIM-Widget:rim/widget" xmlns="http://www.w3.org/ns/widgets">
     <rim:navigation mode="focus" />
     <name>Peaceful</name>
-    <description>A GTD application could bring you peaceful and better life</description>
+    <description>Bring you Peaceful and a Better Life</description>
     <author href="https://larry.ixiezi.com">Liu Xiangqian</author>
     <icon src="resources/icon.png" rim:hover="true" />
     <access uri="http://chart.apis.google.com" subdomains="true" />
