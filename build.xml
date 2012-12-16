@@ -23,11 +23,14 @@
                 <exclude name="build.xml"/>
                 <exclude name=".idea/**/*.*"/>
                 <exclude name="**/*.html"/>
+                <exclude name="elements"/>
             </fileset>
         </copy>
         <!-- HTML files are always been copied-->
         <copy todir="${build.production.target}" encoding="UTF-8" outputencoding="UTF-8" verbose="false" granularity="1" overwrite="true">
             <fileset dir="${build.production.src}">
+                <exclude name="elements"/>
+                <exclude name="elements/*.html"/>
                 <include name="**/*.html"/>
             </fileset>
             <filterset begintoken="@" endtoken="@">
@@ -42,6 +45,12 @@
         <scp todir="root:password@${build.remote.ip}:/var/www/gtd">
             <fileset dir="${build.production.target}" excludes="**/*.swp,.git,**/*.bak,.DS_Store"/>
         </scp>                 
+    </target>
+
+    <target name="deploy-bb" depends="deploy">
+        <exec executable="/bin/sh">
+            <arg line='-c "bb_launch.sh target"'/>
+        </exec>
     </target>
 
     <target name="clean">

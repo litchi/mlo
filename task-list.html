@@ -1,6 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
 
 <div data-bb-type="screen" data-bb-effect="fade" xmlns="http://www.w3.org/1999/html">
+    <script type="text/javascript" id='task-list-js' src="js/task-list.js"></script>
     <div data-bb-type="scroll-panel" style="height:1040px;">
         <div data-bb-type="image-list" data-bb-images="none">
             <div data-bb-type="item" data-bb-title="明天晚上陪女朋友吃晚饭" data-bb-accent-text="Project Name"
@@ -13,7 +14,7 @@
             <div data-bb-type="item" data-bb-title="Send a email to US team about the SSL certification" data-bb-accent-text="Courage">
                 @Call @Urgent @TCL
             </div>
-            <div data-bb-type="item" data-bb-title="明天早上给老板发关于PBC的邮件" data-bb-accent-text="Work">
+            <div data-bb-type="item" data-bb-title="明天早上给老板发关于PBC的邮件" data-bb-accent-text="Work" onclick="showCustomToast();">
                 @Email @Important @Office
             </div>
             <div data-bb-type="item" data-bb-title="Send a email to US team about the SSL certification" data-bb-accent-text="Courage" onclick="bb.pushScreen('edit-task.html','edit-task')">
