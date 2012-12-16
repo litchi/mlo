@@ -1,0 +1,16 @@
+.cell {
+    font-size: 40px;
+}
+.td-label {
+    font-size: 40px;
+    width:20%;
+    vertical-align:middle;
+    padding-right:20px;
+}
+.highlighted-delete-button{
+    color:red;
+    font-weight:bold;
+}
+.delete-button-reminder{
+    padding:0 35px 0 35px;
+}

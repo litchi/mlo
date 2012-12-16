@@ -1,0 +1,30 @@
+﻿<div data-bb-type="screen">
+    <link rel="stylesheet" type="text/css" href="css/edit-object.css"></link>
+    <div id="foo" data-bb-type="title" data-bb-caption="Edit Project" data-bb-back-caption="Cancel" data-bb-action-caption="Save" onactionclick="alert('Save Clicked')"></div>
+    <div data-bb-type="round-panel">
+        <div data-bb-type="panel-header">
+            Project Information
+        </div>
+        <div data-bb-type="label-control-container">
+            <div data-bb-type="row">
+                <div data-bb-type="label">Project Name</div>
+                <input type="text" value="项目名称01" />
+            </div>
+            <table>
+                <tr>
+                    <td class="cell" colspan="2">
+                        <div data-bb-type="button" data-bb-style="stretch">
+                            <font class="highlighted-delete-button">Delete This Project</font>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="cell delete-button-reminder" colspan="2">
+                        All tasks in this project will be moved to inbox if you delete this project
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
