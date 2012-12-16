@@ -13,9 +13,9 @@
     </target>
 
     <target name="pre.process.copy" depends="init">
-        <loadfile property="actionbar.content" srcFile="elements/actionbar.html"/>
-        <loadfile property="task.context.menu.content" srcFile="elements/task-context-menu.html"/>
-        <loadfile property="task.create.inputbox" srcFile="elements/create-task-input.html"/>
+        <loadfile property="actionbar.content" srcFile="${build.production.src}/elements/actionbar.html"/>
+        <loadfile property="task.context.menu.content" srcFile="${build.production.src}/elements/task-context-menu.html"/>
+        <loadfile property="task.create.inputbox" srcFile="${build.production.src}/elements/create-task-input.html"/>
         <copy todir="${build.production.target}" encoding="UTF-8" outputencoding="UTF-8">
             <fileset dir="${build.production.src}">
                 <exclude name="**/*.swp"/>
@@ -48,7 +48,7 @@
         </scp>                 
     </target>
 
-    <target name="deploy-bb" depends="deploy-ws">
+    <target name="deploy-bb" depends="pre.process.copy">
         <exec executable="/bin/sh">
             <arg line='-c "bb_launch.sh target"'/>
         </exec>
