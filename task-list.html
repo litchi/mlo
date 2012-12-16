@@ -21,43 +21,9 @@
             </div>
         </div>
     </div>
-    <div style="text-align:center:margin:auto" align="center">
-        <input name="new-task" type="text" value="" style="width:740px;" placeholder="Create new task">
-    </div>
 
-    <div data-bb-type="context-menu" id="task-operation-context-menu">
-        <div data-bb-type="action" data-bb-img="resources/mark-as-done.png">Mark as Done</div>
-        <div data-bb-type="action" data-bb-img="resources/postpone-task.png">Postpone</div>
-        <div data-bb-type="action" data-bb-img="resources/edit-task.png" onclick="bb.pushScreen('edit-task.html','edit-task')">Edit</div>
-        <div data-bb-type="action" data-bb-img="resources/delete-task.png" data-bb-pin="true">Delete</div>
-    </div>
+@task-context-menu@
+@task-create-inputbox@
+@actionbar@
 
-    <div data-bb-type="action-bar" data-bb-back-caption="Back">
-        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('task-list.html','next-action',{'type': 'next-action'});" data-bb-img="resources/next-action.png" data-bb-accent-text="Next Action">
-            Next Action
-        </div>
-        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
-             onclick="bb.pushScreen('task-list.html','inbox',{'type': 'inbox'});"
-             data-bb-img="resources/inbox.png" data-bb-accent-text="Inbox">
-             Inbox
-        </div>
-        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
-             onclick="bb.pushScreen('task-list.html','next-action',{'type': 'due'});"
-             data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/due.png" data-bb-accent-text="Due">
-            Due
-        </div>
-        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
-             data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/project.png"
-             onclick="bb.pushScreen('task-group.html','project',{'type': 'project'});"
-             data-bb-accent-text="Project">
-            Project
-        </div>
-        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
-             data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/tags.png" data-bb-accent-text="Tags">
-            Tags
-        </div>
-        <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false"
-             data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/someday-maybe.png" data-bb-accent-text="Someday & Maybe">
-        </div>
-    </div>
 </div>

@@ -23,6 +23,7 @@
     <icon src="resources/icon.png" rim:hover="true" />
     <access uri="http://chart.apis.google.com" subdomains="true" />
     <access uri="http://172.16.177.134" subdomains="true" />
+    <access uri="http://172.16.177.134/gtd" subdomains="true" />
     <content src="http://172.16.177.134/gtd/index.html" />
     <feature id="blackberry.push" />
     <feature id="blackberry.identity" />

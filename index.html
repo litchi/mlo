@@ -13,6 +13,15 @@
                 bb.init();
                 bb.pushScreen('task-list.html', 'main');
             }, false);
+            // Fire the webworksready event for PlayBook and BBOS
+            window.addEventListener('load',function() {
+                if (navigator.userAgent.indexOf('Version/10.0') < 0) {
+                    var evt = document.createEvent('Events');
+                    evt.initEvent('webworksready', true, true);
+                    document.dispatchEvent(evt);
+                }
+            });
+
         </script>
     </head>
     <body>
