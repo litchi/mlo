@@ -2,22 +2,19 @@
     <script type="text/javascript" id='task-group-js' src="js/task-group.js"></script>
     <link rel="stylesheet" type="text/css" href="css/task-group.css"></link>
     <div id="group" onclick="adjustTaskGroupWidth('70%','32%');">
-        <div style="margin-left:15px;font-size:40px"> Tags <span onclick="bb.pushScreen('edit-context.html','edit-context')" class="group-edit-button">Edit</span> </div>
+        <div style="margin-left:15px;font-size:40px"> Due Date </div>
         <div data-bb-type="scroll-panel" style="height:980px;">
             <div data-bb-type="image-list" data-bb-images="none">
-                <div data-bb-type="item" data-bb-title="Email" onclick="adjustTaskGroupWidth('32%','70%')"></div>
-                <div data-bb-type="item" data-bb-title="Phone"></div>
-                <div data-bb-type="item" data-bb-title="Bank"></div>
-                <div data-bb-type="item" data-bb-title="电话"></div>
-                <div data-bb-type="item" data-bb-title="碎片事件"></div>
-                <div data-bb-type="item" data-bb-title="健康"></div>
-                <div data-bb-type="item" data-bb-title="运动"></div>
-                <div data-bb-type="item" data-bb-title="互联网"></div>
+                <div data-bb-type="item" data-bb-title="Today" onclick="adjustTaskGroupWidth('32%','70%')"></div>
+                <div data-bb-type="item" data-bb-title="Tomorrow"></div>
+                <div data-bb-type="item" data-bb-title="This Week"></div>
+                <div data-bb-type="item" data-bb-title="Next Week"></div>
+                <div data-bb-type="item" data-bb-title="Yesterday Overdue"></div>
+                <div data-bb-type="item" data-bb-title="Yesterday Done"></div>
             </div>
         </div>
     </div>
     <div id="task-list" onclick="adjustTaskGroupWidth('32%','70%')">
-        <div style="text-align:center">Task List</div>
         <div data-bb-type="scroll-panel">
             <div data-bb-type="image-list" data-bb-images="none">
                 <div data-bb-type="item" data-bb-title="明天晚上陪女朋友吃晚饭"
