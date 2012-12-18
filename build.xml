@@ -1,12 +1,19 @@
-<project default="deploy-bb" basedir=".">
+<project default="run-unit-test" basedir=".">
     <target name="help">
         <echo>Run [ant deploy-ws] to deploy to remote server</echo>
         <echo>Run [ant deploy-bb] to deploy to blackberry 10 simulator</echo>
+        <echo>Run [ant run-unit-test] to run unit tests for javascript</echo>
         <echo>Run [ant clean] to clean target directory</echo>
     </target>
     <property name = "build.production.src"        location = "."/>
     <property name = "build.production.target"     location = "../target"/>
     <property name = "build.remote.ip"             value    = "172.16.177.134"/>
+
+    <!-- This is set to local file for development -->
+    <property name = "build.test.runner.url"       value    = "./js/spec/SpecRunner.html"/>
+
+    <!-- Please notice that by using open we are using the default browser defined by current OS user-->
+    <property name = "env.browser.executable"      value    = "open"/>
 
     <target name="init">
         <mkdir dir="${build.production.target}"/>
@@ -25,9 +32,18 @@
                 <exclude name=".idea/**/*.*"/>
                 <exclude name="**/*.html"/>
                 <exclude name="elements"/>
+
+                <!--Exclude jasmine libs for unit testing-->
+                <exclude name="js/libs/jasmine-1.3.1"/>
+                <exclude name="js/libs/jasmine-1.3.1/*.*"/>
+
+                <!--Exclude testing specs-->
+                <exclude name="js/spec"/>
+                <exclude name="js/spec/*.*"/>
             </fileset>
         </copy>
-        <!-- HTML files are always been copied-->
+
+        <!-- HTML files are always copied since the markups in those files needs to be replaced by element fragments everytime -->
         <copy todir="${build.production.target}" encoding="UTF-8" outputencoding="UTF-8" verbose="false" granularity="1" overwrite="true">
             <fileset dir="${build.production.src}">
                 <exclude name="elements"/>
@@ -46,6 +62,12 @@
         <scp todir="root:password@${build.remote.ip}:/var/www/gtd">
             <fileset dir="${build.production.target}" excludes="**/*.swp,.git,**/*.bak,.DS_Store"/>
         </scp>                 
+    </target>
+
+    <target name="run-unit-test" depends="pre.process.copy">
+        <exec executable="${env.browser.executable}" spawn="yes"> 
+            <arg value="${build.test.runner.url}"/> 
+        </exec> 
     </target>
 
     <target name="deploy-bb" depends="pre.process.copy">
