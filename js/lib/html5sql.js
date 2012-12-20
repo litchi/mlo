@@ -153,8 +153,8 @@ var html5sql = (function () {
 		};
 	return {
 		database: null,
-		logInfo: false,
-		logErrors: false,
+		logInfo: true,
+		logErrors: true,
 		defaultFailureCallback: doNothing,
 		putSelectResultsInArray: true,
 		openDatabase: function (name, displayname, size, whenOpen) {
