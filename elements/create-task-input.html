@@ -1,3 +1,5 @@
 <div style="text-align:center:margin:auto" align="center">
-	<input name="new-task" type="text" value="" style="width:740px;" placeholder="Create new task">
+    <form name="create-task-form" onSubmit="createTaskShortcut(document.getElementById('create-task-shortcut-input').value)">
+        <input id="create-task-shortcut-input" name="create-task" type="text" value="" style="width:740px;" placeholder="Create new task">
+    </form>
 </div>

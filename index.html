@@ -5,26 +5,16 @@
         <link rel="stylesheet" type="text/css" href="css/bbui.css"><link/>
         <link rel="stylesheet" type="text/css" href="css/main.css"><link/>
         <script type="text/javascript" src="js/lib/bbui.js"></script>
+        <script type="text/javascript" src="js/lib/jquery-1.8.3.min.js"></script>
         <script type="text/javascript" src="js/lib/html5sql.js"></script>
+        <script type="text/javascript" src="js/app/data-access.js"></script>
+        <script type="text/javascript" src="js/app/controller.js"></script>
         <script src="local:///chrome/webworks.js" type="text/javascript"></script>
         <script type="text/javascript">
-            document.addEventListener('webworksready', function(e) {
-                // You must call init on bbUI before any other code loads.  
-                // If you want default functionality simply don't pass any parameters.. bb.init();
-                bb.init();
-                bb.pushScreen('task-list.html', 'main');
-            }, false);
-            // Fire the webworksready event for PlayBook and BBOS
-            window.addEventListener('load',function() {
-                if (navigator.userAgent.indexOf('Version/10.0') < 0) {
-                    var evt = document.createEvent('Events');
-                    evt.initEvent('webworksready', true, true);
-                    document.dispatchEvent(evt);
-                }
-            });
-
-        </script>
-    </head>
-    <body>
-    </body>
-</html>
+            document.addEventListener('webworksready', webworksReadyCallback, false);
+            window.addEventListener('load',loadCallback);
+            </script>
+        </head>
+        <body>
+        </body>
+    </html>
