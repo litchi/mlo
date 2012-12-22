@@ -1,11 +1,10 @@
 ﻿<div data-bb-type="screen" style="height:1280px;">
-    <script type="text/javascript" id='task-group-js' src="js/app/task-group.js"></script>
     <link rel="stylesheet" type="text/css" href="css/task-group.css"></link>
-    <div id="group" onclick="adjustTaskGroupWidth('70%','32%','520');">
+    <div id="group" onclick="adjustTaskGroupWidth(uiConfig.rightPanelWidth, uiConfig.leftPanelWidth, uiConfig.rightPanelLargerLeftMargin);">
         <div style="margin-left:15px;font-size:40px"> Due Date </div>
         <div data-bb-type="scroll-panel" style="height:980px;">
             <div data-bb-type="image-list" data-bb-images="none">
-                <div data-bb-type="item" data-bb-title="Today" onclick="adjustTaskGroupWidth('32%','70%','240')"></div>
+                <div data-bb-type="item" data-bb-title="Today" onclick="adjustTaskGroupWidth(uiConfig.leftPanelWidth, uiConfig.rightPanelWidth, uiConfig.rightPanelSmallerLeftMargin)"></div>
                 <div data-bb-type="item" data-bb-title="Tomorrow"></div>
                 <div data-bb-type="item" data-bb-title="This Week"></div>
                 <div data-bb-type="item" data-bb-title="Next Week"></div>
@@ -14,7 +13,7 @@
             </div>
         </div>
     </div>
-    <div id="task-list" onclick="adjustTaskGroupWidth('32%','70%','240')">
+    <div id="task-list" onclick="adjustTaskGroupWidth(uiConfig.leftPanelWidth, uiConfig.rightPanelWidth, uiConfig.rightPanelSmallerLeftMargin)">
         <div data-bb-type="scroll-panel">
             <div data-bb-type="image-list" data-bb-images="none">
                 <div data-bb-type="item" data-bb-title="明天晚上陪女朋友吃晚饭"
