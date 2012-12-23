@@ -28,21 +28,25 @@ function createItemElement(id, title, project, tags) {
     var item = document.createElement('div');
     item.setAttribute('data-bb-type','item');
     item.setAttribute('data-bb-style','stretch');
-    item.onclick = function() {
-        document.getElementById('task-operation-context-menu').menu.show({title:'Edit Task',description: title, selected:this});
-    };    
-    if(id != null){
+    if(id != null) {
         item.setAttribute('id', id);
-    }
-    if(project != null){
-        item.setAttribute('data-bb-accent-text', project);
-    }
-    if (title != null) {                     
-        item.setAttribute('title', title);
-        item.setAttribute('data-bb-title',title);
-    }
-    if (tags != null) {
-        item.innerHTML = tags;
+        if(project != null){
+            item.setAttribute('data-bb-accent-text', project);
+        }
+        if (title != null) {                     
+            item.setAttribute('title', title);
+            item.setAttribute('data-bb-title',title);
+        }
+        if (tags != null) {
+            item.innerHTML = tags;
+        }
+        item.onclick = function() {
+            document.getElementById('task-operation-context-menu').menu.show({
+                title:'Edit Task',
+                description : title, 
+                selected : id,
+            });
+        };    
     }
     return item;
 }
