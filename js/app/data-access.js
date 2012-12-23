@@ -35,9 +35,11 @@ var TASK_REMINDER_SQL = {
 }
 var TASK_SQL = {
     CREATE_TABLE : 'CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, title text);',
+
     INSERT_BY_TITLE : 'insert into task (id, title) values (null, ?)',
     INSERT_BY_ID_TITLE : 'insert into task(id, title) values (?, ?)',
 
+    SELECT_ALL: 'select id, title from task',
     SELECT_BY_ID : 'select id, title from task where id = ?',
     SELECT_BY_TITLE : 'select id, title from task where title = ?',
     SELECT_BY_ID_TITLE : 'select id, title from task where id = ? and title = ?',
@@ -66,15 +68,15 @@ var TASK_COLUMNS = {
 var dataAccess = (function (){
     var dbInited = false;
 
-    function runSQL(createTableSql, sql, data, successCallback, failureCallback){
-        dataAccess.createDatabaseConnection(createTableSql);
+    function runSQL(sql, data, successCallback, failureCallback){
+        dataAccess.createDatabaseConnection();
         html5sql.process(sql, data, successCallback, failureCallback);
     }
 
     return {
         logInfo: false,
         logErrors: true,
-        createDatabaseConnection: function (createTableSql){
+        createDatabaseConnection: function (){
             if(dbInited != true){
                 if(html5sql.database === null){
                     html5sql.database = openDatabase('peaceful_better_life_xiangqian_liu', '0.0.3', 
@@ -82,21 +84,21 @@ var dataAccess = (function (){
                 }
                 dbInited = (html5sql.database != null);
             }
-            //if(dbInited) {
-                //html5sql.process(createTableSql,[]);
-            //}
             return html5sql.database;
         },
 
         task : {
             create: function(title, successCallback, failureCallback){
-                runSQL(TASK_SQL.CREATE_TABLE, TASK_SQL.INSERT_BY_TITLE, [title], successCallback, failureCallback);
+                runSQL(TASK_SQL.INSERT_BY_TITLE, [title], successCallback, failureCallback);
             },
             delete: function(id, successCallback, failureCallback){
                 runSQL(TASK_SQL.DELETE_BY_ID, [id], successCallback, failureCallback);
             },
             update: function(id, title, successCallback, failureCallback){
                 runSQL(TASK_SQL.UPDATE_BY_ID, [title, id], successCallback, failureCallback);
+            },
+            getAll: function(successCallback, failureCallback) {
+                runSQL(TASK_SQL.SELECT_ALL, [], successCallback, failureCallback);
             },
             getById: function(id, successCallback, failureCallback){
                 runSQL(TASK_SQL.SELECT_BY_ID, [id], successCallback, failureCallback);

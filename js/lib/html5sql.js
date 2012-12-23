@@ -1,53 +1,52 @@
 var html5sql = (function () {
 
+    sqlMatch = function(pattern, sql){
+        return (new RegExp(pattern, 'i')).test(sql);
+    }
+
+    isSelect = function(sql){ return sqlMatch('^select\\s', sql);}
+    isInsert = function(sql){ return sqlMatch('^insert\\s', sql);}
+    isUpdate = function(sql){ return sqlMatch('^update\\s', sql);}
+    isDelete = function(sql){ return sqlMatch('^delete\\s', sql);}
+
     sqlProcessor = function (transaction, sql, data, finalSuccessCallback, finalFailureCallback) {
-        if(html5sql.logDebug){
-            console.debug("SQL: [" + sql + "], Data: [" + data + "]");
-        }
+        log.logSqlStatement(sql,data, html5sql.logInfo);
         finalSuccessCallback = (finalSuccessCallback === void 0) ? function(){} : finalSuccessCallback;
         finalFailureCallback = (finalFailureCallback === void 0) ? function(){} : finalFailureCallback;
         successCallback = function (transaction, results) {
-            var rowsArray = putResultOfSelectIntoArray(sql, results);
-            if(html5sql.logDebug) {
-                console.debug("Result array is " + rowsArray);
+            var rowsArray = [];
+            log.logObjectData("ResultSet", results, html5sql.logDebug);
+            if(html5sql.putSelectResultsInArray && isSelect(sql)){
+                rowsArray = putResultOfSelectIntoArray(sql, results);
+            } else if(html5sql.putInsertIdInArray && isInsert(sql)){
+                rowsArray[0] = results.insertId;
             }
+            log.logObjectData("Result Array", rowsArray, html5sql.logDebug);
             finalSuccessCallback(transaction, results, rowsArray);
         };
         failureCallback = function(transaction, error){
-            if(html5sql.logErrors){
-                console.error("Error: " + error.message + " while processing statment: " + sql);
-            }
+            log.logObjectData("Error Message", error, html5sql.logInfo);
             finalFailureCallback(transaction, error);
         };   
         transaction.executeSql(sql, data, successCallback, failureCallback);
     },
+
     putResultOfSelectIntoArray = function (sql, sqlResultSet){
-        var max, rowsArray = [];
-        if(html5sql.putSelectResultsInArray && (new RegExp('^select\\s', 'i')).test(sql)){
-            for(i = 0, max = sqlResultSet.rows.length; i < max; i++){
-                rowsArray[i] = sqlResultSet.rows.item(i);
-            }
-        } else {
-            rowsArray = null;
+        var max, result = [];
+        for(i = 0, max = sqlResultSet.rows.length; i < max; i++){
+            obj = sqlResultSet.rows.item(i);
+            result[i] = obj;
         }
-        return rowsArray;
+        return result;
     }
-    logDatabaseNotOpenError = function (){
-        if(html5sql.logErrors){
-            console.error("Error: Database needs to be opened before sql can be processed");
-            throw ("Error: Database needs to be opened before sql can be processed");
-        }
-    }
+
     return {
-        database: null, logInfo: true, logErrors: true, logDebug: true, putSelectResultsInArray: true,
+        database: null, logInfo: true, logErrors: true, logDebug: true, 
+        putSelectResultsInArray: true, putInsertIdInArray : true,
         openDatabase: function (name, version, displayname, size, whenOpen) {
             whenOpen = (whenOpen === void 0) ? function(){} : whenOpen;
             html5sql.database = openDatabase(name, version, displayname, size, whenOpen);
-            if(html5sql.logInfo){
-                console.info("Name         : " + name);
-                console.info("Display name : " + displayname);
-                console.info("Version      : " + html5sql.database.version);
-            }
+            logDbInfo(name, displayname, version, logInfo);
         },
 
         process: function (sql, data, finalSuccessCallback, failureCallback) {
@@ -56,7 +55,7 @@ var html5sql = (function () {
                     sqlProcessor(transaction, sql, data, finalSuccessCallback, failureCallback);
                 });
             } else {
-                logDatabaseNotOpenError();
+                log.logDatabaseNotOpenError(html5sql.logErrors);
                 return false;
             }
         },
@@ -69,7 +68,7 @@ var html5sql = (function () {
                     });
                 }
             } else {
-                logDatabaseNotOpenError();
+                log.logDatabaseNotOpenError(html5sql.logErrors);
                 return false;
             }
 

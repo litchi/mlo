@@ -5,6 +5,10 @@ describe("Unit Test for Data Access API", function() {
     var db;
     var testIdentity = new Date().getMilliseconds(); 
 
+    beforeEach(function(){
+        dataAccess.createDatabaseConnection();
+    });
+
     function generateTestField (topic, caseNo) {
         return "[" + testIdentity + '|Case #' + caseNo + "] " + topic + " " + new Date().valueOf(); 
     };
