@@ -24,6 +24,14 @@ function deleteTask(){
     }
 }
 
+function deleteTaskById(id){
+    dataAccess.task.delete(id, function(tx, result, rows){
+        bb.popScreen();
+    }, function(tx, error) {
+        bb.pushScreen("error.html", "error-page"); 
+    });
+}
+
 //TODO Optimize code and remove duplicates
 function editTask(){
     var selectedItem, selectedId,
