@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-/* VERSION: 0.9.6.9*/
+/* VERSION: 0.9.6.18*/
 
 bb = {
 	scroller: null,  
@@ -183,12 +183,44 @@ bb = {
 			bb.progress = _bb_progress;
 			bb.roundPanel = _bb_5_6_7_roundPanel;
 		}
+		
+		// Add our keyboard listener for BB10
+		if (bb.device.isBB10 && !bb.device.isPlayBook && !bb.device.isRipple) {
+			// Hide our action bar when the keyboard is about to pop up
+			blackberry.event.addEventListener('keyboardOpening', function() {
+				if (bb.screen.currentScreen.actionBar) {
+					bb.screen.currentScreen.actionBar.hide();
+				} 
+			});
+			
+			// Scroll to our selected input once the keyboard is opened
+			blackberry.event.addEventListener('keyboardOpened', function() {
+				if (bb.screen.currentScreen.actionBar) {
+					if (bb.screen.focusedInput) {
+						bb.screen.currentScreen.scrollToElement(bb.screen.focusedInput);
+					}
+				} 
+			});
+			
+			// Show our action bar when the keyboard disappears
+			blackberry.event.addEventListener('keyboardClosed', function() {
+				if (bb.screen.currentScreen.actionBar) {
+					bb.screen.currentScreen.actionBar.show();
+				} 
+			});
+		}
 	},
 
     doLoad: function(element) {
         // Apply our styling
         var root = element || document.body;
         bb.screen.apply(root.querySelectorAll('[data-bb-type=screen]'));
+		bb.style(root);
+        // perform device specific formatting
+        bb.screen.reAdjustHeight();	
+    },
+	
+	style: function(root) {
 		if (bb.scrollPanel) 			bb.scrollPanel.apply(root.querySelectorAll('[data-bb-type=scroll-panel]'));  
 	    if (bb.textInput) 				bb.textInput.apply(root.querySelectorAll('input[type=text], [type=password], [type=tel], [type=url], [type=email], [type=number], [type=date], [type=time], [type=datetime], [type=month], [type=datetime-local], [type=color], [type=search]'));
 		if (bb.dropdown)				bb.dropdown.apply(root.querySelectorAll('select'));
@@ -206,9 +238,7 @@ bb = {
 		if (bb.activityIndicator) 		bb.activityIndicator.apply(root.querySelectorAll('[data-bb-type=activity-indicator]'));
 		if (bb.checkbox)				bb.checkbox.apply(root.querySelectorAll('input[type=checkbox]'));
 		if (bb.toggle)					bb.toggle.apply(root.querySelectorAll('[data-bb-type=toggle]'));
-        // perform device specific formatting
-        bb.screen.reAdjustHeight();	
-    },
+	},
 	
 	device: {  
         isHiRes: false, 
@@ -494,6 +524,8 @@ bb = {
 			bb.domready.id = id;
 			bb.domready.params = params;
 			setTimeout(bb.domready.fire, 1); 
+		} else {
+			setTimeout(bb.domready.fireEventsOnly, 1);
 		}
 		
 		// If an effect was applied then the popping will be handled at the end of the animation
@@ -530,12 +562,36 @@ bb = {
 				setTimeout(bb.domready.fire, 250);
 				return;
 			}
+			
+			// Raise an internal event to let the rest of the framework know that the dom is ready
+			var evt = document.createEvent('Events');
+			evt.initEvent('bbuidomready', true, true);
+			document.dispatchEvent(evt);
+			// Fire our event
 			bb.options.ondomready(bb.domready.container, bb.domready.id, bb.domready.params);
 			bb.domready.container = null;
 			bb.domready.id = null;	
 		    bb.domready.params = null;
+			// Raise an internal event to let the rest of the framework know that the dom has been processed
+			evt = document.createEvent('Events');
+			evt.initEvent('bbuidomprocessed', true, true);
+			document.dispatchEvent(evt);
+		},
+		
+		fireEventsOnly : function() {
+			if (bb.screen.animating) {
+				setTimeout(bb.domready.fireEventsOnly, 250);
+				return;
+			}
+			// Raise an internal event to let the rest of the framework know that the dom is ready
+			var evt = document.createEvent('Events');
+			evt.initEvent('bbuidomready', true, true);
+			document.dispatchEvent(evt);
+			// Raise an internal event to let the rest of the framework know that the dom has been processed
+			evt = document.createEvent('Events');
+			evt.initEvent('bbuidomprocessed', true, true);
+			document.dispatchEvent(evt);
 		}
-	
 	},
 	
 	// Creates the scroller for the screen
@@ -820,6 +876,7 @@ bb.actionBar = {
 			j;
 			
 		actionBar.backBtnWidth = 0;
+		actionBar.isVisible = true;
 		actionBar.actionOverflowBtnWidth = 0;
 		actionBar.tabOverflowBtnWidth = 0;
 		actionBar.setAttribute('class','bb-bb10-action-bar-'+res+' bb-bb10-action-bar-' + bb.actionBar.color);
@@ -1054,6 +1111,27 @@ bb.actionBar = {
 					}
 				};
 		actionBar.setSelectedTab = actionBar.setSelectedTab.bind(actionBar);  
+		
+		// Add our hide function
+		actionBar.hide = function(tab) {
+					if (!this.isVisible) return;
+					this.style.display = 'none';
+					// Make the scroll area go right to the bottom of the displayed content
+					bb.screen.currentScreen.outerScrollArea.style['bottom'] = '0px';
+					this.isVisible = false;
+				};
+		actionBar.hide = actionBar.hide.bind(actionBar); 
+		
+		// Add our show function
+		actionBar.show = function(tab) {
+					if (this.isVisible) return;
+					this.style.display = '';
+					// Resize the screen scrolling area to stop at the top of the action bar
+					bb.screen.currentScreen.outerScrollArea.style['bottom'] = bb.screen.currentScreen.actionBarHeight + 'px';
+					this.isVisible = true;
+				};
+		actionBar.show = actionBar.show.bind(actionBar);
+		
 		
 		// Add all our overflow tab actions
 		if (overflowTabs.length > 0 ) {
@@ -1690,7 +1768,7 @@ bb.contextMenu = {
 						this.addEventListener("touchmove", this.touchMoveHandler, false);		
 						this.onclick = function(event) {
 									if ((event.target == this) || (event.target == this.scrollContainer)){;
-										this.show();
+										this.show(this.selected);
 									}
 								};
 						// Remove the header click handling while peeking
@@ -2320,6 +2398,8 @@ bb.screen = {
 	overlay : null,
 	tabOverlay : null,
 	contextMenu : null,
+	currentScreen : null,
+	focusedInput : null,
 	animating : false,
     
     apply: function(elements) {
@@ -2338,7 +2418,7 @@ bb.screen = {
 		
         for (var i = 0; i < elements.length; i++) {
             outerElement = elements[i];
-            
+            bb.screen.currentScreen = outerElement;
 			// Set our screen resolution
 			outerElement.setAttribute('class', screenRes);
             		
@@ -2364,6 +2444,7 @@ bb.screen = {
 				// Figure out what to do with the title bar
                 if (titleBar.length > 0) {
 					titleBar = titleBar[0];
+					outerElement.titleBar = titleBar;
 				} else {
 					titleBar = null;
 				}
@@ -2398,6 +2479,59 @@ bb.screen = {
 				// Add them into the scrollable area
 				for (j = 0; j < tempHolder.length -1; j++) {
 					scrollArea.appendChild(tempHolder[j]);
+				}
+				
+				// Set our variables for showing/hiding action bars
+				outerElement.actionBarHeight = actionBarHeight;
+				outerElement.titleBarHeight = titleBarHeight;
+				outerElement.outerScrollArea = outerScrollArea;
+				
+				if (outerElement.getAttribute('data-bb-indicator')) { 
+					// Now add our iframe to load the sandboxed content
+					var overlay = document.createElement('div'),
+						indicator = document.createElement('div');
+					outerScrollArea.scrollArea = scrollArea;
+					outerScrollArea.overlay = overlay;
+					// Create our overlay
+					overlay.style['position'] = 'absolute';
+					overlay.style['bottom'] = '0px';
+					overlay.style['top'] = '0px';
+					overlay.style['left'] = '0px';
+					overlay.style['right'] = '0px';
+					overlay.touchstart = function(e) {
+								e.preventDefault();
+								e.stopPropagation();
+							};
+					overlay.touchend = function(e) {
+								e.preventDefault();
+								e.stopPropagation();
+							};
+					overlay.click = function(e) {
+								e.preventDefault();
+								e.stopPropagation();
+							};
+					outerScrollArea.appendChild(overlay);
+					scrollArea.style.display = 'none';
+						
+					// Add our indicator
+					indicator.setAttribute('data-bb-type', 'activity-indicator');
+					indicator.setAttribute('data-bb-size', 'large');
+					//indicator.style.margin = '0px auto 0px auto';
+					indicator.style.margin = '60% auto 50% auto';
+					overlay.appendChild(indicator);
+					
+					// Create our event handler for when the dom is ready
+					outerScrollArea.bbuidomprocessed = function() {
+								this.scrollArea.style.display = '';
+								this.removeChild(this.overlay);
+								document.removeEventListener('bbuidomprocessed', this.bbuidomprocessed,false);
+							};
+					outerScrollArea.bbuidomprocessed = outerScrollArea.bbuidomprocessed.bind(outerScrollArea);
+					
+					/* Add our event listener for the domready to move our selected item.  We want to
+					   do it this way because it will ensure the screen transition animation is finished before
+					   the pill button move transition happens. This will help for any animation stalls/delays */
+					document.addEventListener('bbuidomprocessed', outerScrollArea.bbuidomprocessed,false);
 				}
 				
 				// Set our outer scroll area dimensions
@@ -2557,7 +2691,22 @@ bb.screen = {
 						bb.scroller.scrollToElement(element);
 					} else if (bb.device.isBB10) {
 						if (!element) return;
-						this.scrollTo(element.offsetTop);
+						var offsetTop = 0,
+							target = element;
+						if (target.offsetParent) {
+							do {
+								offsetTop  += target.offsetTop;
+							} while (target = target.offsetParent);
+						}
+						// Adjust for title bar
+						if (bb.screen.currentScreen.titleBar) {
+							offsetTop -= bb.screen.currentScreen.titleBarHeight;
+						}
+						// Adjust for action bar
+						if (bb.screen.currentScreen.titleBar) {
+							offsetTop -= bb.screen.currentScreen.actionBarHeight;
+						}
+						this.scrollTo(offsetTop);
 					}
 				};
 			outerElement.scrollToElement = outerElement.scrollToElement.bind(outerElement);
@@ -3102,10 +3251,29 @@ bb.titleBar = {
 				// First check for the image
 				if (titleBar.hasAttribute('data-bb-img')) {
 					img = document.createElement('img');
-					img.src = titleBar.getAttribute('data-bb-img');
+					//img.src = titleBar.getAttribute('data-bb-img');
 					titleBar.img = img;
 					topTitleArea.insertBefore(img, details);
 					details.setAttribute('class', 'bb-bb10-title-bar-caption-details-img-'+res);
+					
+					// Create our display image
+					img.style.opacity = '0';
+					img.style['-webkit-transition'] = 'opacity 0.5s linear';
+					img.style['-webkit-backface-visibility'] = 'hidden';
+					img.style['-webkit-perspective'] = 1000;
+					img.style['-webkit-transform'] = 'translate3d(0,0,0)';
+	
+					// Load our image once onbbuidomready 
+					titleBar.onbbuidomready = function() {
+								// Animate its visibility once loaded
+								this.img.onload = function() {
+									this.style.opacity = '1.0';
+								}
+								this.img.src = this.getAttribute('data-bb-img');
+								document.removeEventListener('bbuidomready', this.onbbuidomready,false);
+							};
+					titleBar.onbbuidomready = titleBar.onbbuidomready.bind(titleBar);
+					document.addEventListener('bbuidomready', titleBar.onbbuidomready,false);		
 				} 
 				// Next check for the accent text
 				if (titleBar.hasAttribute('data-bb-accent-text')) {
@@ -4176,7 +4344,9 @@ _bb10_grid = {
 		var res = (bb.device.isPlayBook) ? 'lowres' : 'hires',
 			solidHeader = false,
 			headerJustify;
-
+			
+		
+		
 		// Apply our transforms to all grids
 		for (var i = 0; i < elements.length; i++) {
 			var j,
@@ -4319,11 +4489,29 @@ _bb10_grid = {
 
 							// Create our display image
 							image = document.createElement('img');
-							image.setAttribute('src',itemNode.getAttribute('data-bb-img'));
 							image.style.height = height + 'px';
 							image.style.width = width + 'px';
+							image.style.opacity = '0';
+							image.style['-webkit-transition'] = 'opacity 0.5s linear';
+							image.style['-webkit-backface-visibility'] = 'hidden';
+							image.style['-webkit-perspective'] = 1000;
+							image.style['-webkit-transform'] = 'translate3d(0,0,0)';
+							image.itemNode = itemNode;
 							itemNode.image = image;
 							itemNode.appendChild(image);
+							
+							// Load our image once onbbuidomready 
+							itemNode.onbbuidomready = function() {
+										// Animate its visibility once loaded
+										this.image.onload = function() {
+											this.style.opacity = '1.0';
+										}
+										this.image.src = this.getAttribute('data-bb-img');
+										document.removeEventListener('bbuidomready', this.onbbuidomready,false);
+									};
+							itemNode.onbbuidomready = itemNode.onbbuidomready.bind(itemNode);
+							document.addEventListener('bbuidomready', itemNode.onbbuidomready,false);
+							
 							// Create our translucent overlay
 							if (hasOverlay) {
 								overlay = document.createElement('div');
@@ -4575,43 +4763,53 @@ _bb10_imageList = {
 						if (!this.hideImages) {
 							img = document.createElement('img');
 							img.outerElement = this;
+							
 							innerChildNode.img = img;
 							if (this.imagePlaceholder) {
 								img.placeholder = this.imagePlaceholder;
-								img.src = innerChildNode.hasAttribute('data-bb-img') ? innerChildNode.getAttribute('data-bb-img') : this.imagePlaceholder;
+								img.path = innerChildNode.hasAttribute('data-bb-img') ? innerChildNode.getAttribute('data-bb-img') : this.imagePlaceholder;
 							} else {
-								img.setAttribute('src',innerChildNode.getAttribute('data-bb-img'));
+								img.path = innerChildNode.getAttribute('data-bb-img');
 							}
 							innerChildNode.appendChild(img);
 							
 							if (this.imageEffect) {
-								img.style.opacity = '0.0';
-								img.even = (j%2 == 0)
-								img.onload = function() {
-												this.show();
-											};
-								img.show = function() {
+								img.style.opacity = '0';
+								img.style['-webkit-transition'] = 'opacity 0.5s linear';
+								img.style['-webkit-backface-visibility'] = 'hidden';
+								img.style['-webkit-perspective'] = 1000;
+								img.style['-webkit-transform'] = 'translate3d(0,0,0)';
+								innerChildNode.imageList = this;
+								// Load our image once onbbuidomready 
+								innerChildNode.onbbuidomready = function() {
+											// Animate its visibility once loaded
+											this.img.onload = function() {
 												this.style.opacity = '1.0';
-												if (this.even) { // Change timing based on even and odd numbers for some randomness
-													this.style['-webkit-transition'] = 'opacity 0.5s linear';
-												} else {
-													this.style['-webkit-transition'] = 'opacity 1.0s linear';
-												}
-												this.style['-webkit-backface-visibility'] = 'hidden';
-												this.style['-webkit-perspective'] = 1000;
-												this.style['-webkit-transform'] = 'translate3d(0,0,0)';
-											};
-								img.show = img.show.bind(img);
-							}
-							// Handle the error scenario
-							if (this.imagePlaceholder) {
-								img.onerror = function() {
-												if (this.src == this.placeholder) return;
-												this.src = this.placeholder;
-												if (this.outerElement.imageEffect) {
-													this.show();
-												}
-											};
+											}
+											this.img.src = this.img.path;
+											
+											if (this.imageList.imagePlaceholder) {
+												this.img.onerror = function() {
+													if (this.src == this.placeholder) return;
+													this.src = this.placeholder;
+												};
+											}
+											document.removeEventListener('bbuidomready', this.onbbuidomready,false);
+										};
+								innerChildNode.onbbuidomready = innerChildNode.onbbuidomready.bind(innerChildNode);
+								document.addEventListener('bbuidomready', innerChildNode.onbbuidomready,false);
+							} else {
+								img.src = img.path;
+								// Handle the error scenario
+								if (this.imagePlaceholder) {
+									img.onerror = function() {
+													if (this.src == this.placeholder) return;
+													this.src = this.placeholder;
+													if (this.outerElement.imageEffect) {
+														this.show();
+													}
+												};
+								}
 							}
 						}
 						// Create the details container
@@ -5044,82 +5242,164 @@ _bb10_pillButtons = {
 			outerElement.appendChild(containerDiv);
 			containerDiv.setAttribute('class',containerStyle);
 			
+			// Set our selected color
+			outerElement.selectedColor = (bb.screen.controlColor == 'dark') ? '#909090' : '#555555';
+			
 			// Gather our inner items
 			var items = outerElement.querySelectorAll('[data-bb-type=pill-button]'),
 				percentWidth = Math.floor(100 / items.length),
 				sidePadding = 101-(percentWidth * items.length),
 				sidePadding,
 				innerChildNode,
+				table,
+				tr,
+				td,
 				j;
 			
+			// Create our selection pill
+			pill = document.createElement('div');
+			pillInner = document.createElement('div');
+			pill.appendChild(pillInner);
+			pill.setAttribute('class',buttonStyle + ' bb-bb10-pill-button-selected-'+res+'-'+ bb.screen.controlColor + ' bb-bb10-pill-buttons-pill');
+			pillInner.setAttribute('class','bb-bb10-pill-button-inner-'+res +' bb-bb10-pill-button-inner-selected-'+res+'-'+bb.screen.controlColor);
+			pill.style.width = percentWidth + '%';
+			outerElement.pill = pill;
+			containerDiv.appendChild(pill);
+						
+			// Set our left and right padding
 			outerElement.style['padding-left'] = sidePadding + '%';
 			outerElement.style['padding-right'] = sidePadding + '%';
+			
+			// create our containing table
+			table = document.createElement('table');
+			tr = document.createElement('tr');
+			table.appendChild(tr);
+			table.setAttribute('class','bb-bb10-pill-buttons-table');
+			table.style.width = (99 - (2*sidePadding)) + '%';
+			containerDiv.appendChild(table);				
+			
+			// Loop through all our buttons
 			for (j = 0; j < items.length; j++) {
 				innerChildNode = items[j];
-				containerDiv.appendChild(innerChildNode);
+				innerChildNode.isSelected = false;
 				
-				// Set our styling
-				innerChildNode.selected = buttonStyle + ' bb-bb10-pill-button-selected-'+res+'-'+ bb.screen.controlColor;
-				innerChildNode.normal = buttonStyle;
-				innerChildNode.highlight = buttonStyle + ' bb-bb10-pill-button-highlight-'+res+'-'+ bb.screen.controlColor +' bb10Highlight';
-				if (j == items.length - 1) {
-					innerChildNode.style.float = 'right';
-					if (j == 1) {
-						innerChildNode.style.width = percentWidth-2 + '%';
-					} else {
-						innerChildNode.style.width = (100-j) - (j * percentWidth) + '%';
-					}						
-				} else {
-					innerChildNode.style.width = percentWidth + '%';
-				}
-				
+				// Create our cell
+				td = document.createElement('td');
+				tr.appendChild(td);
+				td.appendChild(innerChildNode);
+				td.style.width = percentWidth + '%';
+							
 				// Create our inner container to have double borders
 				innerBorder = document.createElement('div');
-				innerBorder.normal = 'bb-bb10-pill-button-inner-'+res;
-				innerBorder.selected = innerBorder.normal +' bb-bb10-pill-button-inner-selected-'+res+'-'+bb.screen.controlColor;
-				
 				innerBorder.innerHTML = innerChildNode.innerHTML;
 				innerChildNode.innerHTML = '';
 				innerChildNode.appendChild(innerBorder);
+				// Set our variables
+				innerChildNode.border = innerBorder;
+				innerChildNode.outerElement = outerElement;
 				
 				if (innerChildNode.getAttribute('data-bb-selected') == 'true') {
-					innerChildNode.setAttribute('class',innerChildNode.selected);
-					innerBorder.setAttribute('class',innerBorder.selected);
+					innerChildNode.isSelected = true;
+					outerElement.selected = innerChildNode;
+					innerChildNode.style.color = outerElement.selectedColor;
+				} 
+				
+				// Set our styling
+				innerChildNode.setAttribute('class',buttonStyle);
+				innerBorder.setAttribute('class','bb-bb10-pill-button-inner-'+res);
+				innerChildNode.style['z-index'] = 4;
+				innerChildNode.style.width = '100%';
+				
+				// Set our touch start					
+				innerChildNode.dotouchstart = function(e) {
+											if (this.isSelected) return;
+											// Turn of the selected state of the last item
+											var lastSelected = this.outerElement.selected;
+											lastSelected.style.color = '';	
+											// change color of the pill if it is light coloring
+											if (bb.screen.controlColor == 'light') {
+												this.outerElement.pill.style['background-color'] = '#DDDDDD';
+											}
+											this.outerElement.setPillLeft(this);
+										};
+				innerChildNode.dotouchstart = innerChildNode.dotouchstart.bind(innerChildNode);
+				
+				// Set our touch end					
+				innerChildNode.dotouchend = function(e) {
+											if (this.isSelected) return;
+											
+											// Reset the old selected
+											var lastSelected = this.outerElement.selected;
+											lastSelected.isSelected = false;
+											
+											// Select this item's state
+											this.isSelected = true;
+											this.outerElement.selected = this;
+											this.style.color = this.outerElement.selectedColor;
+											
+											// Remove color styling from pill if light
+											if (bb.screen.controlColor == 'light') {
+												this.outerElement.pill.style['background-color'] = '';
+											}
+											
+											// Raise the click event. Need to do it this way to match the
+											// Cascades selection style in pill buttons
+											var ev = document.createEvent('MouseEvents');
+											ev.initMouseEvent('click', true, true);
+											ev.doClick = true;
+											this.dispatchEvent(ev);
+										};
+				innerChildNode.dotouchend = innerChildNode.dotouchend.bind(innerChildNode);
+				
+							
+				
+				// Tie it to mouse events in ripple, and touch events on devices
+				if (bb.device.isRipple) {
+					innerChildNode.onmousedown = innerChildNode.dotouchstart;	
+					innerChildNode.onmouseup = innerChildNode.dotouchend;
 				} else {
-					innerChildNode.setAttribute('class',innerChildNode.normal);
-					innerBorder.setAttribute('class',innerBorder.normal);
-					innerChildNode.ontouchstart = function() {
-												this.setAttribute('class',this.highlight);
-											};
-					innerChildNode.ontouchend = function() {
-												this.setAttribute('class',this.normal);
-											};
+					innerChildNode.ontouchstart = innerChildNode.dotouchstart;	
+					innerChildNode.ontouchend = innerChildNode.dotouchend;
 				}
 				
-				// Add our subscription for click events to change highlighting
-				innerChildNode.addEventListener('click',function (e) {
-						var innerChildNode,
-							innerBorder,
-							items = this.parentNode.querySelectorAll('[data-bb-type=pill-button]');
-						for (var j = 0; j < items.length; j++) {
-							innerChildNode = items[j];
-							innerBorder = innerChildNode.firstChild;
-							if (innerChildNode == this) {
-								innerChildNode.setAttribute('class',innerChildNode.selected);
-								innerBorder.setAttribute('class',innerBorder.selected);
-							} else {
-								innerBorder.setAttribute('class',innerBorder.normal);
-								innerChildNode.setAttribute('class',innerChildNode.normal);
-								innerChildNode.ontouchstart = function() {
-												this.setAttribute('class',this.highlight);
-											};
-								innerChildNode.ontouchend = function() {
-												this.setAttribute('class',this.normal);
-											};
-							}
-						}
-					},false);
+				// Prevent the default click unless we want it to happen
+				innerChildNode.addEventListener('click',function (e) { 
+							e.stopPropagation();
+						}, true);
 			}
+			
+			// Set our pill left
+			outerElement.setPillLeft = function(element) {
+						if (!element) {
+							element = this.selected;
+						}
+						this.pill.style['-webkit-transform'] = 'translate3d(' + element.parentNode.offsetLeft + 'px,0px,0px)';
+					};
+			outerElement.setPillLeft = outerElement.setPillLeft.bind(outerElement);	
+			
+			// Create our event handler for when the dom is ready
+			outerElement.onbbuidomready = function() {
+						this.setPillLeft();
+						document.removeEventListener('bbuidomready', this.onbbuidomready,false);
+					};
+			outerElement.onbbuidomready = outerElement.onbbuidomready.bind(outerElement);
+			
+			/* Add our event listener for the domready to move our selected item.  We want to
+			   do it this way because it will ensure the screen transition animation is finished before
+			   the pill button move transition happens. This will help for any animation stalls/delays */
+			document.addEventListener('bbuidomready', outerElement.onbbuidomready,false);
+
+			// Handle pill sizing on orientation change
+			outerElement.doOrientationChange = function() {
+						//var outerStyle = window.getComputedStyle(this),
+						//	pillLeft = this.parentNode.offsetLeft;
+						// Set our styles
+						//this.pill.style['-webkit-transform'] = 'translate3d(' + pillLeft + 'px,0px,0px)';
+						this.setPillLeft();
+					};
+			outerElement.doOrientationChange = outerElement.doOrientationChange.bind(outerElement);
+			window.addEventListener('resize', outerElement.doOrientationChange,false); 
+			
 			// Add our show function
 			outerElement.show = function() {
 				this.style.display = 'block';
@@ -5752,6 +6032,7 @@ _bb10_textInput = {
 															this.style['border-color'] = bb.options.highlightColor;
 															this.isFocused = true;
 															this.clickCount = 0;
+															bb.screen.focusedInput = this;
 															}
 													}, false);
 													
@@ -5759,6 +6040,7 @@ _bb10_textInput = {
 														this.setAttribute('class',this.normal);	
 														this.style['border-color'] = '';
 														this.isFocused = false;
+														bb.screen.focusedInput = null;
 														this.removeEventListener('click',outerElement.handleDeleteClick , false);
 													}, false);
 													
@@ -5783,16 +6065,15 @@ _bb10_textInput = {
 		}
     }
 };
-
 _bb10_toggle = {
 
 	apply: function(elements) {
 		for (var i = 0; i < elements.length; i++) {
-			bb.toggle.style(elements[i]);
+			bb.toggle.style(elements[i],true);
 		}
 	},
 	
-	style: function(outerElement) {
+	style: function(outerElement,offdom) {
 		var res,
 			table,
 			tr,
@@ -6077,7 +6358,23 @@ _bb10_toggle = {
 		
 		// set our checked state
 		outerElement.checked = (outerElement.hasAttribute('data-bb-checked')) ? outerElement.getAttribute('data-bb-checked').toLowerCase() == 'true' : false;
-		setTimeout(outerElement.positionButton,0);
+		
+		if (offdom) {
+			// Create our event handler for when the dom is ready
+			outerElement.onbbuidomready = function() {
+						this.positionButton();
+						document.removeEventListener('bbuidomready', this.onbbuidomready,false);
+					};
+			outerElement.onbbuidomready = outerElement.onbbuidomready.bind(outerElement);
+		} else {
+			// Use a simple timeout to trigger the animation once inserted into the DOM
+			setTimeout(outerElement.positionButton,0);
+		}
+		
+		/* Add our event listener for the domready to move our selected item.  We want to
+		   do it this way because it will ensure the screen transition animation is finished before
+		   the toggle button move transition happens. This will help for any animation stalls/delays */
+		document.addEventListener('bbuidomready', outerElement.onbbuidomready,false);
 		
 		// Assign our document event listeners
 		document.addEventListener('touchmove', outerElement.moveToggle, false);
