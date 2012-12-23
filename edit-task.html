@@ -1,7 +1,7 @@
 ﻿<div data-bb-type="screen">
     <link rel="stylesheet" type="text/css" href="css/edit-object.css"></link>
     <div id="foo" data-bb-type="title" data-bb-caption="Edit Task" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
-        onactionclick="alert('Save Clicked')"></div>
+        onactionclick="saveTask(document.getElementById('task-id').value, document.getElementById('task-title').value)"></div>
     <div data-bb-type="round-panel">
         <div data-bb-type="panel-header">
             Basic Information
@@ -10,6 +10,7 @@
             <table>
                 <tr>
                     <td colspan="3" style="font-size:40px;vertical-align:top;">
+                        <input type="hidden" value="" id="task-id">
                         <input type="text" value="Have dinner together with the whole team" id="task-title">
                     </td>
                 </tr>

@@ -51,11 +51,6 @@ function createItemElement(id, title, project, tags) {
     return item;
 }
 
-function listAllTasks () {
-    dataAccess.task.getAll(function(transaction, results, arrays){
-    });
-}
-
 function dialogCallBack(index){
     alert(index);
 }
@@ -67,4 +62,13 @@ function customDialog(task_title) {
     } catch(e) {
         console.log("Exception in customDialog: " + e);
     }
+}
+
+function fillTaskToEditForm(id){
+    dataAccess.task.getById(id, function(tx, result, rows) {
+        document.getElementById('task-id').value = id;
+        document.getElementById('task-title').value = rows[0][TASK_COLUMNS.TITLE];
+    }, function(tx, error) {
+        bb.pushScreen('error.html', 'error-page'); 
+    });
 }

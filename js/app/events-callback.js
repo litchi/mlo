@@ -10,8 +10,8 @@ function loadCallback(){
 }
 
 function webworksReadyCallback(e){
-    // You must call init on bbUI before any other code loads.  
-    // If you want default functionality simply don't pass any parameters.. bb.init();
+    //Init on bbUI should before any other code loads.  
+    //Pass no parameters.. [bb.init()] to do the default init;
     if (webworksreadyFired) return;
     webworksreadyFired = true;
     bb.init({
@@ -29,8 +29,12 @@ function onScreenReadyCallback(element, id){
 }
 
 function onDomReadyCallback(element, id){
-    console.debug("Element: " + element + ", id: " + id);
+    var editTaskPrefix = 'edit-task-';
     if(id === 'inbox' || id === 'next-action'){
         addAllTaskToList(); 
+    }
+    if(id.slice(0, editTaskPrefix.length) == editTaskPrefix){
+        taskId = id.substring(editTaskPrefix.length);
+        fillTaskToEditForm(taskId);
     }
 }
