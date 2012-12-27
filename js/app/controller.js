@@ -55,3 +55,34 @@ function saveTask(id, title){
         bb.pushScreen("error.html", "error-page"); 
     });
 }
+
+function switchMetaEditLink(){
+    var items, item, 
+    currentLink = document.getElementById('edit-meta-link').innerText;
+    console.log(currentLink);
+    metaList = document.getElementById('meta-list');
+    items = metaList.getItems();
+    metaList.clear();
+    for(var key in items){
+        item = items[key];
+        item.innerText = null;
+        if(currentLink == 'Edit'){
+            console.log("I am here");
+            item.setAttribute('data-bb-title', item.getTitle() + " >");
+            item.onclick = function(){
+                bb.pushScreen('edit-project.html', 'edit-project');
+            };
+            document.getElementById('edit-meta-link').innerText = 'Cancel';
+        }
+        if(currentLink == 'Cancel'){
+            title = item.getTitle();
+            item.setAttribute('data-bb-title', title.substring(0, title.length - 4));
+            item.onclick = function(){
+                adjustTaskGroupWidth(uiConfig.leftPanelWidth, uiConfig.rightPanelWidth, uiConfig.rightPanelSmallerLeftMargin);
+            };
+            document.getElementById('edit-meta-link').innerText = 'Edit';
+        }
+        metaList.appendItem(item);
+    }
+    metaList.refresh();
+}

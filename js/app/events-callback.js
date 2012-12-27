@@ -30,11 +30,13 @@ function onScreenReadyCallback(element, id){
 
 function onDomReadyCallback(element, id){
     var editTaskPrefix = 'edit-task-';
-    if(id === 'inbox' || id === 'next-action'){
-        addAllTaskToList(); 
-    }
-    if(id.slice(0, editTaskPrefix.length) == editTaskPrefix){
-        taskId = id.substring(editTaskPrefix.length);
-        fillTaskToEditForm(taskId);
+    if(id != null){
+        if(id === 'inbox' || id === 'next-action'){
+            addAllTaskToList(); 
+        }
+        if(id.slice(0, editTaskPrefix.length) == editTaskPrefix){
+            taskId = id.substring(editTaskPrefix.length);
+            fillTaskToEditForm(taskId);
+        }
     }
 }
