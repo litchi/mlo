@@ -300,35 +300,83 @@ describe("Unit Test for Data Access API", function() {
             dataAccess.metaType.create(project, null, function(tx, result, arrays){
                 projectTypeId = result.insertId;
             });
+            waits(100);
         });
         afterEach(function () {
             dataAccess.metaType.delete(contextTypeId);
             dataAccess.metaType.delete(projectTypeId);
         });
-        it("#21 Create Context", function(){
-            waits(100);
-            runs(function(){
-                doMetaActualAssert(contextTypeId, 21);
-            });
+        it("#21 Create Meta of Type Context", function(){
+            doMetaCreateAssert(contextTypeId, 21);
         });
-        it("#22 Create Project", function(){
-            waits(100);
-            runs(function(){
-                doMetaActualAssert(projectTypeId, 22);
-            });
+        it("#22 Create Meta of Type Project", function(){
+            doMetaCreateAssert(projectTypeId, 22);
         });
-        function doMetaActualAssert(metaTypeId, caseId){
+        it("#23 Delete Meta of Type Context", function(){
+            doMetaDeleteAssert(contextTypeId, 23);
+        });
+        it("#24 Delete Meta of Type Project", function(){
+            doMetaDeleteAssert(projectTypeId, 24);
+        });
+        it("#25 Update Meta of Type Context", function(){
+            doMetaUpdateAssert(contextTypeId, 25);
+        });
+        it("#26 Update Meta of Type Project", function(){
+            doMetaUpdateAssert(projectTypeId, 26);
+        });
+
+        function doMetaUpdateAssert(metaTypeId, caseId){
+            var updatedName, updatedDesc;
+            doMetaAssert(metaTypeId, caseId, function(id, name, desc){
+                updatedName = name + " Updated";
+                updatedDesc = desc + " Updated";
+                dataAccess.meta.update(id, updatedName, updatedDesc); 
+            }, function(id){
+                assertSqlExecuter(SQL.META.SELECT_BY_ID, [id], function(results, arrays, error) {
+                    expect(error).toBeUndefined();
+                    assertMetaFields(arrays, id, metaTypeId, updatedName, updatedDesc);
+                });
+            });
+        }
+
+        function doMetaDeleteAssert(metaTypeId, caseId){
+            doMetaAssert(metaTypeId, caseId, function(id){
+                dataAccess.meta.delete(id);
+            }, function(id){
+                assertSqlExecuter(SQL.META.SELECT_BY_ID, [id], function(results, arrays, error) {
+                    expect(arrays).toBeDefined();
+                    expect(arrays.length).toEqual(0);
+                });
+            });
+        }
+
+        function doMetaCreateAssert(metaTypeId, caseId){
+            doMetaAssert(metaTypeId, caseId, function(id){
+            }, function(id, metaTypeId, name, desc){
+                assertSqlExecuter(SQL.META.SELECT_BY_NAME, [name], function(results, arrays, error) {
+                    expect(error).toBeUndefined();
+                    assertMetaFields(arrays, id, metaTypeId, name, desc);
+                });
+            });
+        }
+
+        function doMetaAssert(metaTypeId, caseId, operCallback, assertCallback){
             var id, 
             name = generateTestField(SQL.META.COLS.NAME, caseId),
             desc = generateTestField(SQL.META.COLS.DESCRIPTION, caseId);
             dataAccess.meta.create(name, metaTypeId, desc, function(tx, results, arrays){
                 id = results.insertId;
             });
-            assertSqlExecuter(SQL.META.SELECT_BY_NAME, [name], function(results, arrays, error) {
-                expect(error).toBeUndefined();
-                assertMetaFields(arrays, id, metaTypeId, name, desc);
+            waits(100);
+            runs(function() {
+                operCallback(id, name, desc);
+            });
+            waits(100);
+            runs(function(){
+                assertCallback(id, metaTypeId, name, desc);
             });
         }
+
         function assertMetaFields(t_arrays, id, meta_type_id, name, desc){
             expect(t_arrays).toBeDefined();
             expect(t_arrays.length).toEqual(1);

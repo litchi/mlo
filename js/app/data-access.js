@@ -22,7 +22,7 @@ var dataAccess = (function (){
         },
 
         task : {
-        //TODO Add delete by name
+            //TODO Add delete by name
             create: function(name, successCallback, failureCallback){
                 runSQL(SQL.TASK.INSERT_BY_NAME, [name], successCallback, failureCallback);
             },
@@ -71,6 +71,16 @@ var dataAccess = (function (){
         meta : {
             create : function(name, meta_type_id, description, successCallback, failureCallback){
                 runSQL(SQL.META.INSERT_BY_NAME_TYPE, [name, meta_type_id, description], successCallback, failureCallback);
+            },
+            delete : function(id, successCallback, failureCallback){
+                runSQL(SQL.META.DELETE_BY_ID,[id], successCallback, failureCallback);
+            },
+            update : function(id, name, description, successCallback, failureCallback){
+                if(null == description){
+                    runSQL(SQL.META.UPDATE_NAME_BY_ID, [name, id], successCallback, failureCallback);
+                } else {
+                    runSQL(SQL.META.UPDATE_BY_ID, [name, description, id], successCallback, failureCallback);
+                }           
             },
         },
 

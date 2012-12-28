@@ -1,20 +1,23 @@
-/* SQL for clean up testing
-drop table meta;
-drop table meta_type;
-drop table task;
-drop table task_meta;
-drop table task_note;
-drop table task_reminder;
-drop table __WebKitDatabaseInfoTable__;
+/*
+* SQL for clean up testing
+* drop table meta;
+* drop table meta_type;
+* drop table task;
+* drop table task_meta;
+* drop table task_note;
+* drop table task_reminder;
+* drop table __WebKitDatabaseInfoTable__;
+*
 */
 
 var COMMON_SQL = {
     ID_COL : "id",
     GET_MAX_ID : 'select max(id) from ',
 }
+
 var SQL = {
 
-    TASK_META : {
+   TASK_META : {
         TABLE_NAME : 'task_meta',
         CREATE_TABLE : 'CREATE TABLE IF NOT EXISTS task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_id int)'
     },
@@ -35,7 +38,8 @@ var SQL = {
         SELECT_BY_NAME : 'select id, meta_type_id, name, description from meta where name = ?',
         SELECT_BY_ID_NAME : 'select id, meta_type_id, name, description from meta where id = ? and name = ?',
 
-        UPDATE_BY_ID: 'update meta set name = ? where id = ?',
+        UPDATE_NAME_BY_ID : 'update meta set name = ? where id = ?',
+        UPDATE_BY_ID : 'update meta set name = ? ,description = ? where id = ?',
 
         DELETE_BY_ID : 'delete from meta where id = ?',
         DELETE_ALL : 'delete from meta',
