@@ -19,7 +19,7 @@ function addAllTaskToList () {
     dataAccess.task.getAll(function(transaction, results, arrays){
         if(null == arrays || undefined == arrays || 0 == arrays.length){
             taskList = document.getElementById('task-list');
-            taskList.innerHTML = '<center><br/>Dude, Please add a task to begin</center>';
+            taskList.innerHTML = '<center><br/>Wow, great, all tasks are done, you could play with your family or friends</center>';
         } else {
             for(var key in arrays){   
                 name = arrays[key][SQL.TASK.COLS.NAME];
