@@ -1,0 +1,26 @@
+﻿<div data-bb-type="screen">
+    <link rel="stylesheet" type="text/css" href="css/edit-object.css"></link>
+    <div id="foo" data-bb-type="title" data-bb-caption="Edit" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
+        onactionclick="saveMeta(document.getElementById('id').value, document.getElementById('name').value, document.getElementById('description').value)">
+    </div>
+    <input type="hidden" value="" id="id"/>
+    <div data-bb-type="round-panel">
+        <div data-bb-type="panel-header">
+            Information
+        </div>
+        <div data-bb-type="label-control-container">
+            <div data-bb-type="row">
+                <div data-bb-type="label">Name</div>
+                <input type="text" value="" id="name"/>
+            </div>
+            <div data-bb-type="row">
+                <div data-bb-type="label">Description</div>
+                <input type="text" value="" id="description"/>
+            </div>
+            <div data-bb-type="row">
+                <div data-bb-type="label">Type</div>
+                <input type="text" value="" id="meta_type_name" disabled='disabled'/>
+            </div>
+        </div>
+    </div>
+</div>

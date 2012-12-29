@@ -39,6 +39,7 @@
     <target name="pre.process.copy" depends="init">
         <loadfile property="actionbar.content" srcFile="${build.src}/elements/actionbar.html"/>
         <loadfile property="task.context.menu.content" srcFile="${build.src}/elements/task-context-menu.html"/>
+        <loadfile property="meta.context.menu.content" srcFile="${build.src}/elements/meta-context-menu.html"/>
         <loadfile property="task.create.inputbox" srcFile="${build.src}/elements/create-task-input.html"/>
         <copy todir="${build.target.code}" encoding="UTF-8" outputencoding="UTF-8">
             <fileset dir="${build.src}">
@@ -71,6 +72,7 @@
             <filterset begintoken="@" endtoken="@">
                 <filter token = "actionbar"            value = "${actionbar.content}"/>
                 <filter token = "task-context-menu"    value = "${task.context.menu.content}"/>
+                <filter token = "meta-context-menu"    value = "${meta.context.menu.content}"/>
                 <filter token = "task-create-inputbox" value = "${task.create.inputbox}"/>
             </filterset>
         </copy>

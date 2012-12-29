@@ -8,11 +8,9 @@ describe("Unit Test for Data Access API", function() {
     beforeEach(function(){
         dataAccess.createDatabaseConnection();
     });
-
     function generateTestField (topic, caseNo) {
         return "[" + testIdentity + '|Case #' + caseNo + "] " + topic + " " + new Date().valueOf(); 
     };
-
     function assertSqlExecuter (v_sql, v_data, assertCallback){
         var t_results, t_arrays, t_error;
         html5sql.process(
@@ -31,13 +29,14 @@ describe("Unit Test for Data Access API", function() {
             assertCallback(t_results, t_arrays, t_error);
         });
     };
-
     function assertObject(obj, expected){
         expect(obj).toBeDefined();
         expect(obj).toEqual(expected);
 
     }
-
+    function assertFails (){
+        expect(true).toBeFalsy();
+    }
     function assertSqlResultAndField(arrays, error, column, value){
         expect(error).toBeUndefined();
         expect(arrays).toBeDefined();
@@ -45,24 +44,20 @@ describe("Unit Test for Data Access API", function() {
         expect(arrays[0]).toBeDefined();
         assertObject(arrays[0][column], value);
     };
-
     afterEach(function () {
         //html5sql.process( [ SQL.TASK.DELETE_ALL ]);
         //html5sql.process( [ SQL.META_TYPE.DELETE_ALL ]);
     });
-
     it("#0 Hello world test case to make sure the unit test framework is working!", function() {
         var helloworld="Hello World!";
         expect(helloworld).toEqual("Hello World!");
     });
-
     it("#1 The database should be opened successfully", function(){
         db = dataAccess.createDatabaseConnection();
         expect(db).toBeDefined();
         var notNull = (db == null);
         expect(notNull).toBeFalsy();
     });
-
     describe("Upon opening db, all tables should be exists", function(){
 
         function tableExistsAssert(t_results, t_arrays, t_error){
@@ -96,7 +91,6 @@ describe("Unit Test for Data Access API", function() {
             assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [SQL.TASK_REMINDER.TABLE_NAME], tableExistsAssert);
         });
     });
-
     describe("Task data access", function(){
         it("#8 Insert into task table", function(){
 
@@ -186,7 +180,6 @@ describe("Unit Test for Data Access API", function() {
             });
         }
     });
-
     describe("Meta Type data access", function (){
 
         it("#14 Insert into Meta Type table", function(){
@@ -290,57 +283,45 @@ describe("Unit Test for Data Access API", function() {
             assertObject(t_arrays[0][SQL.META_TYPE.COLS.DESCRIPTION], desc);
         }
     });
-
     describe("Meta data access", function() {
-        var contextTypeId, projectTypeId, context = 'Context', project = 'project';
+        var metaTypeId, metaTypeName = generateTestField(SQL.META.COLS.NAME, "21 - #24");
         beforeEach(function(){
-            dataAccess.metaType.create(context, null, function(tx, result, arrays){
-                contextTypeId = result.insertId; 
-            });
-            dataAccess.metaType.create(project, null, function(tx, result, arrays){
-                projectTypeId = result.insertId;
+            dataAccess.metaType.create(metaTypeName, null, function(tx, result, arrays){
+                metaTypeId = result.insertId;
             });
             waits(100);
         });
-        afterEach(function () {
-            dataAccess.metaType.delete(contextTypeId);
-            dataAccess.metaType.delete(projectTypeId);
+        it("#21 Create Meta", function(){
+            doMetaCreateAssert(21);
         });
-        it("#21 Create Meta of Type Context", function(){
-            doMetaCreateAssert(contextTypeId, 21);
+        it("#22 Delete Meta", function(){
+            doMetaDeleteAssert(22);
         });
-        it("#22 Create Meta of Type Project", function(){
-            doMetaCreateAssert(projectTypeId, 22);
+        it("#23 Update Meta", function(){
+            doMetaUpdateAssert(23);
         });
-        it("#23 Delete Meta of Type Context", function(){
-            doMetaDeleteAssert(contextTypeId, 23);
+        it("#24 Get Meta by Meta Type Name", function(){
+            doMetaAssert(24, function(){}, function(id, metaTypeId, name, desc){
+                dataAccess.meta.getByTypeName(metaTypeName, function(tx, results, arrays){
+                    assertMetaFieldsInArray(arrays, id, metaTypeId, name, desc);
+                }, assertFails);
+            });
         });
-        it("#24 Delete Meta of Type Project", function(){
-            doMetaDeleteAssert(projectTypeId, 24);
-        });
-        it("#25 Update Meta of Type Context", function(){
-            doMetaUpdateAssert(contextTypeId, 25);
-        });
-        it("#26 Update Meta of Type Project", function(){
-            doMetaUpdateAssert(projectTypeId, 26);
-        });
-
-        function doMetaUpdateAssert(metaTypeId, caseId){
+        function doMetaUpdateAssert(caseId){
             var updatedName, updatedDesc;
-            doMetaAssert(metaTypeId, caseId, function(id, name, desc){
+            doMetaAssert(caseId, function(id, name, desc){
                 updatedName = name + " Updated";
                 updatedDesc = desc + " Updated";
                 dataAccess.meta.update(id, updatedName, updatedDesc); 
             }, function(id){
                 assertSqlExecuter(SQL.META.SELECT_BY_ID, [id], function(results, arrays, error) {
                     expect(error).toBeUndefined();
-                    assertMetaFields(arrays, id, metaTypeId, updatedName, updatedDesc);
+                    assertMetaFieldsInArray(arrays, id, metaTypeId, updatedName, updatedDesc);
                 });
             });
         }
-
-        function doMetaDeleteAssert(metaTypeId, caseId){
-            doMetaAssert(metaTypeId, caseId, function(id){
+        function doMetaDeleteAssert(caseId){
+            doMetaAssert(caseId, function(id){
                 dataAccess.meta.delete(id);
             }, function(id){
                 assertSqlExecuter(SQL.META.SELECT_BY_ID, [id], function(results, arrays, error) {
@@ -349,18 +330,16 @@ describe("Unit Test for Data Access API", function() {
                 });
             });
         }
-
-        function doMetaCreateAssert(metaTypeId, caseId){
-            doMetaAssert(metaTypeId, caseId, function(id){
+        function doMetaCreateAssert(caseId){
+            doMetaAssert(caseId, function(id){
             }, function(id, metaTypeId, name, desc){
                 assertSqlExecuter(SQL.META.SELECT_BY_NAME, [name], function(results, arrays, error) {
                     expect(error).toBeUndefined();
-                    assertMetaFields(arrays, id, metaTypeId, name, desc);
+                    assertMetaFieldsInArray(arrays, id, metaTypeId, name, desc);
                 });
             });
         }
-
-        function doMetaAssert(metaTypeId, caseId, operCallback, assertCallback){
+        function doMetaAssert(caseId, operCallback, assertCallback){
             var id, 
             name = generateTestField(SQL.META.COLS.NAME, caseId),
             desc = generateTestField(SQL.META.COLS.DESCRIPTION, caseId);
@@ -376,16 +355,17 @@ describe("Unit Test for Data Access API", function() {
                 assertCallback(id, metaTypeId, name, desc);
             });
         }
-
-        function assertMetaFields(t_arrays, id, meta_type_id, name, desc){
-            expect(t_arrays).toBeDefined();
-            expect(t_arrays.length).toEqual(1);
-            expect(t_arrays[0]).toBeDefined();
-
-            assertObject(t_arrays[0][SQL.META.COLS.ID], id);
-            assertObject(t_arrays[0][SQL.META.COLS.META_TYPE_ID], meta_type_id);
-            assertObject(t_arrays[0][SQL.META.COLS.NAME], name);
-            assertObject(t_arrays[0][SQL.META.COLS.DESCRIPTION], desc);
+        function assertMetaFieldsInArray(arrays, id, meta_type_id, name, desc){
+            expect(arrays).toBeDefined();
+            expect(arrays.length).toEqual(1);
+            assertMetaFields(arrays[0], id, meta_type_id, name, desc);
+        }
+        function assertMetaFields(value, id, meta_type_id, name, desc){
+            expect(value).toBeDefined();
+            assertObject(value[SQL.META.COLS.ID], id);
+            assertObject(value[SQL.META.COLS.META_TYPE_ID], meta_type_id);
+            assertObject(value[SQL.META.COLS.NAME], name);
+            assertObject(value[SQL.META.COLS.DESCRIPTION], desc);
         }
     });
 

@@ -10,6 +10,25 @@
 *
 */
 
+/*
+ * -- SQL for initialize the database
+ * CREATE TABLE IF NOT EXISTS task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_id int)
+ * CREATE TABLE IF NOT EXISTS meta (id INTEGER PRIMARY KEY AUTOINCREMENT, meta_type_id INTEGER, name text, description text)
+ * CREATE TABLE IF NOT EXISTS meta_type (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, description text)
+ * CREATE TABLE IF NOT EXISTS task_note (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, content text, create_date real)
+ * CREATE TABLE IF NOT EXISTS task_reminder (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, next_reminder_time real)
+ * CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text)
+ *
+ * -- Initialize database data
+ * insert into meta_type (name, description) values ('project', 'Project dimension for meta');
+ * insert into meta_type (name, description) values ('context', 'Context dimension for meta');
+ * insert into meta_type (name, description) values ('GTD', 'GTD predefined dimension for meta, includes someday & maybe and next action');
+ * insert into meta (meta_type_id, name, description) values (5, 'inbox', 'Inbox for tasks');
+ * insert into meta (meta_type_id, name, description) values (5, 'next-action', 'Next action tasks');
+ * insert into meta (meta_type_id, name, description) values (5, 'someday', 'Someday & Maybe for tasks');
+ */
+
+
 var COMMON_SQL = {
     ID_COL : "id",
     GET_MAX_ID : 'select max(id) from ',
@@ -37,6 +56,7 @@ var SQL = {
         SELECT_BY_ID : 'select id, meta_type_id, name, description from meta where id = ?',
         SELECT_BY_NAME : 'select id, meta_type_id, name, description from meta where name = ?',
         SELECT_BY_ID_NAME : 'select id, meta_type_id, name, description from meta where id = ? and name = ?',
+        SELECT_BY_TYPE_ID : 'select id, meta_type_id, name, description from meta where meta_type_id = ?',
 
         UPDATE_NAME_BY_ID : 'update meta set name = ? where id = ?',
         UPDATE_BY_ID : 'update meta set name = ? ,description = ? where id = ?',
@@ -58,6 +78,7 @@ var SQL = {
         INSERT_BY_NAME : 'insert into meta_type (name, description) values (?, ?)',
         INSERT_BY_ID_NAME   : 'insert into meta_type (id, name, description) values (?, ?, ?)',
 
+        SELECT_ALL : 'select id, name, description from meta_type',
         SELECT_BY_ID : 'select id, name, description from meta_type where id = ?',
         SELECT_BY_NAME : 'select id, name, description from meta_type where name = ?',
         SELECT_BY_ID_NAME : 'select id, name, description from meta_type where id = ? and name = ?',
@@ -108,4 +129,4 @@ var SQL = {
     },
 };
 
-console.log(SQL);
+//console.log(SQL);

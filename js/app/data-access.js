@@ -47,23 +47,27 @@ var dataAccess = (function (){
         },
 
         metaType : {
-            //TODO Add delete by name
-            create: function(name, description, successCallback, failureCallback) {
+            //TODO Add delete by name if necessary from business perspective
+            create : function(name, description, successCallback, failureCallback) {
                 runSQL(SQL.META_TYPE.INSERT_BY_NAME, [name, description], successCallback, failureCallback);            
             },        
-            delete: function(id, successCallback, failureCallback) {
+            delete : function(id, successCallback, failureCallback) {
                 runSQL(SQL.META_TYPE.DELETE_BY_ID, [id], successCallback, failureCallback);            
             },        
-            update: function(id, name, description, successCallback, failureCallback){
+            update : function(id, name, description, successCallback, failureCallback){
                 runSQL(SQL.META_TYPE.UPDATE_BY_ID, [name, description, id], successCallback, failureCallback);
             },
-            getById: function(id, successCallback, failureCallback){
+            //Write Test case for this method.
+            getAll : function(successCallback, failureCallback){
+                runSQL(SQL.META_TYPE.SELECT_ALL, [], successCallback, failureCallback);
+            },
+            getById : function(id, successCallback, failureCallback){
                 runSQL(SQL.META_TYPE.SELECT_BY_ID, [id], successCallback, failureCallback);
             },
-            getByName: function(name, successCallback, failureCallback){
+            getByName : function(name, successCallback, failureCallback){
                 runSQL(SQL.META_TYPE.SELECT_BY_NAME, [name], successCallback, failureCallback);
             },
-            getByIdAndName: function(id, name, successCallback, failureCallback){
+            getByIdAndName : function(id, name, successCallback, failureCallback){
                 runSQL(SQL.META_TYPE.SELECT_BY_ID_NAME , [id, name], successCallback, failureCallback);
             },
         },
@@ -81,6 +85,27 @@ var dataAccess = (function (){
                 } else {
                     runSQL(SQL.META.UPDATE_BY_ID, [name, description, id], successCallback, failureCallback);
                 }           
+            },
+            getById : function(id, successCallback, failureCallback){
+                runSQL(SQL.META.SELECT_BY_ID, [id], successCallback, failureCallback);
+            },
+            getByTypeName : function(metaTypeName, successCallback, failureCallback){
+                dataAccess.metaType.getByName(metaTypeName, function(tx, results, arrays){ 
+                    if(
+                        arrays != null && 
+                        arrays != undefined && 
+                        arrays.length >= 0 && 
+                        arrays[0] != undefined && 
+                        arrays[0] != null
+                    ){
+                        metaTypeId = arrays[0][SQL.META_TYPE.COLS.ID];
+                        runSQL(SQL.META.SELECT_BY_TYPE_ID, [metaTypeId], successCallback, failureCallback);
+                    } else {
+                        console.error ("Meta Type with name [" + metaTypeName + "] not exists");
+                    }
+                }, function(tx, error) {
+                    console.error("Error to get Meta of Type [" + metaTypeName + "]");
+                });
             },
         },
 

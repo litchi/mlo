@@ -29,14 +29,23 @@ function onScreenReadyCallback(element, id){
 }
 
 function onDomReadyCallback(element, id){
-    var editTaskPrefix = 'edit-task-';
     if(id != null){
         if(id === 'inbox' || id === 'next-action'){
             addAllTaskToList(); 
-        }
-        if(id.slice(0, editTaskPrefix.length) == editTaskPrefix){
-            taskId = id.substring(editTaskPrefix.length);
+        } else if(id.slice(0, uiConfig.editTaskPagePrefix.length) == uiConfig.editTaskPagePrefix){
+            taskId = id.substring(uiConfig.editTaskPagePrefix.length);
             fillTaskToEditForm(taskId);
+        } else if(id.slice(0, uiConfig.taskByPagePrefix.length) == uiConfig.taskByPagePrefix){
+            metaTypeName = id.substring(uiConfig.taskByPagePrefix.length);
+            fillMetaListToPanel(metaTypeName, uiConfig.taskByPagePrefix);
+            fillTasksToPanel(metaTypeName, uiConfig.taskByPagePrefix);
+        } else if(id === 'dimensions'){
+            //TODO Move 'context', 'project' to a constant and make sure all reference refer to one definition
+            fillMetaTypeToPanel();
+            fillMetaListToPanel('context', uiConfig.metaByPagePrefix);
+        } else if(id.slice(0, uiConfig.editMetaPagePrefix.length) == uiConfig.editMetaPagePrefix){
+            metaId = id.substring(uiConfig.editMetaPagePrefix.length);
+            fillMetaToEditForm(metaId);
         }
     }
 }

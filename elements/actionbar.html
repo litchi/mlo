@@ -1,23 +1,27 @@
 <div data-bb-type="action-bar" data-bb-back-caption="Back">
+    <!-- TODO Make this action bar dynamic-->
     <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('task-list.html','next-action');" data-bb-img="resources/next-action.png" data-bb-accent-text="Next Action">
         Next Action
     </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="addTaskToList('This is a sample task');" data-bb-img="resources/inbox.png" data-bb-accent-text="Inbox">
+    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('task-list.html','inbox')" data-bb-img="resources/inbox.png" data-bb-accent-text="Inbox">
         Inbox
     </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('task-by-due.html','task-by-due');" data-bb-img="resources/due.png" data-bb-accent-text="Due">
+    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('due-tasks.html','due-tasks');" data-bb-img="resources/due.png" data-bb-accent-text="Due">
         Due
     </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('task-by-project.html','task-by-project');" data-bb-img="resources/project.png"  data-bb-accent-text="Project">
-        Project
+    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('task-by-meta.html', uiConfig.taskByPagePrefix + 'project');" data-bb-img="resources/task-by-project.png"  data-bb-accent-text="Task by Project">
+        Task by Project
     </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('task-by-context.html','task-by-context');" data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/context.png" data-bb-accent-text="Context"> 
-        Context
+    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('task-by-meta.html', uiConfig.taskByPagePrefix + 'context');" data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/task-by-context.png" data-bb-accent-text="Task by Context"> 
+        Task by Context
     </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('task-by-context.html','task-by-context');" data-bb-img="resources/someday-maybe.png" data-bb-accent-text="Someday">
-        Someday
+    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('task-list.html','someday');" data-bb-img="resources/task-by-someday.png" data-bb-accent-text="Someday/Maybe">
+        Someday/Maybe
     </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('settings.html','settings');" data-bb-img="resources/someday-maybe.png" data-bb-accent-text="Settings"> 
+    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('meta-by-type.html','dimensions');" data-bb-img="resources/context.png" data-bb-accent-text="Dimensions"> 
+        Dimensions
+    </div>
+    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('settings.html','settings');" data-bb-img="resources/settings.png" data-bb-accent-text="Settings"> 
         Settings
     </div>
 </div>
