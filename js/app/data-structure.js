@@ -14,20 +14,20 @@
  * -- SQL for initialize the database
  * CREATE TABLE IF NOT EXISTS task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_id int)
  * CREATE TABLE IF NOT EXISTS meta (id INTEGER PRIMARY KEY AUTOINCREMENT, meta_type_id INTEGER, name text, description text)
- * CREATE TABLE IF NOT EXISTS meta_type (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, description text)
+ * TODO Add internal column for meta_type and filter based on this when generate the meta_type list.
+ * CREATE TABLE IF NOT EXISTS meta_type (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, description text, internal INTEGER DEFAULT 0)
  * CREATE TABLE IF NOT EXISTS task_note (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, content text, create_date real)
  * CREATE TABLE IF NOT EXISTS task_reminder (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, next_reminder_time real)
- * CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text)
+ * CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, status text default 'New')
  *
  * -- Initialize database data
  * insert into meta_type (name, description) values ('project', 'Project dimension for meta');
  * insert into meta_type (name, description) values ('context', 'Context dimension for meta');
- * insert into meta_type (name, description) values ('GTD', 'GTD predefined dimension for meta, includes someday & maybe and next action');
+ * insert into meta_type (name, description, internal) values ('GTD', 'GTD predefined dimension for meta, includes someday & maybe and next action', 1);
  * insert into meta (meta_type_id, name, description) values (5, 'inbox', 'Inbox for tasks');
- * insert into meta (meta_type_id, name, description) values (5, 'next-action', 'Next action tasks');
- * insert into meta (meta_type_id, name, description) values (5, 'someday', 'Someday & Maybe for tasks');
+ * insert into meta (meta_type_id, name, description) values (5, 'Next action', 'Next action tasks');
+ * insert into meta (meta_type_id, name, description) values (5, 'Someday', 'Someday & Maybe for tasks');
  */
-
 
 var COMMON_SQL = {
     ID_COL : "id",
@@ -110,22 +110,23 @@ var SQL = {
             NAME: 'name'
         },
 
-        CREATE_TABLE : 'CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text);',
+        CREATE_TABLE      : 'CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text);',
 
-        INSERT_BY_NAME : 'insert into task (id, name) values (null, ?)',
+        INSERT_BY_NAME    : 'insert into task (id, name) values (null, ?)',
         INSERT_BY_ID_NAME : 'insert into task(id, name) values (?, ?)',
 
-        SELECT_ALL: 'select id, name from task',
-        SELECT_BY_ID : 'select id, name from task where id = ?',
-        SELECT_BY_NAME : 'select id, name from task where name = ?',
+        SELECT_ALL        : 'select id, name from task where status != "Done"',
+        SELECT_BY_ID      : 'select id, name from task where id = ?',
+        SELECT_BY_NAME    : 'select id, name from task where name = ?',
         SELECT_BY_ID_NAME : 'select id, name from task where id = ? and name = ?',
 
-        UPDATE_BY_ID: 'update task set name = ? where id = ?',
+        UPDATE_BY_ID      : 'update task set name = ? where id = ?',
+        MARK_AS_DONE      : 'update task set status = ? where id = ?',
 
-        DELETE_BY_ID : 'delete from task where id = ?',
-        DELETE_ALL : 'delete from task',
+        DELETE_BY_ID      : 'delete from task where id = ?',
+        DELETE_ALL        : 'delete from task',
 
-        GET_MAX_ID : COMMON_SQL.GET_MAX_ID + 'task',
+        GET_MAX_ID        : COMMON_SQL.GET_MAX_ID + 'task',
     },
 };
 

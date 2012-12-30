@@ -41,9 +41,8 @@ function onDomReadyCallback(element, id){
             fillMetaListToPanelByTypeName(metaTypeName, uiConfig.taskByPagePrefix);
             fillTasksToPanel(metaTypeName, uiConfig.taskByPagePrefix);
         } else if(id === 'dimensions'){
-            //TODO Move 'context', 'project' to a constant and make sure all reference refer to one definition
-            console.log("dimension here");
             fillMetaTypeToPanel();
+            //Set a default
             //fillMetaListToPanel('context', uiConfig.metaByPagePrefix);
         } else if(u.startsWith(id, uiConfig.editMetaPagePrefix)){
             metaId = id.substring(uiConfig.editMetaPagePrefix.length);

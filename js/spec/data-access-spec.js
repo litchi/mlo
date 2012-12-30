@@ -162,6 +162,14 @@ describe("Unit Test for Data Access API", function() {
             });                                  
         });
 
+        it("#13.1 Mark Task as Done", function(){
+            assertFails();
+        });
+
+        it("#13.2 Get All Task of status New", function(){
+            assertFails();
+        });
+
         function assertTaskFields(arrays, errors, id, name){
             assertSqlResultAndField(arrays, errors, SQL.TASK.COLS.ID, id);
             assertSqlResultAndField(arrays, errors, SQL.TASK.COLS.NAME, name);
@@ -256,6 +264,14 @@ describe("Unit Test for Data Access API", function() {
                     assertMetaTypeFields(arrays, id, name, desc);
                 });
             });                                  
+        });
+
+        it("#20.1 Get All Internal Meta Type", function(){
+            assertFails();
+        });
+
+        it("#20.2 Get All Non-Internal Meta Type", function(){
+            assertFails();
         });
 
         function assertReadMetaType(caseId, assertCallback){

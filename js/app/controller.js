@@ -93,3 +93,21 @@ function deleteMeta(){
         }
     }
 }
+
+function markTaskAsDone(){
+    var selectedItem, selectedId,
+    context = document.getElementById('task-operation-context-menu');
+    selectedItem  = context.menu.selected;
+    console.log(selectedItem);
+    if (selectedItem) {
+        selectedId = selectedItem.selected;
+        console.log(selectedId);
+        if(selectedId != null){
+            dataAccess.task.markAsDone (selectedId, function(tx, result, rows) {
+                document.getElementById('task-' + selectedId).style.textDecoration = 'line-through';
+            }, function(tx, error) {
+                bb.pushScreen("error.html", "error-page"); 
+            });
+        }
+    }
+}

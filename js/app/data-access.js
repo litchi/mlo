@@ -32,6 +32,9 @@ var dataAccess = (function (){
             update: function(id, name, successCallback, failureCallback){
                 runSQL(SQL.TASK.UPDATE_BY_ID, [name, id], successCallback, failureCallback);
             },
+            markAsDone: function(id, successCallback, failureCallback){
+                runSQL(SQL.TASK.MARK_AS_DONE, ['Done', id], successCallback, failureCallback);
+            },
             getAll: function(successCallback, failureCallback) {
                 runSQL(SQL.TASK.SELECT_ALL, [], successCallback, failureCallback);
             },
