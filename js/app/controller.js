@@ -63,15 +63,15 @@ function saveTask(id, name){
 }
 
 function saveMeta(id, name, meta_type_id, description){
-    if(id != null && id != undefined && id != ''){
+    if(id != null && id != undefined && id != ''){//If update a meta
         dataAccess.meta.update(id, name, description, function(tx, result, rows){
-            bb.popScreen();
+            bb.pushScreen('meta-by-type.html',uiConfig.metaByPagePrefix + meta_type_id);
         }, function(tx, error) {
             bb.pushScreen("error.html", "error-page"); 
         });
     } else {
         dataAccess.meta.create(name, meta_type_id, description, function(tx, result, rows){
-            bb.popScreen();
+            bb.pushScreen('meta-by-type.html',uiConfig.metaByPagePrefix + meta_type_id);
         }, function(tx, error) {
             bb.pushScreen("error.html", "error-page"); 
         });
@@ -92,9 +92,4 @@ function deleteMeta(){
             });
         }
     }
-}
-
-function openCreateMetaPage(meta_type_id){
-    bb.pushScreen("edit-meta.html", "edit-meta-"); 
-    fillMetaToCreateForm();
 }

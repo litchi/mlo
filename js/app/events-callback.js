@@ -42,6 +42,7 @@ function onDomReadyCallback(element, id){
             fillTasksToPanel(metaTypeName, uiConfig.taskByPagePrefix);
         } else if(id === 'dimensions'){
             //TODO Move 'context', 'project' to a constant and make sure all reference refer to one definition
+            console.log("dimension here");
             fillMetaTypeToPanel();
             //fillMetaListToPanel('context', uiConfig.metaByPagePrefix);
         } else if(u.startsWith(id, uiConfig.editMetaPagePrefix)){
@@ -50,6 +51,10 @@ function onDomReadyCallback(element, id){
         } else if(u.startsWith(id, uiConfig.createMetaPagePrefix)){
             metaTypeId = id.substring(uiConfig.createMetaPagePrefix.length);
             fillMetaToCreateForm(metaTypeId);
+        } else if(u.startsWith(id, uiConfig.metaByPagePrefix)){
+            fillMetaTypeToPanel();
+            metaTypeId = id.substring(uiConfig.metaByPagePrefix.length);
+            fillMetaListToPanel(metaTypeId, uiConfig.metaByPagePrefix);
         }
     }
 }
