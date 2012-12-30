@@ -10,7 +10,7 @@
     margin:25px 0 15px 0;
 }
 
-#task-list {
+#detail-list {
     border: 2px solid #379082; 
     -webkit-border-top-left-radius: 40px;
     -webkit-border-top-right-radius: 0px;
@@ -24,4 +24,9 @@
     position:absolute;
     top:0px;
     left:240px;
+}
+
+#add-new-link {
+    text-align: center;
+    margin-top: 10px;
 }

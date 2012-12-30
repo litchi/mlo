@@ -32,20 +32,24 @@ function onDomReadyCallback(element, id){
     if(id != null){
         if(id === 'inbox' || id === 'next-action'){
             addAllTaskToList(); 
-        } else if(id.slice(0, uiConfig.editTaskPagePrefix.length) == uiConfig.editTaskPagePrefix){
+        } else if(u.startsWith(id, uiConfig.editTaskPagePrefix)){
             taskId = id.substring(uiConfig.editTaskPagePrefix.length);
             fillTaskToEditForm(taskId);
-        } else if(id.slice(0, uiConfig.taskByPagePrefix.length) == uiConfig.taskByPagePrefix){
+        } else if(u.startsWith(id, uiConfig.taskByPagePrefix)){
             metaTypeName = id.substring(uiConfig.taskByPagePrefix.length);
-            fillMetaListToPanel(metaTypeName, uiConfig.taskByPagePrefix);
+            //TODO Change to id, required additional change on actionbar.html
+            fillMetaListToPanelByTypeName(metaTypeName, uiConfig.taskByPagePrefix);
             fillTasksToPanel(metaTypeName, uiConfig.taskByPagePrefix);
         } else if(id === 'dimensions'){
             //TODO Move 'context', 'project' to a constant and make sure all reference refer to one definition
             fillMetaTypeToPanel();
-            fillMetaListToPanel('context', uiConfig.metaByPagePrefix);
-        } else if(id.slice(0, uiConfig.editMetaPagePrefix.length) == uiConfig.editMetaPagePrefix){
+            //fillMetaListToPanel('context', uiConfig.metaByPagePrefix);
+        } else if(u.startsWith(id, uiConfig.editMetaPagePrefix)){
             metaId = id.substring(uiConfig.editMetaPagePrefix.length);
             fillMetaToEditForm(metaId);
+        } else if(u.startsWith(id, uiConfig.createMetaPagePrefix)){
+            metaTypeId = id.substring(uiConfig.createMetaPagePrefix.length);
+            fillMetaToCreateForm(metaTypeId);
         }
     }
 }

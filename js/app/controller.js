@@ -1,5 +1,5 @@
-function createTask(title){
-    dataAccess.task.create(title, function(tx, result, rows){
+function createTask(name){
+    dataAccess.task.create(name, function(tx, result, rows){
     }, function(tx, error) {
         bb.pushScreen("error.html", "error-page"); 
     });
@@ -8,12 +8,9 @@ function createTask(title){
 function deleteTask(){
     var selectedItem, selectedId,
     context = document.getElementById('task-operation-context-menu');
-    console.debug(context);
     selectedItem  = context.menu.selected;
-    console.debug(selectedItem);
     if (selectedItem) {
         selectedId = selectedItem.selected;
-        console.debug(selectedId);
         if(selectedId != null){
             dataAccess.task.delete(selectedId, function(tx, result, rows){
                 document.getElementById('task-' + selectedId).remove();
@@ -36,12 +33,9 @@ function deleteTaskById(id){
 function editTask(){
     var selectedItem, selectedId,
     context = document.getElementById('task-operation-context-menu');
-    console.debug(context);
     selectedItem  = context.menu.selected;
-    console.debug(selectedItem);
     if (selectedItem) {
         selectedId = selectedItem.selected;
-        console.debug(selectedId);
         if(selectedId != null){
             bb.pushScreen('edit-task.html', uiConfig.editTaskPagePrefix + selectedId, {'taskId' : selectedId}); 
         }
@@ -51,12 +45,9 @@ function editTask(){
 function editMeta(){
     var selectedItem, selectedId,
     context = document.getElementById('meta-operation-context-menu');
-    console.debug(context);
     selectedItem  = context.menu.selected;
-    console.debug(selectedItem);
     if (selectedItem) {
         selectedId = selectedItem.selected;
-        console.debug(selectedId);
         if(selectedId != null){
             bb.pushScreen('edit-meta.html', uiConfig.editMetaPagePrefix + selectedId, {'metaId' : selectedId}); 
         }
@@ -71,12 +62,20 @@ function saveTask(id, name){
     });
 }
 
-function saveMeta(id, name, description){
-    dataAccess.meta.update(id, name, description, function(tx, result, rows){
-        bb.popScreen();
-    }, function(tx, error) {
-        bb.pushScreen("error.html", "error-page"); 
-    });
+function saveMeta(id, name, meta_type_id, description){
+    if(id != null && id != undefined && id != ''){
+        dataAccess.meta.update(id, name, description, function(tx, result, rows){
+            bb.popScreen();
+        }, function(tx, error) {
+            bb.pushScreen("error.html", "error-page"); 
+        });
+    } else {
+        dataAccess.meta.create(name, meta_type_id, description, function(tx, result, rows){
+            bb.popScreen();
+        }, function(tx, error) {
+            bb.pushScreen("error.html", "error-page"); 
+        });
+    }
 }
 
 function deleteMeta(){
@@ -93,4 +92,9 @@ function deleteMeta(){
             });
         }
     }
+}
+
+function openCreateMetaPage(meta_type_id){
+    bb.pushScreen("edit-meta.html", "edit-meta-"); 
+    fillMetaToCreateForm();
 }

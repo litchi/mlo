@@ -89,6 +89,10 @@ var dataAccess = (function (){
             getById : function(id, successCallback, failureCallback){
                 runSQL(SQL.META.SELECT_BY_ID, [id], successCallback, failureCallback);
             },
+            //TODO Add unit test for this function.
+            getByTypeId : function(metaTypeId, successCallback, failureCallback){
+                runSQL(SQL.META.SELECT_BY_TYPE_ID, [metaTypeId], successCallback, failureCallback);
+            },
             getByTypeName : function(metaTypeName, successCallback, failureCallback){
                 dataAccess.metaType.getByName(metaTypeName, function(tx, results, arrays){ 
                     if(
@@ -99,7 +103,7 @@ var dataAccess = (function (){
                         arrays[0] != null
                     ){
                         metaTypeId = arrays[0][SQL.META_TYPE.COLS.ID];
-                        runSQL(SQL.META.SELECT_BY_TYPE_ID, [metaTypeId], successCallback, failureCallback);
+                        getByTypeId(metaTypeId, successCallback, failureCallback);
                     } else {
                         console.error ("Meta Type with name [" + metaTypeName + "] not exists");
                     }

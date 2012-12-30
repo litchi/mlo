@@ -1,35 +1,32 @@
 function filterTasksToGroupList(groupWidth,taskWidth,taskLeft, metaTypeName, metaName) {
     document.getElementById('group').style.width=groupWidth;
-    document.getElementById('task-list').style.width=taskWidth;
-    document.getElementById('task-list').style.left=taskLeft + 'px';
+    document.getElementById(uiConfig.detailListElementId).style.width=taskWidth;
+    document.getElementById(uiConfig.detailListElementId).style.left=taskLeft + 'px';
     if(null != metaTypeName && null != metaName) {
       //Fill in tasks.      
     }
 }
-
 function addTaskToList (id, name, project, tags) {
     var item, taskList;
     item = createItemElement(id, name, project, tags);
-    taskList = document.getElementById('task-list');
+    taskList = document.getElementById(uiConfig.detailListElementId);
     taskList.appendItem(item, taskList[0]);
 }
-
 function addAllTaskToList () {
     var id, name;
     dataAccess.task.getAll(function(transaction, results, arrays){
         if(null == arrays || undefined == arrays || 0 == arrays.length){
-            taskList = document.getElementById('task-list');
+            taskList = document.getElementById(uiConfig.detailListElementId);
             taskList.innerHTML = '<center><br/>Wow, great, all tasks are done, you could play with your family or friends</center>';
         } else {
-            for(var key in arrays){   
+            for(var key in arrays) {   
                 name = arrays[key][SQL.TASK.COLS.NAME];
                 id   = arrays[key][SQL.TASK.COLS.ID];
-                console.log("Task id: " + id + ", name: " + name);
                 addTaskToList(id, name, "Project", "@中文 @Call @Tag2");    
             }
         }
     }, function(transaction, error){
-        console.log("Error to get task " + error);
+        console.error("Error to get task " + error);
     });
 }
 
@@ -59,21 +56,18 @@ function createItemElement(id, name, project, tags) {
     }
     return item;
 }
-
 function dialogCallBack(index){
     alert(index);
 }
-
 function customDialog(taskName) {
     try {
         var buttons = ["Done!", "Postpone :(", "Open Task"];
             var ops = {title : "Peaceful & Better Life's Reminder", size : "large", position : "middleCenter"};
             blackberry.ui.dialog.customAskAsync(taskName, buttons, dialogCallBack, ops);
     } catch(e) {
-        console.log("Exception in customDialog: " + e);
+        console.error("Exception in customDialog: " + e);
     }
 }
-
 function fillTaskToEditForm(id){
     dataAccess.task.getById(id, function(tx, result, arrays) {
         document.getElementById('task-id').value = id;
@@ -83,11 +77,22 @@ function fillTaskToEditForm(id){
         bb.pushScreen('error.html', 'error-page'); 
     });
 }
-
-function fillMetaListToPanel(metaTypeName, pageType){
-    var metaList = document.getElementById('meta-list');
+function fillMetaListToPanel(metaTypeId, pageType){
+    var metaTypeIdInput = document.getElementById('meta_type_id'), metaTypeName, metaList = document.getElementById('meta-list');
     metaList.clear();
-    dataAccess.meta.getByTypeName(metaTypeName, function(tx, result, arrays){
+    if(undefined != metaTypeIdInput) {
+        metaTypeIdInput.value = metaTypeId;
+    }
+    dataAccess.metaType.getById(metaTypeId, function(tx, result, objs){
+        if(objs != null && objs != undefined && objs[0] != undefined){
+            metaTypeName = objs[0][SQL.META_TYPE.COLS.NAME];
+            console.log(metaTypeName);
+            document.getElementById('add-new-link').innerText = 'Add New ' + metaTypeName;
+        }
+    }, function(tx, error){
+        bb.pushScreen('error.html', 'error-page'); 
+    });
+    dataAccess.meta.getByTypeId(metaTypeId, function(tx, result, arrays){
         for(var key in arrays){   
             name = arrays[key][SQL.META.COLS.NAME];
             id   = arrays[key][SQL.META.COLS.ID];
@@ -113,19 +118,28 @@ function fillMetaListToPanel(metaTypeName, pageType){
                         );
                     };    
                 } else if (uiConfig.metaByPagePrefix == pageType){
+                    if(desc != null && desc != undefined){
+                        item.innerHTML = desc;
+                    }
                     item.setAttribute(
                         'onclick', 
-                        "document.getElementById('meta-operation-context-menu').menu.show({ title : 'Edit " + metaTypeName + "', description : '" + name + "', selected : '" + id + "'});");
+                        "document.getElementById('meta-operation-context-menu').menu.show({ title : '" + name + "', description : '" + metaTypeName + "', selected : '" + id + "'});");
                 }
-                metaList.appendItem(item);
             }
+            metaList.appendItem(item);
         }
-        //Save current meta type information for later use
     }, function(tx, error){
         bb.pushScreen('error.html', 'error-page'); 
     });
 }
-
+//TODO Remove this method and all change to fillMetaListToPanel(metaTypeId, pageType) method invoking
+function fillMetaListToPanelByTypeName(metaTypeName, pageType){
+    dataAccess.metaType.getByName(metaType, function(tx, result, objs){
+        fillMetaListToPanel(objs[0][SQL.META_TYPE.COLS.ID], pageType);
+    }, function(tx, error){
+        bb.pushScreen('error.html', 'error-page'); 
+    })
+}
 function fillMetaTypeToPanel (){
     var item, name;
     metaTypeList = document.getElementById('meta-type-list');
@@ -146,7 +160,7 @@ function fillMetaTypeToPanel (){
                 }
                 item.setAttribute(
                     'onclick', 
-                    "fillMetaListToPanel('" + name + "', '" + uiConfig.metaByPagePrefix + "');filterTasksToGroupList('" + uiConfig.leftPanelWidth + "', '" + uiConfig.rightPanelWidth +"', '" + uiConfig.rightPanelSmallerLeftMargin +"');"
+                    "fillMetaListToPanel('" + id + "', '" + uiConfig.metaByPagePrefix + "');filterTasksToGroupList('" + uiConfig.leftPanelWidth + "', '" + uiConfig.rightPanelWidth +"', '" + uiConfig.rightPanelSmallerLeftMargin +"');"
                 );
                 metaTypeList.appendItem(item);
             }
@@ -155,22 +169,28 @@ function fillMetaTypeToPanel (){
         bb.pushScreen('error.html', 'error-page'); 
     });
 }
-
 function fillTasksToPanel(metaTypeName){
 
 }
-
 function fillMetaToEditForm(id){
-    dataAccess.meta.getById(id, function(tx, results, arrays){
-        log.logObjectData("Meta", arrays[0], true);
-        document.getElementById(SQL.META.COLS.ID).value = arrays[0][SQL.META.COLS.ID];
-        document.getElementById(SQL.META.COLS.NAME).value = arrays[0][SQL.META.COLS.NAME];
-        document.getElementById(SQL.META.COLS.DESCRIPTION).value = arrays[0][SQL.META.COLS.DESCRIPTION];
-        console.log(arrays[0][SQL.META.COLS.META_TYPE_ID]);
-        dataAccess.metaType.getById(arrays[0][SQL.META.COLS.META_TYPE_ID], function(tx,r_result, r_arrays){
-            document.getElementById('meta_type_name').value = r_arrays[0][SQL.META_TYPE.COLS.NAME];
+    if(id != null && id != undefined){
+        dataAccess.meta.getById(id, function(tx, results, arrays){
+            log.logObjectData("Meta", arrays[0], true);
+            document.getElementById(SQL.META.COLS.ID).value = arrays[0][SQL.META.COLS.ID];
+            document.getElementById(SQL.META.COLS.NAME).value = arrays[0][SQL.META.COLS.NAME];
+            document.getElementById(SQL.META.COLS.DESCRIPTION).value = arrays[0][SQL.META.COLS.DESCRIPTION];
+            dataAccess.metaType.getById(arrays[0][SQL.META.COLS.META_TYPE_ID], function(tx,result, objs){
+                document.getElementById('meta_type_name').value = objs[0][SQL.META_TYPE.COLS.NAME];
+                document.getElementById('meta_type_id').value = objs[0][SQL.META_TYPE.COLS.ID];
+            });
+        }, function(tx, error) {
+            bb.pushScreen('error.html', 'error-page'); 
         });
-    }, function(tx, error) {
-        bb.pushScreen('error.html', 'error-page'); 
+    }
+}
+function fillMetaToCreateForm(meta_type_id) {
+    dataAccess.metaType.getById(meta_type_id, function(tx,result, objs){
+        document.getElementById('meta_type_name').value = objs[0][SQL.META_TYPE.COLS.NAME];
+        document.getElementById('meta_type_id').value = objs[0][SQL.META_TYPE.COLS.ID];
     });
 }

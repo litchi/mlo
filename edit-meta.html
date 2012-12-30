@@ -1,9 +1,10 @@
 ﻿<div data-bb-type="screen">
     <link rel="stylesheet" type="text/css" href="css/edit-object.css"></link>
     <div id="foo" data-bb-type="title" data-bb-caption="Edit" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
-        onactionclick="saveMeta(document.getElementById('id').value, document.getElementById('name').value, document.getElementById('description').value)">
+        onactionclick="saveMeta(u.valueOf('id'), u.valueOf('name'), u.valueOf('meta_type_id'), u.valueOf('description'))">
     </div>
     <input type="hidden" value="" id="id"/>
+    <input type="hidden" value="" id="meta_type_id"/>
     <div data-bb-type="round-panel">
         <div data-bb-type="panel-header">
             Information
