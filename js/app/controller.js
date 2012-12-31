@@ -1,5 +1,5 @@
 function createTask(name){
-    var taskId, r = false, count = 0, interval;
+    var taskId, r = false, count = 0, interval, runned = false;
     dataAccess.task.create(name, function(tx, result, rows){
         taskId = result.insertId;
         r = true;
@@ -7,7 +7,6 @@ function createTask(name){
         bb.pushScreen("error.html", "error-page"); 
     });
     interval = setInterval(function(){
-        var runned = false, 
             metaName = u.valueOf('v_meta_name'), 
             metaTypeName = u.valueOf('v_meta_type_name');
         count = count + 1;

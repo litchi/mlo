@@ -6,14 +6,18 @@ function switchPanelWidth(groupWidth,taskWidth,taskLeft) {
 
 //TODO Optimize, first construct a document fragment and then append it to the element.
 function addTaskToList (id, name, project, tags) {
-    var taskList = document.getElementById(uiConfig.detailListElementId), 
-    item, items = taskList.getItems();
+    var item, taskList = document.getElementById(uiConfig.detailListElementId); 
+    var items = taskList.getItems();
     item = createItemElement(id, name, project, tags);
     if(0 == items.length){
         taskList.innerHTML = uiConfig.emptyString;
         taskList.appendItem(item);
     } else if(items.length > 0){
-        taskList.insertItemBefore(item, items[0]);
+        if(items[0] != undefined){
+            taskList.insertItemBefore(item, items[0]);
+        } else {
+            taskList.appendItem(item);
+        }
     }
 }
 
@@ -136,7 +140,8 @@ function fillMetaListToPanel(metaTypeId, pageType){
     }, function(tx, error){
         bb.pushScreen('error.html', 'error-page'); 
     });
-    fillMetaTypeInfo(metaTypeId, metaTypeName);
+    u.setValue('v_meta_type_id', id);
+    u.setValue('v_meta_type_name', name);
 }
 
 function fillMetaListToPanelByTypeName(metaTypeName, pageType){
@@ -183,7 +188,8 @@ function fillMetaToEditForm(id){
             u.setValue(SQL.META.COLS.NAME, arrays[0][SQL.META.COLS.NAME]);
             u.setValue(SQL.META.COLS.DESCRIPTION, arrays[0][SQL.META.COLS.DESCRIPTION]);
             dataAccess.metaType.getById(arrays[0][SQL.META.COLS.META_TYPE_ID], function(tx,result, objs){
-                fillMetaTypeInfo(objs[0][SQL.META_TYPE.COLS.ID], objs[0][SQL.META_TYPE.COLS.NAME]);
+                u.setValue('meta_type_id'   , objs[0][SQL.META_TYPE.COLS.ID]);
+                u.setValue('meta_type_name' , objs[0][SQL.META_TYPE.COLS.NAME]);
             });
         }, function(tx, error) {
             bb.pushScreen('error.html', 'error-page'); 
@@ -192,15 +198,7 @@ function fillMetaToEditForm(id){
 }
 function fillMetaToCreateForm(meta_type_id) {
     dataAccess.metaType.getById(meta_type_id, function(tx,result, objs){
-        fillMetaTypeInfo(objs[0][SQL.META_TYPE.COLS.ID], objs[0][SQL.META_TYPE.COLS.NAME]);
+        u.setValue('meta_type_id'   , objs[0][SQL.META_TYPE.COLS.ID]);
+        u.setValue('meta_type_name' , objs[0][SQL.META_TYPE.COLS.NAME]);
     });
-}
-
-function fillMetaTypeInfo(id, name){
-    u.setValue('v_meta_type_id', id);
-    u.setValue('v_meta_type_name', name);
-}
-function fillMetaInfo(id, name){
-    u.setValue('v_meta_id', id);
-    u.setValue('v_meta_name', name);
 }
