@@ -31,8 +31,8 @@ var dataAccess = (function (){
             update: function(id, name, successCallback, failureCallback){
                 runSQL(SQL.TASK.UPDATE_BY_ID, [name, id], successCallback, failureCallback);
             },
-            markAsDone: function(id, successCallback, failureCallback){
-                runSQL(SQL.TASK.UPDATE_STATUS_BY_ID, [seedData.taskDoneStatus, id], successCallback, failureCallback);
+            updateStatus: function(id, statusKey, successCallback, failureCallback){
+                runSQL(SQL.TASK.UPDATE_STATUS_BY_ID, [statusKey, id], successCallback, failureCallback);
             },
             getByMeta: function(metaTypeName, metaName, successCallback, failureCallback){
                 runSQL(SQL.TASK.SELECT_BY_META_NAME,[metaName, metaTypeName, seedData.taskDoneStatus], successCallback, failureCallback);
@@ -141,6 +141,11 @@ var dataAccess = (function (){
             },
             throwTaskToList : function(taskId, metaName, metaTypeName, successCallback, failureCallback){
                 runSQL(SQL.TASK_META.THROW_TASK_TO_LIST, [taskId, metaName, metaTypeName], successCallback, failureCallback);
+            },
+            moveTaskToGtdList : function(taskId, metaName, successCallback, failureCallback){
+                runSQL(SQL.TASK_META.DELETE_GTD_META, [taskId, seedData.gtdMetaTypeName], function(tx, result, objs){
+                    runSQL(SQL.TASK_META.THROW_TASK_TO_LIST, [taskId, metaName, seedData.gtdMetaTypeName], successCallback, failureCallback);
+                }, failureCallback);
             },
         },
     };

@@ -41,7 +41,7 @@ var html5sql = (function () {
     }
 
     return {
-        database: null, logInfo: true, logErrors: true, logDebug: true, 
+        database: null, logInfo: false, logErrors: true, logDebug: false, 
         putSelectResultsInArray: true, putInsertIdInArray : true,
         openDatabase: function (name, version, displayname, size, whenOpen) {
             whenOpen = (whenOpen === void 0) ? function(){} : whenOpen;

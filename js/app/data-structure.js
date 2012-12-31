@@ -54,6 +54,7 @@ var SQL = {
         CREATE_TABLE           : 'CREATE TABLE IF NOT EXISTS task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_id int)',
         INSERT                 : 'INSERT INTO task_meta (id, task_id, meta_id) VALUES (null, ?, ?)',
         THROW_TASK_TO_LIST     : 'INSERT INTO task_meta (id, task_id, meta_id) select null, ?, id from meta where name = ? and meta_type_id = (select id from meta_type where name = ?)',
+        DELETE_GTD_META        : 'DELETE FROM task_meta where task_id = ? and meta_id in (select id from meta where meta_type_id = (select id from meta_type where name = ?))',
         SELECT_BY_IDS          : 'SELECT id, task_id, meta_id from task_meta where task_id = ? and meta_id = ?',
         SELECT_TASK_BY_META_ID : 'SELECT task.id, task.name, task.status, task_meta.meta_id FROM task INNER JOIN task_meta ON task.id = task_meta.task_id WHERE task_meta.meta_id = ?',
         SELECT_META_BY_TASK_ID : 'SELECT meta.id, meta.name, meta.meta_type_id, meta.description FROM meta INNER JOIN task_meta ON meta.id = task_meta.meta_id WHERE task_meta.task_id = ?',

@@ -125,17 +125,54 @@ function deleteMeta(){
 }
 
 function markTaskAsDone(){
+    updateTaskStatus(seedData.taskDoneStatus, 'line-through');
+}
+function markTaskAsNew(){
+    updateTaskStatus(seedData.taskNewStatus, 'none');
+}
+
+function updateTaskStatus(statusKey, textDecoration){
     var selectedItem, selectedId,
     context = document.getElementById('task-operation-context-menu');
     selectedItem  = context.menu.selected;
     if (selectedItem) {
         selectedId = selectedItem.selected;
         if(selectedId != null){
-            dataAccess.task.markAsDone (selectedId, function(tx, result, rows) {
-                document.getElementById('task-' + selectedId).style.textDecoration = 'line-through';
+            //TODO Change to set style class 
+            dataAccess.task.updateStatus(selectedId, statusKey, function(tx, result, rows) {
+                document.getElementById('task-' + selectedId).style.textDecoration = textDecoration;
             }, function(tx, error) {
                 bb.pushScreen("error.html", "error-page"); 
             });
+        }
+    }
+}
+
+function moveTaskToNextAction(){
+    moveTaskToGtdList(seedData.nextActionMetaName);
+}
+function moveTaskToSomeday(){
+    moveTaskToGtdList(seedData.somedayMetaName);
+}
+function moveTaskToInBasket(){
+    moveTaskToGtdList(seedData.inBasketMetaName);
+}
+function moveTaskToGtdList(metaName){
+    var selectedItem, selectedId,
+    context = document.getElementById('task-operation-context-menu');
+    selectedItem  = context.menu.selected;
+    if (selectedItem) {
+        selectedId = selectedItem.selected;
+        if(selectedId != null){
+        //TODO Generate the context menu dynamically based on current task status
+            dataAccess.taskMeta.moveTaskToGtdList(
+                selectedId, metaName, function(tx3, result3, rows3) {
+                    document.getElementById('task-' + selectedId).remove();
+                }, 
+                function(tx3, error3){
+                    console.error("Failed to create task meta for task[" + result.insertId + "], meta[" + meta_id + "]");
+                }
+            );
         }
     }
 }

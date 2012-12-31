@@ -134,14 +134,14 @@ function fillMetaListToPanel(metaTypeId, pageType){
                         "document.getElementById('meta-operation-context-menu').menu.show({ title : '" + name + "', description : '" + metaTypeName + "', selected : '" + id + "'});"
                     );
                 }
+                u.setValue('v_meta_type_id', id);
+                u.setValue('v_meta_type_name', name);
+                metaList.appendItem(item);
             }
-            metaList.appendItem(item);
         }
     }, function(tx, error){
         bb.pushScreen('error.html', 'error-page'); 
     });
-    u.setValue('v_meta_type_id', id);
-    u.setValue('v_meta_type_name', name);
 }
 
 function fillMetaListToPanelByTypeName(metaTypeName, pageType){
