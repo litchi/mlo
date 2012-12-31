@@ -1,4 +1,8 @@
 ﻿<div data-bb-type="screen">
+    @meta-fields@
+    <input type="hidden" value="" id="task-id">
+    <input type="hidden" value="" id="is-next-action">
+    <input type="hidden" value="" id="is-someday">
     <link rel="stylesheet" type="text/css" href="css/edit-object.css"></link>
     <div id="foo" data-bb-type="title" data-bb-caption="Edit Task" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
         onactionclick="saveTask(document.getElementById('task-id').value, document.getElementById('task-name').value)"></div>
@@ -10,7 +14,6 @@
             <table>
                 <tr>
                     <td colspan="3" style="font-size:40px;vertical-align:top;">
-                        <input type="hidden" value="" id="task-id">
                         <input type="text" value="Have dinner together with the whole team" id="task-name">
                     </td>
                 </tr>
@@ -56,5 +59,4 @@
             </table>			
         </div>
     </div>
-    <div data-bb-type="button" data-bb-style="stretch" onclick="deleteTaskById(document.getElementById('task-id').value)"><font class="highlighted-delete-button">Delete This Task</b></font></div>
 </div>

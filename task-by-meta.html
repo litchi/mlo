@@ -1,36 +1,19 @@
 <div data-bb-type="screen" style="height:1280px;">
     <link rel="stylesheet" type="text/css" href="css/task-group.css"></link>
-    <div id="group" onclick="filterTasksToGroupList(uiConfig.rightPanelWidth, uiConfig.leftPanelWidth, uiConfig.rightPanelLargerLeftMargin);">
-        <div style="margin-left:15px;font-size:40px;">Project</div>
+    <div id="group" onclick="switchPanelWidth(uiConfig.rightPanelWidth, uiConfig.leftPanelWidth, uiConfig.rightPanelLargerLeftMargin);">
+        <div style="margin-left:15px;font-size:40px;" id="meta-type-name-title"></div>
         <div data-bb-type="scroll-panel" style="height:980px;">
             <div data-bb-type="image-list" data-bb-images="none" id="meta-list">
-                <!--Sample item -->
-                <!--<div data-bb-type="item" data-bb-title="Cisco" onclick="adjustTaskGroupWidth(uiConfig.leftPanelWidth, uiConfig.rightPanelWidth, uiConfig.rightPanelSmallerLeftMargin);"></div>-->
             </div>
         </div>
     </div>
-    <div id="detail-list" onclick="filterTasksToGroupList(uiConfig.leftPanelWidth, uiConfig.rightPanelWidth, uiConfig.rightPanelSmallerLeftMargin)">
+    <div id="detail-list-panel" onclick="switchPanelWidth(uiConfig.leftPanelWidth, uiConfig.rightPanelWidth, uiConfig.rightPanelSmallerLeftMargin)">
         <div data-bb-type="scroll-panel">
-            <div data-bb-type="image-list" data-bb-images="none">
-                <div data-bb-type="item" data-bb-title="明天晚上陪女朋友吃晚饭"
-                    onclick="document.getElementById('task-operation-context-menu').menu.show({title:'Task',description: '明天晚上陪女朋友吃晚饭',selected:this});">
-                    @tag1 @tag2 @标签1 @标签2
-                </div>
-                <div data-bb-type="item" data-bb-title="明天早上给老板发关于PBC的邮件">
-                    @Email @Important @Office
-                </div>
-                <div data-bb-type="item" data-bb-title="Send a email to US team about the SSL certification">
-                    @Call @Urgent @TCL
-                </div>
-                <div data-bb-type="item" data-bb-title="明天早上给老板发关于PBC的邮件">
-                    @Email @Important @Office
-                </div>
-                <div data-bb-type="item" data-bb-title="Send a email to US team about the SSL certification" onclick="bb.pushScreen('edit-task.html','edit-task')">
-                    @Call @Urgent @TCL
-                </div>
+            <div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">
             </div>
         </div>
     </div>
+    @meta-fields@
     @task-create-inputbox@
     @task-context-menu@
     @actionbar@

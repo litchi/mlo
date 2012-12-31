@@ -93,11 +93,8 @@ describe("Unit Test for Data Access API", function() {
     });
     describe("Task data access", function(){
         it("#8 Insert into task table", function(){
-
             var taskName = generateTestField(SQL.TASK.COLS.NAME, 8);
-
             dataAccess.task.create(taskName);
-
             assertSqlExecuter(SQL.TASK.SELECT_BY_NAME, [taskName], function(t_results, t_arrays, t_error) {
                 assertSqlResultAndField(t_arrays, t_error, SQL.TASK.COLS.NAME, taskName);
             });
@@ -165,8 +162,19 @@ describe("Unit Test for Data Access API", function() {
         it("#13.1 Mark Task as Done", function(){
             assertFails();
         });
-
         it("#13.2 Get All Task of status New", function(){
+            assertFails();
+        });
+        it("#13.4 Get All Next Actions", function(){
+            assertFails();
+        });
+        it("#13.5 Get All in Basket", function(){
+            assertFails();
+        });
+        it("#13.6 Get All Someday & Maybe", function(){
+            assertFails();
+        });
+        it("#13.7 Get by Meta", function(){
             assertFails();
         });
 
@@ -323,6 +331,21 @@ describe("Unit Test for Data Access API", function() {
                 }, assertFails);
             });
         });
+        it("#25 Get Meta by Meta Type ID", function(){
+            assertFails();
+        });
+        it("#26 Get Meta by Meta Name", function(){
+            assertFails();
+        });
+        it("#27 Get Next Action Meta Definition", function(){
+            assertFails();
+        });
+        it("#28 Get In-Basket Meta Definition", function(){
+            assertFails();
+        });
+        it("#29 Get Someday/Maybe Meta Definition", function(){
+            assertFails();
+        });
         function doMetaUpdateAssert(caseId){
             var updatedName, updatedDesc;
             doMetaAssert(caseId, function(id, name, desc){
@@ -385,4 +408,44 @@ describe("Unit Test for Data Access API", function() {
         }
     });
 
+    describe("Task Meta data access", function() {
+        it("#26 Create Task Meta", function(){
+            var taskName = generateTestField('Task', 26);
+            var metaTypeName = generateTestField('MetaType', 26);
+            var metaTypeDesc = generateTestField('MetaType Desc', 26);
+            var metaName = generateTestField('Meta', 26);
+            var metaDesc = generateTestField('Meta Desc', 26);
+            dataAccess.task.create(taskName, function(tx1, taskResult, obj1){
+                expect(taskResult).toBeDefined();
+                expect(taskResult.insertId).toBeDefined();
+                dataAccess.metaType.create(metaTypeName, metaTypeDesc, function(tx2, metaTypeResult, obj2){
+                    expect(metaTypeResult).toBeDefined();
+                    expect(metaTypeResult.insertId).toBeDefined();
+                    dataAccess.meta.create(metaName, metaTypeResult.insertId, metaDesc, function(tx3, metaResult, obj3){
+                        expect(metaResult).toBeDefined();
+                        expect(metaResult.insertId).toBeDefined();
+                        dataAccess.taskMeta.create(taskResult.insertId, metaResult.insertId, function(tx4, taskMetaResult, obj4){
+                            expect(taskMetaResult).toBeDefined();
+                            expect(taskMetaResult.insertId).toBeDefined();
+                            assertSqlExecuter(SQL.TASK_META.SELECT_BY_IDS, [taskResult.insertId, metaResult.insertId], function(t_results, t_arrays, t_error) {
+                               expect(t_arrays).toBeDefined();
+                               expect(t_arrays.length).toEqual(1);
+                               assertObject(t_arrays[0][SQL.TASK_META.COLS.TASK_ID], taskResult.insertId);
+                               assertObject(t_arrays[0][SQL.TASK_META.COLS.META_ID], metaResult.insertId);
+                            });
+                        }, assertFails);
+                    }, assertFails);
+                }, assertFails);            
+            }, assertFails);
+        });
+        it("#26 Get Task Meta by Id", function(){
+            assertFails();
+        });
+        it("#27 Get Tasks by Meta Id", function(){
+            assertFails();
+        });
+        it("#28 Get Metas by Task Id", function(){
+            assertFails();
+        });
+    });
 });

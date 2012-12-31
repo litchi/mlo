@@ -1,6 +1,7 @@
 <div style="text-align:center:margin:auto" align="center">
     <!-- TODO Is there any way to know the screen id I am being in ? -->
-    <form name="ctf" onSubmit="createTask(document.getElementById('ctsi').value)">
+    <form name="ctf" onSubmit="return createTask(document.getElementById('ctsi').value);">
         <input id="ctsi" name="ct" type="text" style="width:740px;" placeholder="Create new task">
+        <input id='meta_id' type='hidden'/>
     </form>
 </div>

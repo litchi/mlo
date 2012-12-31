@@ -22,7 +22,6 @@ var dataAccess = (function (){
         },
 
         task : {
-            //TODO Add delete by name
             create: function(name, successCallback, failureCallback){
                 runSQL(SQL.TASK.INSERT_BY_NAME, [name], successCallback, failureCallback);
             },
@@ -33,10 +32,13 @@ var dataAccess = (function (){
                 runSQL(SQL.TASK.UPDATE_BY_ID, [name, id], successCallback, failureCallback);
             },
             markAsDone: function(id, successCallback, failureCallback){
-                runSQL(SQL.TASK.MARK_AS_DONE, ['Done', id], successCallback, failureCallback);
+                runSQL(SQL.TASK.UPDATE_STATUS_BY_ID, [seedData.taskDoneStatus, id], successCallback, failureCallback);
+            },
+            getByMeta: function(metaTypeName, metaName, successCallback, failureCallback){
+                runSQL(SQL.TASK.SELECT_BY_META_NAME,[metaName, metaTypeName, seedData.taskDoneStatus], successCallback, failureCallback);
             },
             getAll: function(successCallback, failureCallback) {
-                runSQL(SQL.TASK.SELECT_ALL, [], successCallback, failureCallback);
+                runSQL(SQL.TASK.FILTER_BY_STATUS, [seedData.taskDoneStatus], successCallback, failureCallback);
             },
             getById: function(id, successCallback, failureCallback){
                 runSQL(SQL.TASK.SELECT_BY_ID, [id], successCallback, failureCallback);
@@ -50,7 +52,6 @@ var dataAccess = (function (){
         },
 
         metaType : {
-            //TODO Add delete by name if necessary from business perspective
             create : function(name, description, successCallback, failureCallback) {
                 runSQL(SQL.META_TYPE.INSERT_BY_NAME, [name, description], successCallback, failureCallback);            
             },        
@@ -92,7 +93,19 @@ var dataAccess = (function (){
             getById : function(id, successCallback, failureCallback){
                 runSQL(SQL.META.SELECT_BY_ID, [id], successCallback, failureCallback);
             },
-            //TODO Add unit test for this function.
+            //TODO Possible bug: if user creates a meta has the same name with Pre-defined, then there will be issue
+            getByName : function(name, successCallback, failureCallback){
+                runSQL(SQL.META.SELECT_BY_NAME, [name], successCallback, failureCallback);
+            },
+            getInBasketMeta: function(successCallback, failureCallback){
+                dataAccess.meta.getByName(seedData.inBasketMetaName, successCallback, failureCallback);
+            },
+            getNextActionMeta: function(successCallback, failureCallback){
+                dataAccess.meta.getByName(seedData.nextActionMetaName, successCallback, failureCallback);
+            },
+            getSomedayMeta: function(successCallback, failureCallback){
+                dataAccess.meta.getByName(seedData.somedayMetaName, successCallback, failureCallback);
+            },
             getByTypeId : function(metaTypeId, successCallback, failureCallback){
                 runSQL(SQL.META.SELECT_BY_TYPE_ID, [metaTypeId], successCallback, failureCallback);
             },
@@ -116,6 +129,20 @@ var dataAccess = (function (){
             },
         },
 
+        taskMeta : {
+            create : function(taskId, metaId, successCallback, failureCallback){
+                runSQL(SQL.TASK_META.INSERT, [taskId, metaId], successCallback, failureCallback);
+            },       
+            getTasksByMetaId : function(metaId, successCallback, failureCallback){
+                runSQL(SQL.TASK_META.SELECT_TASK_BY_META_ID, [metaId], successCallback, failureCallback);
+            },
+            getMetasByTaskId: function(taskId, successCallback, failureCallback){
+                runSQL(SQL.TASK_META.SELECT_META_BY_TASK_ID, [taskId], successCallback, failureCallback);
+            },
+            throwTaskToList : function(taskId, metaName, metaTypeName, successCallback, failureCallback){
+                runSQL(SQL.TASK_META.THROW_TASK_TO_LIST, [taskId, metaName, metaTypeName], successCallback, failureCallback);
+            },
+        },
     };
 })();
 

@@ -22,12 +22,25 @@ var u = (function (){
                 if(element != null && element != undefined){
                     value = element.value;
                 } else {
-                    console.error("Element with ID[" + id + "] not found");
+                    console.warn("Element with ID[" + id + "] not found");
                 }
             } else {
-                console.error("ID is null");
+                console.warn("ID is null");
             }
             return value;
-        }
+        },
+        setValue : function(id, value){
+            var element;
+            if(id != null){
+                element = document.getElementById(id); 
+                if(element != null && element != undefined){
+                    element.value = value;
+                } else {
+                    console.warn("Element with ID[" + id + "] not found trying to set value to [" + value + "]");
+                }
+            } else {
+                console.warn("ID is null trying to set value to [" + value + "]");
+            } 
+        },
     };
 })();

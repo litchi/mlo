@@ -22,7 +22,7 @@ function webworksReadyCallback(e){
         onscreenready: onScreenReadyCallback,
         ondomready: onDomReadyCallback
     });
-    bb.pushScreen('task-list.html', 'next-action');
+    bb.pushScreen('task-list.html', seedData.nextActionMetaName);
 }
 
 function onScreenReadyCallback(element, id){
@@ -30,20 +30,16 @@ function onScreenReadyCallback(element, id){
 
 function onDomReadyCallback(element, id){
     if(id != null){
-        if(id === 'inbox' || id === 'next-action'){
-            addAllTaskToList(); 
-        } else if(u.startsWith(id, uiConfig.editTaskPagePrefix)){
+        if(id === seedData.inBasketMetaName || id === seedData.nextActionMetaName || id === seedData.somedayMetaName){
+            fillTasksToGroupByMetaInfo(seedData.gtdMetaTypeName, id);
+        }else if(u.startsWith(id, uiConfig.editTaskPagePrefix)){
             taskId = id.substring(uiConfig.editTaskPagePrefix.length);
             fillTaskToEditForm(taskId);
         } else if(u.startsWith(id, uiConfig.taskByPagePrefix)){
             metaTypeName = id.substring(uiConfig.taskByPagePrefix.length);
-            //TODO Change to id, required additional change on actionbar.html
             fillMetaListToPanelByTypeName(metaTypeName, uiConfig.taskByPagePrefix);
-            fillTasksToPanel(metaTypeName, uiConfig.taskByPagePrefix);
         } else if(id === 'dimensions'){
             fillMetaTypeToPanel();
-            //Set a default
-            //fillMetaListToPanel('context', uiConfig.metaByPagePrefix);
         } else if(u.startsWith(id, uiConfig.editMetaPagePrefix)){
             metaId = id.substring(uiConfig.editMetaPagePrefix.length);
             fillMetaToEditForm(metaId);
@@ -55,5 +51,18 @@ function onDomReadyCallback(element, id){
             metaTypeId = id.substring(uiConfig.metaByPagePrefix.length);
             fillMetaListToPanel(metaTypeId, uiConfig.metaByPagePrefix);
         }
+        generateActionBar(id);
     }
 }
+
+function generateActionBar(screenId){
+    addGtdItems(screenId);
+    addDueItem(screenId);
+    addMetaTypeItems(screenId);
+    addAdditionalItems(screenId);
+}
+
+function addGtdItems(screenId){ }
+function addDueItem(screenId){ }
+function addMetaTypeItems(screenId){ }
+function addAdditionalItems(screenId){ }

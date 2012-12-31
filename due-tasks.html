@@ -1,10 +1,10 @@
 ﻿<div data-bb-type="screen" style="height:1280px;">
     <link rel="stylesheet" type="text/css" href="css/task-group.css"></link>
-    <div id="group" onclick="adjustTaskGroupWidth(uiConfig.rightPanelWidth, uiConfig.leftPanelWidth, uiConfig.rightPanelLargerLeftMargin);">
-        <div style="margin-left:15px;font-size:40px"> Due Date </div>
+    <div id="group" onclick="switchPanelWidth(uiConfig.rightPanelWidth, uiConfig.leftPanelWidth, uiConfig.rightPanelLargerLeftMargin);">
+        <div style="margin-left:15px;font-size:40px">Task by Due</div>
         <div data-bb-type="scroll-panel" style="height:980px;">
             <div data-bb-type="image-list" data-bb-images="none">
-                <div data-bb-type="item" data-bb-title="Today" onclick="adjustTaskGroupWidth(uiConfig.leftPanelWidth, uiConfig.rightPanelWidth, uiConfig.rightPanelSmallerLeftMargin)"></div>
+                <div data-bb-type="item" data-bb-title="Today" onclick="switchPanelWidth(uiConfig.leftPanelWidth, uiConfig.rightPanelWidth, uiConfig.rightPanelSmallerLeftMargin)"></div>
                 <div data-bb-type="item" data-bb-title="Tomorrow"></div>
                 <div data-bb-type="item" data-bb-title="This Week"></div>
                 <div data-bb-type="item" data-bb-title="Next Week"></div>
@@ -13,9 +13,9 @@
             </div>
         </div>
     </div>
-    <div id="detail-list" onclick="adjustTaskGroupWidth(uiConfig.leftPanelWidth, uiConfig.rightPanelWidth, uiConfig.rightPanelSmallerLeftMargin)">
+    <div id="detail-list-panel" onclick="switchPanelWidth(uiConfig.leftPanelWidth, uiConfig.rightPanelWidth, uiConfig.rightPanelSmallerLeftMargin)">
         <div data-bb-type="scroll-panel">
-            <div data-bb-type="image-list" data-bb-images="none">
+            <div data-bb-type="image-list" data-bb-images="none" id='detail-list'>
                 <div data-bb-type="item" data-bb-title="明天晚上陪女朋友吃晚饭"
                     onclick="document.getElementById('task-operation-context-menu').menu.show({title:'Task',description: '明天晚上陪女朋友吃晚饭',selected:this});">
                     @tag1 @tag2 @标签1 @标签2
@@ -35,6 +35,7 @@
             </div>
         </div>
     </div>
+    @meta-fields@
     @task-context-menu@
     @task-create-inputbox@
     @actionbar@

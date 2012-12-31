@@ -1,8 +1,33 @@
 function createTask(name){
+    var taskId, r = false, count = 0, interval;
     dataAccess.task.create(name, function(tx, result, rows){
+        taskId = result.insertId;
+        r = true;
     }, function(tx, error) {
         bb.pushScreen("error.html", "error-page"); 
     });
+    interval = setInterval(function(){
+        var metaName = u.valueOf('v_meta_name'), metaTypeName = u.valueOf('v_meta_type_name');
+        console.log(metaName);
+        console.log(metaTypeName);
+        count = count + 1;
+        console.log(count);
+        if(count >= 10){
+            clearInterval(interval);
+        }
+        if(r == true && taskId != null && taskId != undefined){
+            dataAccess.taskMeta.throwTaskToList(
+                taskId, metaName, metaTypeName, function(tx3, result3, rows3) {
+                }, 
+                function(tx3, error3){
+                    console.error("Failed to create task meta for task[" + result.insertId + "], meta[" + meta_id + "]");
+                }
+            );
+        }
+        clearInterval(interval);
+    }, 100);
+    u.setValue('ctsi', uiConfig.emptyString);
+    return false;
 }
 
 function deleteTask(){
@@ -14,6 +39,11 @@ function deleteTask(){
         if(selectedId != null){
             dataAccess.task.delete(selectedId, function(tx, result, rows){
                 document.getElementById('task-' + selectedId).remove();
+                setTimeout(function(){
+                    if(document.getElementById(uiConfig.detailListElementId).getItems().length == 0){
+                        document.getElementById(uiConfig.detailListElementId).innerHTML = uiConfig.msgForNoTask;
+                    }
+                }, 100);
             }, function(tx, error) {
                 bb.pushScreen("error.html", "error-page"); 
             });
@@ -98,10 +128,8 @@ function markTaskAsDone(){
     var selectedItem, selectedId,
     context = document.getElementById('task-operation-context-menu');
     selectedItem  = context.menu.selected;
-    console.log(selectedItem);
     if (selectedItem) {
         selectedId = selectedItem.selected;
-        console.log(selectedId);
         if(selectedId != null){
             dataAccess.task.markAsDone (selectedId, function(tx, result, rows) {
                 document.getElementById('task-' + selectedId).style.textDecoration = 'line-through';
