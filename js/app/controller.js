@@ -7,15 +7,15 @@ function createTask(name){
         bb.pushScreen("error.html", "error-page"); 
     });
     interval = setInterval(function(){
-        var metaName = u.valueOf('v_meta_name'), metaTypeName = u.valueOf('v_meta_type_name');
-        console.log(metaName);
-        console.log(metaTypeName);
+        var runned = false, 
+            metaName = u.valueOf('v_meta_name'), 
+            metaTypeName = u.valueOf('v_meta_type_name');
         count = count + 1;
-        console.log(count);
-        if(count >= 10){
+        if((count >= 10) || (true === runned)){
             clearInterval(interval);
         }
         if(r == true && taskId != null && taskId != undefined){
+            runned = true;
             dataAccess.taskMeta.throwTaskToList(
                 taskId, metaName, metaTypeName, function(tx3, result3, rows3) {
                 }, 
@@ -23,6 +23,7 @@ function createTask(name){
                     console.error("Failed to create task meta for task[" + result.insertId + "], meta[" + meta_id + "]");
                 }
             );
+            addTaskToList(taskId, name, null, null);
         }
         clearInterval(interval);
     }, 100);

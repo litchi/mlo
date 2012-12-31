@@ -4,10 +4,17 @@ function switchPanelWidth(groupWidth,taskWidth,taskLeft) {
     document.getElementById(uiConfig.detailListPanelElementId).style.left=taskLeft + 'px';
 }
 
-function addTaskToList (id, name, taskList, project, tags) {
-    var item;
+//TODO Optimize, first construct a document fragment and then append it to the element.
+function addTaskToList (id, name, project, tags) {
+    var taskList = document.getElementById(uiConfig.detailListElementId), 
+    item, items = taskList.getItems();
     item = createItemElement(id, name, project, tags);
-    taskList.appendItem(item, taskList[0]);
+    if(0 == items.length){
+        taskList.innerHTML = uiConfig.emptyString;
+        taskList.appendItem(item);
+    } else if(items.length > 0){
+        taskList.insertItemBefore(item, items[0]);
+    }
 }
 
 function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
@@ -16,11 +23,11 @@ function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
         if(null == arrays || undefined == arrays || 0 == arrays.length){
             taskList.innerHTML = uiConfig.msgForNoTask;
         } else {
-            taskList.innerHTML = uiConfig.emptyString;
+            document.getElementById(uiConfig.detailListElementId).clear();
             for(var key in arrays) {   
                 name = arrays[key][SQL.TASK.COLS.NAME];
                 id   = arrays[key][SQL.TASK.COLS.ID];
-                addTaskToList(id, name, taskList, "Project", "@中文 @Call @Tag2");    
+                addTaskToList(id, name, null, null);    
             }
         }
     }, function(transaction, error){
