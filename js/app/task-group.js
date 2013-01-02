@@ -35,7 +35,7 @@ function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
             }
         }
     }, function(transaction, error){
-        console.error("Error to get task " + error);
+        console.error("Error to get task, error code: " + error.code + ", error message: " + error.message);
     });
     u.setValue('v_meta_type_name', metaTypeName);
     u.setValue('v_meta_name', metaName);
@@ -67,18 +67,7 @@ function createItemElement(id, name, project, tags) {
     }
     return item;
 }
-function dialogCallBack(index){
-    alert(index);
-}
-function customDialog(taskName) {
-    try {
-        var buttons = ["Done!", "Postpone :(", "Open Task"];
-            var ops = {title : "Peaceful & Better Life's Reminder", size : "large", position : "middleCenter"};
-            blackberry.ui.dialog.customAskAsync(taskName, buttons, dialogCallBack, ops);
-    } catch(e) {
-        console.error("Exception in customDialog: " + e);
-    }
-}
+
 function fillTaskToEditForm(id){
     dataAccess.task.getById(id, function(tx, result, arrays) {
         u.setValue('task-id', id);
@@ -102,6 +91,8 @@ function fillMetaListToPanel(metaTypeId, pageType){
             if(null != metaListTitle && undefined != metaListTitle){
                 metaListTitle.innerText= metaTypeName;
             }
+            u.setValue('v_meta_type_id', metaTypeId);
+            u.setValue('v_meta_type_name', metaTypeName);
         }
     }, function(tx, error){
         bb.pushScreen('error.html', 'error-page'); 
@@ -134,8 +125,6 @@ function fillMetaListToPanel(metaTypeId, pageType){
                         "document.getElementById('meta-operation-context-menu').menu.show({ title : '" + name + "', description : '" + metaTypeName + "', selected : '" + id + "'});"
                     );
                 }
-                u.setValue('v_meta_type_id', id);
-                u.setValue('v_meta_type_name', name);
                 metaList.appendItem(item);
             }
         }
