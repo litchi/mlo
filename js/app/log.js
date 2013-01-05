@@ -12,13 +12,21 @@ var log = (function (){
                 throw ("Error: Database needs to be opened before sql can be processed");
             }
         },
+        logSqlError : function (msg, e){
+            console.error("------------------------------SQL Error Log Start------------------------------");
+            console.error(msg)        
+            console.error("Error Code: " + e.code);
+            console.error("Error Msge: " + e.message);
+            console.error("------------------------------SQL Error Log Stopp------------------------------\n");
+        },
         logObjectData : function(name, obj, logEnable) {
             if(logEnable) {
                 for(var key in obj) {
                     try{
                         var value = obj[key];
                         if(typeof value === 'object'){
-                            logObjectData(key, value, logEnable);
+                            console.debug(name + " : [" + key + "][" + value + "]"); 
+                            log.logObjectData("\t" + key, value, logEnable);
                         } else {
                             console.debug(name + " : [" + key + "][" + value + "]"); 
                         }
