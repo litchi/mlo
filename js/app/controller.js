@@ -1,13 +1,12 @@
-function createTask(name){
-    var taskId, r = false, count = 0, interval, runned = false;
+function createTask(name, metaId){
+    var taskId; 
     dataAccess.task.create(name, function(tx, result, rows){
         taskId = result.insertId;
-        r = true;
         dataAccess.appDb.transaction(function(transaction){
             transaction.executeSql(
-                "INSERT INTO task_meta (id, task_id, meta_id) select null, ?, id from meta where name = ? and meta_type_id = (select id from meta_type where name = ?)", 
-                [taskId, 'In Basket', 'GTD'],
-                function(tx1, r){
+                "INSERT INTO task_meta (id, task_id, meta_id) values (null, ?, ?)", 
+                [taskId, metaId],
+                function(tx1, r2){
                     addTaskToList(taskId, name, null, null);
                     u.setValue('ctsi', uiConfig.emptyString);
                 }, 

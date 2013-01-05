@@ -37,8 +37,19 @@ function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
     }, function(transaction, error){
         log.logSqlError("Error getting meta[" + metaName + "] and type[" + metaTypeName + "]", error);
     });
-    u.setValue('v_meta_type_name', metaTypeName);
-    u.setValue('v_meta_name', metaName);
+    //TODO Application level cache support
+    dataAccess.meta.getByName(metaName, function(tx, result, resultObj){
+        u.setValue('v_meta_name', metaName);
+        u.setValue('v_meta_id', resultObj[0][SQL.META.COLS.ID]);
+    }, function(tx, error){
+        log.logSqlError("Error getting meta[" + metaName + "]", error);    
+    });
+    dataAccess.metaType.getByName(metaTypeName, function(tx, result, resultObj){
+        u.setValue('v_meta_type_name', metaTypeName);
+        u.setValue('v_meta_type_id', resultObj[0][SQL.META_TYPE.COLS.ID]);
+    }, function(tx, error){
+        log.logSqlError("Error getting metaType[" + metaTypeName + "]", error);    
+    });
 }
 
 function createItemElement(id, name, project, tags) {
