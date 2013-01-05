@@ -1,0 +1,40 @@
+﻿<div data-bb-type="screen">
+	<script src="js/app/development.js" id="developmentJs"></script>
+    <div id="title" data-bb-type="title" data-bb-caption="Settings" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
+        onactionclick="alert('Save Clicked')"></div>
+    <div data-bb-type="round-panel">
+        <div data-bb-type="panel-header">
+            Development
+        </div>
+        <div data-bb-type="label-control-container">
+            <div data-bb-type="row">
+                <div data-bb-type="label">Recreate/Reinitalize Database(All data will be deleted)</div>
+                <div data-bb-type="button" data-bb-style="stretch" onclick="reCreateDatabase()"> Recreate/Reinitalize Datbase </div>
+            </div>
+            <div data-bb-type="row">
+                <div data-bb-type="label">Print task Table Data</div>
+                <div data-bb-type="button" data-bb-style="stretch" onclick="printTable('task')">Print Data(console.debug())</div>
+            </div>
+            <div data-bb-type="row">
+                <div data-bb-type="label">Print meta_type Table Data</div>
+                <div data-bb-type="button" data-bb-style="stretch" onclick="printTable('meta_type')">Print Data(console.debug())</div>
+            </div>
+            <div data-bb-type="row">
+                <div data-bb-type="label">Print meta Table Data</div>
+                <div data-bb-type="button" data-bb-style="stretch" onclick="printTable('meta')">Print Data(console.debug())</div>
+            </div>
+            <div data-bb-type="row">
+                <div data-bb-type="label">Print task_meta Table Data</div>
+                <div data-bb-type="button" data-bb-style="stretch" onclick="printTable('task_meta')">Print Data(console.debug())</div>
+            </div>
+            <div data-bb-type="row">
+                <div data-bb-type="label">Print task_reminder Table Data</div>
+                <div data-bb-type="button" data-bb-style="stretch" onclick="printTable('task_reminder')">Print Data(console.debug())</div>
+            </div>
+            <div data-bb-type="row">
+                <div data-bb-type="label">Print task_note Table Data</div>
+                <div data-bb-type="button" data-bb-style="stretch" onclick="printTable('task_note')">Print Data(console.debug())</div>
+            </div>
+        </div>
+    </div>
+</div>
