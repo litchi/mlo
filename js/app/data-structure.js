@@ -43,8 +43,10 @@ var seedData = {
 };
 
 var SQL = {
-
-   TASK_META : {
+    DB_NAME        : 'peaceful_better_life_xiangqian_liu',
+    DB_DESCRIPTION : 'Local Database for Peaceful & Better Life App',
+    DB_SIZE        : 2*1024*1024,
+    TASK_META : {
         TABLE_NAME             : 'task_meta',
         COLS : {
             ID      : COMMON_SQL.ID_COL,
@@ -68,7 +70,7 @@ var SQL = {
             META_TYPE_ID : 'meta_type_id',
             DESCRIPTION  : 'description',
         },
-        CREATE_TABLE        : 'CREATE TABLE IF NOT EXISTS meta (id INTEGER PRIMARY KEY AUTOINCREMENT, meta_type_id INTEGER, name text, description text)',
+        CREATE_TABLE        : 'CREATE TABLE IF NOT EXISTS meta (id INTEGER PRIMARY KEY AUTOINCREMENT, meta_type_id INTEGER, name text, description text, UNIQUE(meta_type_id, name))',
         INSERT_BY_NAME_TYPE : 'insert into meta (id, name, meta_type_id, description) values (null, ?, ?, ?)',
         SELECT_ALL          : 'select id, meta_type_id, name, description from meta',
         SELECT_BY_ID        : 'select id, meta_type_id, name, description from meta where id = ?',
@@ -88,7 +90,7 @@ var SQL = {
             NAME : 'name',
             DESCRIPTION : 'description'
         },
-        CREATE_TABLE : 'CREATE TABLE IF NOT EXISTS meta_type (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, description text)',
+        CREATE_TABLE : 'CREATE TABLE IF NOT EXISTS meta_type (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, description text, internal INTEGER DEFAULT 0)',
         INSERT_BY_NAME : 'insert into meta_type (name, description) values (?, ?)',
         INSERT_BY_ID_NAME   : 'insert into meta_type (id, name, description) values (?, ?, ?)',
         SELECT_ALL : 'select id, name, description from meta_type',
@@ -117,7 +119,7 @@ var SQL = {
             ID : COMMON_SQL.ID_COL,
             NAME: 'name'
         },
-        CREATE_TABLE        : 'CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text);',
+        CREATE_TABLE        : "CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, status text default 'New')",
         INSERT_BY_NAME      : 'insert into task (id, name) values (null, ?)',
         INSERT_BY_ID_NAME   : 'insert into task(id, name) values (?, ?)',
         FILTER_BY_STATUS    : 'select id, name from task where status != ?',
@@ -130,6 +132,12 @@ var SQL = {
         DELETE_BY_ID        : 'delete from task where id = ?',
         DELETE_ALL          : 'delete from task',
         GET_MAX_ID          : COMMON_SQL.GET_MAX_ID + 'task',
+    },
+};
+
+var APP_SQL = {
+    APP_INFO : {
+        CREATE_TABLE : 'CREATE TABLE IF NOT EXISTS app_info (id INTEGER PRIMARY KEY AUTOINCREMENT, app_id text, name text, version text, db_schema_version text, additional_info text, UNIQUE(app_id))',
     },
 };
 //console.log(SQL);

@@ -42,5 +42,8 @@ var u = (function (){
                 console.warn("ID is null trying to set value to [" + value + "]");
             } 
         },
+        isFunction : function(func){
+            return false === (func === void 0);
+        },
     };
 })();

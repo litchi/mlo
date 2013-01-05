@@ -1,24 +1,192 @@
 ﻿
 var dataAccess = (function (){
-    var dbInited = false;
+    var dbConnected = false, seedDb, db_schema_version; 
+
+    sqlMatch = function(pattern, sql){
+        return (new RegExp(pattern, 'i')).test(sql);
+    }
+
+    isSelect = function(sql){ return sqlMatch('^select\\s', sql);}
+    isInsert = function(sql){ return sqlMatch('^insert\\s', sql);}
+    isUpdate = function(sql){ return sqlMatch('^update\\s', sql);}
+    isDelete = function(sql){ return sqlMatch('^delete\\s', sql);}
+
+    sqlProcessor = function (transaction, sql, data, finalSuccessCallback, finalFailureCallback) {
+        log.logSqlStatement(sql,data, dataAccess.logInfo);
+        finalSuccessCallback = (finalSuccessCallback === void 0) ? function(){} : finalSuccessCallback;
+        finalFailureCallback = (finalFailureCallback === void 0) ? function(){} : finalFailureCallback;
+        successCallback = function (transaction, sqlResultSet) {
+            var resultObjs = [];
+            if(isSelect(sql)){
+                resultObjs = putResultOfSelectIntoArray(sql, sqlResultSet);
+            } else if(isInsert(sql)){
+                resultObjs[0] = sqlResultSet.insertId;
+            }
+            log.logObjectData("Result Array", resultObjs, dataAccess.logDebug);
+            finalSuccessCallback(transaction, sqlResultSet, resultObjs);
+        };
+        failureCallback = function(transaction, error){
+            log.logObjectData("Error Message", error, dataAccess.logInfo);
+            finalFailureCallback(transaction, error);
+        };   
+        transaction.executeSql(sql, data, successCallback, failureCallback);
+    },
+
+    putResultOfSelectIntoArray = function (sql, sqlResultSet){
+        var max, result = [];
+        for(i = 0, max = sqlResultSet.rows.length; i < max; i++){
+            obj = sqlResultSet.rows.item(i);
+            result[i] = obj;
+        }
+        return result;
+    }
 
     function runSQL(sql, data, successCallback, failureCallback){
-        dataAccess.createDatabaseConnection();
-        html5sql.process(sql, data, successCallback, failureCallback);
+        if(dbConnected != true){
+            dataAccess.createDatabaseConnection();
+            setTimeout(function(){
+                dataAccess.appDb.transaction(function(tx){
+                    sqlProcessor(tx, sql, data, successCallback, failureCallback);
+                }, function(error){
+                    log.logSqlError("Failed to run SQL[" + sql + "] with data[" + data + "]", error);
+                }, function(){});
+            }, 1000);
+        } else {
+            dataAccess.appDb.transaction(function(tx){
+                sqlProcessor(tx, sql, data, successCallback, failureCallback);
+            }, function(error){
+                log.logSqlError("Failed to run SQL[" + sql + "] with data[" + data + "]", error);
+            }, function(){});
+        }
+    }
+
+    function openAppDb(){
+        dataAccess.appDb = openDatabase(SQL.DB_NAME, db_schema_version, SQL.DB_DESCRIPTION, SQL.DB_SIZE, dataAccess.initAppDb);
+        log.logDbInfo(SQL.DB_NAME, SQL.DB_DESCRIPTION, db_schema_version, dataAccess.logInfo);
+        applyPatch003to004(dataAccess.appDb);
+        dbConnected = (dataAccess.appDb != null);
+        if(dbConnected != true){
+            console.error("Failed to open application database");
+        }
+    }
+
+    function applyPatch003to004(db){
+        if(db_schema_version == '0.0.3'){
+            db.changeVersion('0.0.3', '0.0.4', function(tx){
+                dataAccess.runSqlDirectly(tx, 'alter table task add column reminder_on integer');                
+                dataAccess.runSqlDirectly(tx, 'alter table task add column next_reminder_time real');                
+            }, function(error){
+                log.logSqlError("Failed to apply DB patch from V0.0.3 to V0.0.4", error);
+            }, function(){
+                seedDb.transaction(function(tx){
+                    dataAccess.runSqlDirectly(tx, 'update app_info set db_schema_version = ? where app_id = ?', ['0.0.4', 'BB10GTD']);
+                }, function(error){
+                    log.logSqlError("Failed to update app_info table for DB patch 0.0.3->0.0.4", error);
+                }, function(){
+                    console.info("Successfully update app_info table for DB patch 0.0.3->0.0.4");
+                    console.info("Successfully apply DB patch from V0.0.3 to V0.0.4");
+                });
+                console.info("Successfully change DB schema for patch 0.0.3->0.0.4, about to update app_info table");
+            });
+        }
     }
 
     return {
-        logInfo: false,
-        logErrors: true,
-        createDatabaseConnection: function (){
-            if(dbInited != true){
-                if(html5sql.database === null){
-                    html5sql.database = openDatabase('peaceful_better_life_xiangqian_liu', '0.0.3', 
-                                                     'Local Database for Peaceful & Better Life App', 2*1024*1024);
-                }
-                dbInited = (html5sql.database != null);
+        logInfo: true,
+        logError: true,
+        logDebug: true,
+        appDb : null,
+        dropAllTables : function(tx){
+            dataAccess.runSqlDirectly(tx, 'drop table task');
+            dataAccess.runSqlDirectly(tx, 'drop table task_meta');
+            dataAccess.runSqlDirectly(tx, 'drop table meta_type');
+            dataAccess.runSqlDirectly(tx, 'drop table meta');
+            dataAccess.runSqlDirectly(tx, 'drop table task_note');
+            dataAccess.runSqlDirectly(tx, 'drop table task_reminder');
+        },
+
+        initAppDb : function(db){
+            db.transaction(function(tx){
+                dataAccess.runSqlDirectly(tx, SQL.TASK.CREATE_TABLE);
+                dataAccess.runSqlDirectly(tx, SQL.META_TYPE.CREATE_TABLE);
+                dataAccess.runSqlDirectly(tx, SQL.META.CREATE_TABLE);
+                dataAccess.runSqlDirectly(tx, SQL.TASK_META.CREATE_TABLE);
+                dataAccess.runSqlDirectly(tx, SQL.TASK_NOTE.CREATE_TABLE);
+                dataAccess.runSqlDirectly(tx, SQL.TASK_REMINDER.CREATE_TABLE);
+                dataAccess.runSqlDirectly(tx, "insert into meta_type (name, description) values ('project', 'Predefined Project dimension for meta')");
+                dataAccess.runSqlDirectly(tx, "insert into meta_type (name, description) values ('context', 'Predefined Context dimension for meta')");
+                dataAccess.runSqlDirectly(tx, "insert into meta_type (name, description, internal) values ('GTD', 'Predefined GTD dimension for meta, includes in basket/(someday/maybe)/next action', 1)");
+                dataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'In Basket'   , 'Predefined in basket meta for tasks' from meta_type where name = 'GTD'");
+                dataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'Next Action' , 'Predefined next action meta for tasks' from meta_type where name = 'GTD'");
+                dataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'Someday'     , 'Predefined Someday & Maybe meta for tasks' from meta_type where name = 'GTD'");
+            }, function(error){
+                log.logSqlError("Failed to create tables", error);
+            }, function(){
+                console.info("Successfully created tables");
+            });
+        },
+
+        initAppInfoDb : function(db){
+            db.transaction(function(tx){
+                dataAccess.runSqlDirectly(tx, APP_SQL.APP_INFO.CREATE_TABLE);
+            }, function(error){
+                log.logSqlError("Failed to create app info table", error);
+            }, function(){
+                console.log("Successfully created app info table");
+            });
+        },
+
+        runSqlDirectly : function(tx, sql, data, callback){
+            if((null == data) || (undefined == data)){
+                data = [];
             }
-            return html5sql.database;
+            tx.executeSql(sql, data, function(tx, result){
+                console.debug("SQL directly: [" + sql + "], data: [" + data + "]");
+                if(u.isFunction(callback)){
+                    callback(tx, result);
+                }
+            }, function(tx, error){
+                log.logSqlError("SQL directly failed: [" + sql + "], data: [" + data + "]", error);
+            });
+        },
+
+        createDatabaseConnection: function (){
+            if(dataAccess.appDb === null){
+                seedDb = openDatabase('xiangqian_liu_apps_info_db', '0.0.1', 'App info for Liu Xiangqian\'s Applications', 1024, dataAccess.initAppInfoDb);
+                setTimeout(function(){
+                    seedDb.transaction(function(tx){
+                        dataAccess.runSqlDirectly(tx, "select db_schema_version from app_info where app_id = ?", ['BB10GTD'], 
+                            function(tx, result){
+                                if((result != null) 
+                                    && (result.rows != null)
+                                    && (1 == result.rows.length )
+                                    && (result.rows.item != null)
+                                    && (result.rows.item(0) != null)
+                                    && (result.rows.item(0)['db_schema_version'] != null)){
+                                    db_schema_version = result.rows.item(0)['db_schema_version'];                
+                                    console.info("DB Schema version for app[BB10GTD] is [" + db_schema_version + "]");
+                                    openAppDb();
+                                } else {
+                                    console.info("DB Schema version for app[BB10GTD] not existing");
+                                    seedDb.transaction(function(tx1){
+                                        dataAccess.runSqlDirectly(
+                                            tx1, 
+                                            "insert into app_info(app_id, name, version, db_schema_version, additional_info) values (?, ?, ?, ?, ?)", 
+                                            ['BB10GTD', 'Peaceful & Better Life App', '0.0.1', '0.0.3','Peaceful & Better Life App']
+                                        );
+                                    }, function(error){
+                                        log.logSqlError("Failed to insert app info for BB10GTD app", error);
+                                    }, function(){
+                                        console.log("Successfully insert app info for BB10GTD to app_info table");
+                                        openAppDb();
+                                    });
+                                }
+                            });
+                    }, function(error){
+                        log.logSqlError("Failed to query for db_schema_version for app[BB10GTD]", error);
+                    });
+                }, 500);
+            }
         },
 
         task : {

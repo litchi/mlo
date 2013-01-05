@@ -35,7 +35,7 @@ function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
             }
         }
     }, function(transaction, error){
-        console.error("Error to get task, error code: " + error.code + ", error message: " + error.message);
+        log.logSqlError("Error getting meta[" + metaName + "] and type[" + metaTypeName + "]", error);
     });
     u.setValue('v_meta_type_name', metaTypeName);
     u.setValue('v_meta_name', metaName);
@@ -73,7 +73,7 @@ function fillTaskToEditForm(id){
         u.setValue('task-id', id);
         u.setValue('task-name', arrays[0][SQL.TASK.COLS.NAME]);
     }, function(tx, error) {
-        bb.pushScreen('error.html', 'error-page'); 
+        log.logSqlError("Error filling task[" + id + "] to edit form", error);
     });
 }
 function fillMetaListToPanel(metaTypeId, pageType){
@@ -95,7 +95,7 @@ function fillMetaListToPanel(metaTypeId, pageType){
             u.setValue('v_meta_type_name', metaTypeName);
         }
     }, function(tx, error){
-        bb.pushScreen('error.html', 'error-page'); 
+        log.logSqlError("Error getting meta type[" + metaTypeId + "], pageType:[" + pageType + "]", error);
     });
     dataAccess.meta.getByTypeId(metaTypeId, function(tx, result, arrays){
         for(var key in arrays){   
@@ -129,7 +129,7 @@ function fillMetaListToPanel(metaTypeId, pageType){
             }
         }
     }, function(tx, error){
-        bb.pushScreen('error.html', 'error-page'); 
+        log.logSqlError("Error getting meta list[" + metaTypeId + "]", error);
     });
 }
 
@@ -137,7 +137,7 @@ function fillMetaListToPanelByTypeName(metaTypeName, pageType){
     dataAccess.metaType.getByName(metaTypeName, function(tx, result, objs){
         fillMetaListToPanel(objs[0][SQL.META_TYPE.COLS.ID], pageType);
     }, function(tx, error){
-        bb.pushScreen('error.html', 'error-page'); 
+        log.logSqlError("Error getting meta type[" + metaTypeName + "], pageType: [" + pageType + "]", error);
     })
 }
 function fillMetaTypeToPanel (){
@@ -165,7 +165,7 @@ function fillMetaTypeToPanel (){
             }
         }
     }, function(tx, error){
-        bb.pushScreen('error.html', 'error-page'); 
+        logSqlError("Error getting all meta type", error);
     });
 }
 
@@ -181,7 +181,7 @@ function fillMetaToEditForm(id){
                 u.setValue('meta_type_name' , objs[0][SQL.META_TYPE.COLS.NAME]);
             });
         }, function(tx, error) {
-            bb.pushScreen('error.html', 'error-page'); 
+            log.logSqlError("Error getting meta with id[" + id + "]", error);
         });
     }
 }

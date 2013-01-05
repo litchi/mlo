@@ -17,3 +17,10 @@ var uiConfig = (function(){
     };
 
 })(); 
+
+var appConfig = (function(){
+    return {
+        debugMode : true,
+    }
+
+})();

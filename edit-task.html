@@ -1,8 +1,6 @@
 ﻿<div data-bb-type="screen">
     @meta-fields@
     <input type="hidden" value="" id="task-id">
-    <input type="hidden" value="" id="is-next-action">
-    <input type="hidden" value="" id="is-someday">
     <link rel="stylesheet" type="text/css" href="css/edit-object.css"></link>
     <div id="foo" data-bb-type="title" data-bb-caption="Edit Task" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
         onactionclick="saveTask(document.getElementById('task-id').value, document.getElementById('task-name').value)"></div>
@@ -31,32 +29,22 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="td-label">Due</td>
-                    <td style="padding-left:23px;"><input type="datetime" value="" id="due-date-time"/> </td>
-                    <td><div data-bb-type="toggle" data-bb-checked="true" data-bb-on="Remind Me" data-bb-off="No Remind" id="is-reminder-on"/></div> </td>
+                    <td class="td-label">Due Date: </td>
+                    <td style="padding-left:23px;" colspan=2><input type="date" value="" id="due-date"/></td>
+                </tr>
+                <tr>
+                    <td class="td-label">Due Time: </td>
+                    <td style="padding-left:23px;" colspan=2><input type="time" value="" id="due-time"/></td>
+                </tr>
+                <tr> 
+                    <td class="td-label">Reminder?</td>
+                    <td colspan=2><div data-bb-type="toggle" data-bb-checked="true" data-bb-on="Yes" data-bb-off="No" id="is-reminder-on"/></div> </td>
                 </tr>
                 <tr>
                     <td class="td-label">Context</td>
                     <td colspan="2" style="padding-left:23px"><input type="text" value="TCL Customer Email" id="contexts"/> </td>
                 </tr>
             </table>
-        </div>
-    </div>
-    <div data-bb-type="round-panel" style="margin-top:10px;">
-        <div data-bb-type="panel-header">
-            Additional Information
-        </div>
-        <div data-bb-type="label-control-container">
-            <table style="margin-left:50px;">
-                <tr>
-                    <td class="cell"> Is Next Action </td>
-                    <td class="cell"> <div data-bb-type="toggle" data-bb-checked="false" data-bb-on="Yes" data-bb-off="No" id="is-next-action"/></div> </td>
-                </tr>
-                <tr>
-                    <td class="cell"> Is Someday & Maybe </td>
-                    <td class="cell"> <div data-bb-type="toggle" data-bb-checked="false" data-bb-on="Yes" data-bb-off="No" id="is-someday-maybe"/></div> </td>
-                </tr>
-            </table>			
         </div>
     </div>
 </div>

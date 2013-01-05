@@ -15,8 +15,8 @@ function webworksReadyCallback(e){
     if (webworksreadyFired) return;
     webworksreadyFired = true;
     bb.init({
-        actionBarDark: true,
-        controlsDark: true,
+        actionBarDark: false,
+        controlsDark: false,
         listsDark: false,
         bb10ForPlayBook: false,
         onscreenready: onScreenReadyCallback,
