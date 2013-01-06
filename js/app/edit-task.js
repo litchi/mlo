@@ -5,12 +5,35 @@ function fillTaskToEditForm(id){
     dataAccess.task.getById(id, function(tx, result, arrays) {
         u.setValue('task-id', id);
         u.setValue('task-name', arrays[0][SQL.TASK.COLS.NAME]);
+        prepareReminderData(id);
         prepareProjectData();
         setDefaultProjectForTask(id);
         prepareContextData(id);
         bb.refresh();
     }, function(tx, error) {
         log.logSqlError("Error filling task[" + id + "] to edit form", error);
+    });
+}
+
+function prepareReminderData(taskId){
+    var reminderOn;
+    dataAccess.appDb.transaction(function(tx){
+        dataAccess.runSqlDirectly(
+            tx,
+            'select reminder_on, next_reminder_time from task where id = ?',
+            [taskId],
+            function(tx, result){
+                if(null != result.rows && result.rows.length > 0){
+                    reminderOn = (result.rows.item(0)['reminder_on'] == 1);
+                    if(reminderOn != true){
+                        document.getElementById('is-reminder-on').setChecked(false);
+                    } else {
+                        document.getElementById('is-reminder-on').setChecked(true);
+                    }
+                    //TODO set reminder time
+                }
+            }
+        );
     });
 }
 
@@ -87,7 +110,6 @@ function createContextSpan(container, taskId, metaId, metaName){
                     span = document.createElement('span');
                     span.setAttribute('id', metaId);
                     count = result.rows.item(0)['c'];
-                    console.log(count);
                     if(count >= 1){
                         span.setAttribute('class', 'selectedContext');
                         span.setAttribute('onclick', 'unSelectContext("' + metaId + '", "' + metaName + '")');
@@ -186,7 +208,7 @@ function saveReminderInfo(taskId){
         }
     } else {
         dataAccess.appDb.transaction(function(tx){
-            dataAccess.runSqlDirectly(tx, "update task set next_reminder_time = ?, reminder_on = ? where id = ?", [0, 0, taskId]); 
+            dataAccess.runSqlDirectly(tx, "update task set reminder_on = ? where id = ?", [0, taskId]); 
         });
     }
 }
