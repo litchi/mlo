@@ -1,6 +1,6 @@
 ﻿
 var dataAccess = (function (){
-    var dbConnected = false, seedDb, db_schema_version; 
+    var seedDb, db_schema_version; 
 
     sqlMatch = function(pattern, sql){
         return (new RegExp(pattern, 'i')).test(sql);
@@ -42,7 +42,7 @@ var dataAccess = (function (){
     }
 
     function runSQL(sql, data, successCallback, failureCallback){
-        if(dbConnected != true){
+        if(null == dataAccess.appDb){
             dataAccess.createDatabaseConnection();
             setTimeout(function(){
                 dataAccess.appDb.transaction(function(tx){
@@ -64,8 +64,7 @@ var dataAccess = (function (){
         dataAccess.appDb = openDatabase(SQL.DB_NAME, db_schema_version, SQL.DB_DESCRIPTION, SQL.DB_SIZE, dataAccess.initAppDb);
         log.logDbInfo(SQL.DB_NAME, SQL.DB_DESCRIPTION, db_schema_version, dataAccess.logInfo);
         applyPatch003to004(dataAccess.appDb);
-        dbConnected = (dataAccess.appDb != null);
-        if(dbConnected != true){
+        if(null == dataAccess.appDb){
             console.error("Failed to open application database");
         }
     }

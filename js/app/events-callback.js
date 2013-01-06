@@ -51,18 +51,13 @@ function onDomReadyCallback(element, id){
             metaTypeId = id.substring(uiConfig.metaByPagePrefix.length);
             fillMetaListToPanel(metaTypeId, uiConfig.metaByPagePrefix);
         }
-        generateActionBar(id);
+        setActionBarSelectStatus(id);
     }
 }
 
-function generateActionBar(screenId){
-    addGtdItems(screenId);
-    addDueItem(screenId);
-    addMetaTypeItems(screenId);
-    addAdditionalItems(screenId);
+function setActionBarSelectStatus(screenId){
+    var tab = document.getElementById(screenId);
+    if(undefined != tab){
+        bb.actionBar.highlightAction(tab);
+    }
 }
-
-function addGtdItems(screenId){ }
-function addDueItem(screenId){ }
-function addMetaTypeItems(screenId){ }
-function addAdditionalItems(screenId){ }

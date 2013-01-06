@@ -38,6 +38,7 @@ function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
         log.logSqlError("Error getting meta[" + metaName + "] and type[" + metaTypeName + "]", error);
     });
     //TODO Application level cache support
+    //TODO Performance optimize
     dataAccess.meta.getByName(metaName, function(tx, result, resultObj){
         u.setValue('v_meta_name', metaName);
         u.setValue('v_meta_id', resultObj[0][SQL.META.COLS.ID]);

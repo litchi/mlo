@@ -1,11 +1,47 @@
-<div data-bb-type="action-bar" data-bb-back-caption="Back">
+<div data-bb-type="action-bar" data-bb-back-caption="Back" id="action-bar">
     <!-- TODO Make this action bar dynamic-->
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('task-list.html', seedData.inBasketMetaName)" data-bb-img="resources/inbox.png" data-bb-accent-text="Basket"> Basket </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('task-list.html',seedData.nextActionMetaName);" data-bb-img="resources/next-action.png" data-bb-accent-text="Next Action"> Next Action </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('due-tasks.html','due-tasks');" data-bb-img="resources/due.png" data-bb-accent-text="Due"> Due </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" onclick="bb.pushScreen('task-by-meta.html', uiConfig.taskByPagePrefix + 'project');" data-bb-img="resources/task-by-project.png"  data-bb-accent-text="Project"> Project </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('task-by-meta.html', uiConfig.taskByPagePrefix + 'context');" data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/task-by-context.png" data-bb-accent-text="Context"> Context </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('task-list.html', seedData.somedayMetaName);" data-bb-img="resources/task-by-someday.png" data-bb-accent-text="Someday/Maybe"> Someday/Maybe </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('meta-by-type.html','dimensions');" data-bb-img="resources/context.png" data-bb-accent-text="Dimensions"> Dimensions </div>
-    <div data-bb-type="action" data-bb-style="tab" data-bb-selected="false" data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('development.html','development');" data-bb-img="resources/development.png" data-bb-accent-text="Development"> Development </div>
+    <!--
+    -The id of each action bar should be the same as the 
+    -pushScreen id to make Javascript code setting the 
+    -active bar selected status working
+    -->
+    <div data-bb-type="action" data-bb-style="tab" 
+        onclick="bb.pushScreen('task-list.html', seedData.inBasketMetaName)" 
+        data-bb-img="resources/inbox.png" data-bb-accent-text="Basket" id="In Basket"> 
+        Basket 
+    </div>
+    <div data-bb-type="action" data-bb-style="tab" 
+        onclick="bb.pushScreen('task-list.html',seedData.nextActionMetaName);" 
+        data-bb-img="resources/next-action.png" data-bb-accent-text="Next Action" id="Next Action"> 
+        Next Action 
+    </div>
+    <div data-bb-type="action" data-bb-style="tab" 
+        onclick="bb.pushScreen('due-tasks.html','due-tasks');" 
+        data-bb-img="resources/due.png" data-bb-accent-text="Due" id="due-tasks"> 
+        Due 
+    </div>
+    <div data-bb-type="action" data-bb-style="tab" 
+        onclick="bb.pushScreen('task-by-meta.html', uiConfig.taskByPagePrefix + 'project');" 
+        data-bb-img="resources/task-by-project.png"  data-bb-accent-text="Project" id="task-by-project"> Project 
+    </div>
+    <div data-bb-type="action" data-bb-style="tab" 
+        data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('task-by-meta.html', uiConfig.taskByPagePrefix + 'context');" 
+        data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/task-by-context.png" data-bb-accent-text="Context"> 
+        Context 
+    </div>
+    <div data-bb-type="action" data-bb-style="tab" data-bb-pin="true" 
+        data-bb-overflow="true" onclick="bb.pushScreen('task-list.html', seedData.somedayMetaName);" 
+        data-bb-img="resources/task-by-someday.png" data-bb-accent-text="Someday/Maybe" id="Someday"> 
+        Someday/Maybe 
+    </div>
+    <div data-bb-type="action" data-bb-style="tab" data-bb-pin="true" 
+        data-bb-overflow="true" onclick="bb.pushScreen('meta-by-type.html','dimensions');" 
+        data-bb-img="resources/context.png" data-bb-accent-text="Dimensions" id="dimensions"> 
+        Dimensions 
+    </div>
+    <div data-bb-type="action" data-bb-style="tab" data-bb-pin="true" 
+        data-bb-overflow="true" onclick="bb.pushScreen('development.html','development');" 
+        data-bb-img="resources/development.png" data-bb-accent-text="Development" id="development"> 
+        Development 
+    </div>
 </div>
