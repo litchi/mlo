@@ -58,10 +58,10 @@ var SQL = {
         CREATE_TABLE           : 'CREATE TABLE IF NOT EXISTS task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_id int)',
         INSERT                 : 'INSERT INTO task_meta (id, task_id, meta_id) VALUES (null, ?, ?)',
         THROW_TASK_TO_LIST     : 'INSERT INTO task_meta (id, task_id, meta_id) select null, ?, id from meta where name = ? and meta_type_id = (select id from meta_type where name = ?)',
-        DELETE_GTD_META        : 'DELETE FROM task_meta where task_id = ? and meta_id in (select id from meta where meta_type_id = (select id from meta_type where name = ?))',
         SELECT_BY_IDS          : 'SELECT id, task_id, meta_id from task_meta where task_id = ? and meta_id = ?',
         SELECT_TASK_BY_META_ID : 'SELECT task.id, task.name, task.status, task_meta.meta_id FROM task INNER JOIN task_meta ON task.id = task_meta.task_id WHERE task_meta.meta_id = ?',
         SELECT_META_BY_TASK_ID : 'SELECT meta.id, meta.name, meta.meta_type_id, meta.description FROM meta INNER JOIN task_meta ON meta.id = task_meta.meta_id WHERE task_meta.task_id = ?',
+        DELETE_META_BY_TYPE    : 'DELETE FROM task_meta where task_id = ? and meta_id in (select id from meta where meta_type_id = (select id from meta_type where name = ?))',
     },
 
     META : {
@@ -128,7 +128,7 @@ var SQL = {
         SELECT_BY_ID        : 'select id, name from task where id = ?',
         SELECT_BY_NAME      : 'select id, name from task where name = ?',
         SELECT_BY_ID_NAME   : 'select id, name from task where id = ? and name = ?',
-        SELECT_BY_META_NAME : 'select task.id, task.name, task.status, task_meta.meta_id from task inner join task_meta on task.id = task_meta.task_id where task_meta.meta_id = (select meta.id from meta where name= ? and meta_type_id = (select meta_type.id from meta_type where name = ?)) AND task.status != ?',
+        SELECT_BY_META_NAME : 'select distinct task.id, task.name, task.status, task_meta.meta_id from task inner join task_meta on task.id = task_meta.task_id where task_meta.meta_id = (select meta.id from meta where name= ? and meta_type_id = (select meta_type.id from meta_type where name = ?)) AND task.status != ?',
         UPDATE_BY_ID        : 'update task set name = ? where id = ?',
         UPDATE_STATUS_BY_ID : 'update task set status = ? where id = ?',
         DELETE_BY_ID        : 'delete from task where id = ?',

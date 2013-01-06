@@ -314,7 +314,7 @@ var dataAccess = (function (){
                 runSQL(SQL.TASK_META.THROW_TASK_TO_LIST, [taskId, metaName, metaTypeName], successCallback, failureCallback);
             },
             moveTaskToGtdList : function(taskId, metaName, successCallback, failureCallback){
-                runSQL(SQL.TASK_META.DELETE_GTD_META, [taskId, seedData.gtdMetaTypeName], function(tx, result, objs){
+                runSQL(SQL.TASK_META.DELETE_META_BY_TYPE, [taskId, seedData.gtdMetaTypeName], function(tx, result, objs){
                     runSQL(SQL.TASK_META.THROW_TASK_TO_LIST, [taskId, metaName, seedData.gtdMetaTypeName], successCallback, failureCallback);
                 }, failureCallback);
             },

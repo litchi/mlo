@@ -73,62 +73,12 @@ function editMeta(){
     }
 }
 
-function saveTask(id, name, projectId){
-    dataAccess.task.update(id, name, function(tx, result, rows){
-        //Set Reminder
-        reminderOn = document.getElementById('is-reminder-on').getChecked();
-        if(reminderOn){
-            var dueDate = u.valueOf('due-date'), dueTime = u.valueOf('due-time');
-            var myDate = new Date(dueDate + " " + dueTime).getTime();
-            var currDate = new Date().getTime();
-            if(myDate > currDate){ 
-                var reminderAfter = myDate - currDate;
-                console.log("Reminder after: " + reminderAfter);
-                dataAccess.appDb.transaction(function(transaction){
-                    transaction.executeSql("update task set next_reminder_time = ? where taskId = ?", [myDate, taskId], 
-                        function(tx, result) {
-                            //Set reminder, add to system notificatin hub.
-                        });
-                });
-            }
-        }
-
-        //1. Delete the old one
-        dataAccess.appDb.transaction(function(tx1){
-            tx1.executeSql(
-                "delete from task_meta where task_id = ? and meta_id = (select meta_id from meta_view where meta_type_name = ?)", 
-                [id, seedData.projectMetaTypeName], 
-                function(tx, result) {
-                    //2. Insert the new one
-                    dataAccess.appDb.transaction(function(tx2){
-                        tx2.executeSql(
-                            'insert into task_meta (id, task_id, meta_id) values(null, ?, ?)', 
-                            [id, projectId],
-                            function(tx, result){
-                                console.debug("Successfully change project id to %s for task [%s,%s]", projectId, id, name);
-                            }, function(tx, error){
-                                log.logSqlError("Failed to update project id to %s for task[%s, %s]", projectId, id, name);
-                            }
-                        );
-                    });
-                }, function(tx, error){
-                    log.logSqlError("Failed to delete project meta for task[%s, %s]", id, name);
-                }
-            );
-        });
-        //TODO get back the context
-        bb.popScreen();
-    }, function(tx, error) {
-        log.logSqlError("Failed to update task[" + id + "][" + name + "]", error);
-    });
-}
-
 function saveMeta(id, name, meta_type_id, description){
     if(id != null && id != undefined && id != ''){//If update a meta
         dataAccess.meta.update(id, name, description, function(tx, result, rows){
             bb.pushScreen('meta-by-type.html',uiConfig.metaByPagePrefix + meta_type_id);
         }, function(tx, error) {
-        //TODO Change all those to sprintf(http://www.diveintojavascript.com/projects/javascript-sprintf)
+            //TODO Change all those to sprintf(http://www.diveintojavascript.com/projects/javascript-sprintf)
             log.logSqlError("Failed to update meta[" + id + "][" + name + "][" + meta_type_id + "][" + description + "]", error);
         });
     } else {
