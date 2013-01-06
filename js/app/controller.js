@@ -4,7 +4,7 @@ function createTask(name, metaId){
         taskId = result.insertId;
         dataAccess.appDb.transaction(function(transaction){
             transaction.executeSql(
-                "INSERT INTO task_meta (id, task_id, meta_id) values (null, ?, ?)", 
+                "insert into task_meta (id, task_id, meta_id) values (null, ?, ?)", 
                 [taskId, metaId],
                 function(tx1, r2){
                     addTaskToList(taskId, name, null, null);
@@ -73,7 +73,7 @@ function editMeta(){
     }
 }
 
-function saveTask(id, name){
+function saveTask(id, name, projectId){
     dataAccess.task.update(id, name, function(tx, result, rows){
         //Set Reminder
         reminderOn = document.getElementById('is-reminder-on').getChecked();
@@ -85,17 +85,37 @@ function saveTask(id, name){
                 var reminderAfter = myDate - currDate;
                 console.log("Reminder after: " + reminderAfter);
                 dataAccess.appDb.transaction(function(transaction){
-                    transaction.executeSql("delete from task_reminder where task_id = ?", [taskId]);
-                    transaction.executeSql("insert into task_reminder (id, task_id, next_reminder_time) values(null, ?, ?)", [taskId, myDate], 
-                    function(tx1, result) {
-                        //Set reminder, add to system notificatin hub.
-                        setTimeout(function(){
-                            customDialog(name);
-                        }, reminderAfter);
-                    });
+                    transaction.executeSql("update task set next_reminder_time = ? where taskId = ?", [myDate, taskId], 
+                        function(tx, result) {
+                            //Set reminder, add to system notificatin hub.
+                        });
                 });
             }
         }
+
+        //1. Delete the old one
+        dataAccess.appDb.transaction(function(tx1){
+            tx1.executeSql(
+                "delete from task_meta where task_id = ? and meta_id = (select meta_id from meta_view where meta_type_name = ?)", 
+                [id, seedData.projectMetaTypeName], 
+                function(tx, result) {
+                    //2. Insert the new one
+                    dataAccess.appDb.transaction(function(tx2){
+                        tx2.executeSql(
+                            'insert into task_meta (id, task_id, meta_id) values(null, ?, ?)', 
+                            [id, projectId],
+                            function(tx, result){
+                                console.debug("Successfully change project id to %s for task [%s,%s]", projectId, id, name);
+                            }, function(tx, error){
+                                log.logSqlError("Failed to update project id to %s for task[%s, %s]", projectId, id, name);
+                            }
+                        );
+                    });
+                }, function(tx, error){
+                    log.logSqlError("Failed to delete project meta for task[%s, %s]", id, name);
+                }
+            );
+        });
         //TODO get back the context
         bb.popScreen();
     }, function(tx, error) {
@@ -186,17 +206,5 @@ function moveTaskToGtdList(metaName){
                 }
             );
         }
-    }
-}
-
-function customDialog(taskName) {
-    try {
-        var buttons = ["Close the reminder"];
-            var ops = {title : "Peaceful & Better Life's Reminder", size : "large", position : "middleCenter"};
-            blackberry.ui.dialog.customAskAsync(taskName, buttons, function(index){
-                console.debug("Index " + index + " Selected for customDialog");
-            }, ops);
-    } catch(e) {
-        console.error("Exception in customDialog: " + e);
     }
 }

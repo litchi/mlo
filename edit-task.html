@@ -3,7 +3,7 @@
     <input type="hidden" value="" id="task-id">
     <link rel="stylesheet" type="text/css" href="css/edit-object.css"></link>
     <div id="foo" data-bb-type="title" data-bb-caption="Edit Task" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
-        onactionclick="saveTask(document.getElementById('task-id').value, document.getElementById('task-name').value)"></div>
+        onactionclick="saveTask(u.valueOf('task-id'), u.valueOf('task-name'), u.valueOf('project'))"></div>
     <div data-bb-type="round-panel">
         <div data-bb-type="panel-header">
             Basic Information
@@ -18,14 +18,8 @@
                 <tr>
                     <td class="td-label" style="padding-top:50px;font-size:40px;vertical-align:top;">Project</td>
                     <td colspan="2">
-                        <select id="project">
-                            <option value="project_id_1" selected="true">No Project(Inbox)</option>
-                            <option value="project_id_2">中文项目</option>
-                            <option value="project_id_1">Project 1</option>
-                            <option value="project_id_2">Project 3</option>
-                            <option value="project_id_3">I am a long</option>
-                            <option value="project_id_4">I am a projct</option>
-                        </select>
+                        <div id='projectContainer'>
+                        </div>
                     </td>
                 </tr>
                 <tr>

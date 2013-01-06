@@ -45,5 +45,12 @@ var u = (function (){
         isFunction : function(func){
             return false === (func === void 0);
         },
+
+        appendOption : function(dropDown, value, innerHTML){
+            var option = document.createElement('option');
+            option.setAttribute('value',value);
+            option.innerHTML = innerHTML;
+            dropDown.appendChild(option);
+        },
     };
 })();

@@ -18,7 +18,7 @@ var dataAccess = (function (){
         successCallback = function (transaction, sqlResultSet) {
             var resultObjs = [];
             if(isSelect(sql)){
-                resultObjs = putResultOfSelectIntoArray(sql, sqlResultSet);
+                resultObjs = dataAccess.sqlResultSetToArray(sqlResultSet);
             } else if(isInsert(sql)){
                 resultObjs[0] = sqlResultSet.insertId;
             }
@@ -30,16 +30,8 @@ var dataAccess = (function (){
             finalFailureCallback(transaction, error);
         };   
         transaction.executeSql(sql, data, successCallback, failureCallback);
-    },
-
-    putResultOfSelectIntoArray = function (sql, sqlResultSet){
-        var max, result = [];
-        for(i = 0, max = sqlResultSet.rows.length; i < max; i++){
-            obj = sqlResultSet.rows.item(i);
-            result[i] = obj;
-        }
-        return result;
     }
+
 
     function runSQL(sql, data, successCallback, failureCallback){
         if(null == dataAccess.appDb){
@@ -74,6 +66,7 @@ var dataAccess = (function (){
             db.changeVersion('0.0.3', '0.0.4', function(tx){
                 dataAccess.runSqlDirectly(tx, 'alter table task add column reminder_on integer');                
                 dataAccess.runSqlDirectly(tx, 'alter table task add column next_reminder_time real');                
+                dataAccess.runSqlDirectly(tx, 'drop table task_reminder');                
             }, function(error){
                 log.logSqlError("Failed to apply DB patch from V0.0.3 to V0.0.4", error);
             }, function(){
@@ -112,12 +105,14 @@ var dataAccess = (function (){
                 dataAccess.runSqlDirectly(tx, SQL.TASK_META.CREATE_TABLE);
                 dataAccess.runSqlDirectly(tx, SQL.TASK_NOTE.CREATE_TABLE);
                 dataAccess.runSqlDirectly(tx, SQL.TASK_REMINDER.CREATE_TABLE);
-                dataAccess.runSqlDirectly(tx, "insert into meta_type (name, description) values ('project', 'Predefined Project dimension for meta')");
-                dataAccess.runSqlDirectly(tx, "insert into meta_type (name, description) values ('context', 'Predefined Context dimension for meta')");
-                dataAccess.runSqlDirectly(tx, "insert into meta_type (name, description, internal) values ('GTD', 'Predefined GTD dimension for meta, includes in basket/(someday/maybe)/next action', 1)");
-                dataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'In Basket'   , 'Predefined in basket meta for tasks' from meta_type where name = 'GTD'");
-                dataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'Next Action' , 'Predefined next action meta for tasks' from meta_type where name = 'GTD'");
-                dataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'Someday'     , 'Predefined Someday & Maybe meta for tasks' from meta_type where name = 'GTD'");
+                dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('project', 'Predefined Project dimension for meta')");
+                dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('context', 'Predefined Context dimension for meta')");
+                dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description, internal) VALUES ('GTD', 'Predefined GTD dimension for meta, includes in basket/(someday/maybe)/next action', 1)");
+                dataAccess.runSqlDirectly(tx, "INSERT INTO meta (meta_type_id , name , description) select id , 'In Basket'   , 'Predefined in basket meta for tasks' from meta_type where name = 'GTD'");
+                dataAccess.runSqlDirectly(tx, "INSERT INTO meta (meta_type_id , name , description) select id , 'Next Action' , 'Predefined next action meta for tasks' from meta_type where name = 'GTD'");
+                dataAccess.runSqlDirectly(tx, "INSERT INTO meta (meta_type_id , name , description) select id , 'Someday'     , 'Predefined Someday & Maybe meta for tasks' from meta_type where name = 'GTD'");
+                dataAccess.runSqlDirectly(tx, 'CREATE VIEW task_view AS select task.id as task_id, task.name as task_name, task.status as task_status, task.reminder_on as task_reminder_on, task.next_reminder_time as task_reminder_time, meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from task join task_meta on task_meta.task_id = task.id join meta on task_meta.meta_id = meta.id join meta_type on meta_type.id = meta.meta_type_id');
+                dataAccess.runSqlDirectly(tx, 'CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name, meta_type.internal as internal from meta join meta_type on meta_type.id = meta.meta_type_id');
             }, function(error){
                 log.logSqlError("Failed to create tables", error);
             }, function(){
@@ -140,13 +135,22 @@ var dataAccess = (function (){
                 data = [];
             }
             tx.executeSql(sql, data, function(tx, result){
-                console.debug("SQL directly: [" + sql + "], data: [" + data + "]");
+                console.debug("SQL: [" + sql + "], data: [" + data + "]");
                 if(u.isFunction(callback)){
                     callback(tx, result);
                 }
             }, function(tx, error){
-                log.logSqlError("SQL directly failed: [" + sql + "], data: [" + data + "]", error);
+                log.logSqlError("SQL failed: [" + sql + "], data: [" + data + "]", error);
             });
+        },
+
+        sqlResultSetToArray : function (sqlResultSet){
+            var max, result = [];
+            for(i = 0, max = sqlResultSet.rows.length; i < max; i++){
+                obj = sqlResultSet.rows.item(i);
+                result[i] = obj;
+            }
+            return result;
         },
 
         createDatabaseConnection: function (){

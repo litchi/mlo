@@ -81,13 +81,54 @@ function createItemElement(id, name, project, tags) {
 }
 
 function fillTaskToEditForm(id){
+    var projectSelect, obj, option;
+    projectSelect = document.createElement('select');
+    projectSelect.setAttribute('id', seedData.projectMetaTypeName);
+    projectSelect.setAttribute('data-bb-label','> ');
+    u.appendOption(projectSelect, 0, 'No Project');
     dataAccess.task.getById(id, function(tx, result, arrays) {
         u.setValue('task-id', id);
         u.setValue('task-name', arrays[0][SQL.TASK.COLS.NAME]);
+        dataAccess.appDb.transaction(function(tx){
+            dataAccess.runSqlDirectly(
+                tx,
+                "select meta_id, meta_name from meta_view where meta_type_name = ?", 
+                [seedData.projectMetaTypeName], 
+                function(tx, result){
+                    if(undefined != projectSelect && null != result.rows && result.rows.length > 0){
+                        for(i = 0, max = result.rows.length; i < max; i++){
+                            obj = result.rows.item(i);
+                            if(null != obj){
+                                u.appendOption(projectSelect, obj['meta_id'], obj['meta_name']);
+                            }
+                        }
+                    }
+                    projectSelect = bb.dropdown.style(projectSelect);
+                    document.getElementById('projectContainer').appendChild(projectSelect);
+                    bb.refresh();
+                }
+            );
+        });
+
+        dataAccess.appDb.transaction(function(tx){
+            dataAccess.runSqlDirectly(
+                tx,
+                "select distinct meta_name from task_view where task_id = ? and meta_type_name = ?",
+                [id, seedData.projectMetaTypeName],
+                function(tx, result){
+                    if(null != result && null!= result.rows && result.rows.length > 0 && 
+                        null != result.rows && null != result.rows.item && null != result.rows.item(0) &&
+                        null != result.rows.item(0)['meta_name']){
+                            document.getElementById(seedData.projectMetaTypeName).setSelectedText(result.rows.item(0)['meta_name']);                
+                        }    
+                }
+            );
+        });
     }, function(tx, error) {
         log.logSqlError("Error filling task[" + id + "] to edit form", error);
     });
 }
+
 function fillMetaListToPanel(metaTypeId, pageType){
     var metaTypeName,
         addNewLink      = document.getElementById('add-new-link'),

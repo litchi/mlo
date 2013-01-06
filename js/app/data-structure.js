@@ -34,12 +34,14 @@ var COMMON_SQL = {
 };
 
 var seedData = {
-    inBasketMetaName   : 'In Basket',
-    nextActionMetaName : 'Next Action',
-    somedayMetaName    : 'Someday',
-    gtdMetaTypeName    : 'GTD',
-    taskDoneStatus     : 'Done',
-    taskNewStatus      : 'New'
+    inBasketMetaName    : 'In Basket',
+    nextActionMetaName  : 'Next Action',
+    somedayMetaName     : 'Someday',
+    gtdMetaTypeName     : 'GTD',
+    taskDoneStatus      : 'Done',
+    taskNewStatus       : 'New',
+    projectMetaTypeName : 'project',
+    contextMetaTypeName : 'context',
 };
 
 var SQL = {

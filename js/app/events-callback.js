@@ -12,7 +12,9 @@ function loadCallback(){
 function webworksReadyCallback(e){
     //Init on bbUI should before any other code loads.  
     //Pass no parameters.. [bb.init()] to do the default init;
-    if (webworksreadyFired) return;
+    if (webworksreadyFired) {
+        return;
+    }
     webworksreadyFired = true;
     bb.init({
         actionBarDark: false,
@@ -26,6 +28,9 @@ function webworksReadyCallback(e){
 }
 
 function onScreenReadyCallback(element, id){
+    if(null == dataAccess.appDb){
+        dataAccess.createDatabaseConnection();
+    }
 }
 
 function onDomReadyCallback(element, id){
