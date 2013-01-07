@@ -105,8 +105,8 @@ var dataAccess = (function (){
                 dataAccess.runSqlDirectly(tx, SQL.TASK_META.CREATE_TABLE);
                 dataAccess.runSqlDirectly(tx, SQL.TASK_NOTE.CREATE_TABLE);
                 dataAccess.runSqlDirectly(tx, SQL.TASK_REMINDER.CREATE_TABLE);
-                dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('project', 'Predefined Project dimension for meta')");
-                dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('context', 'Predefined Context dimension for meta')");
+                dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('Project', 'Predefined Project dimension for meta')");
+                dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('Context', 'Predefined Context dimension for meta')");
                 dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description, internal) VALUES ('GTD', 'Predefined GTD dimension for meta, includes in basket/(someday/maybe)/next action', 1)");
                 dataAccess.runSqlDirectly(tx, "INSERT INTO meta (meta_type_id , name , description) select id , 'In Basket'   , 'Predefined in basket meta for tasks' from meta_type where name = 'GTD'");
                 dataAccess.runSqlDirectly(tx, "INSERT INTO meta (meta_type_id , name , description) select id , 'Next Action' , 'Predefined next action meta for tasks' from meta_type where name = 'GTD'");

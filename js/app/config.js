@@ -1,10 +1,10 @@
 var uiConfig = (function(){
 
     return {
-        leftPanelWidth              : '32%',
-        rightPanelWidth             : '70%',
-        rightPanelSmallerLeftMargin : '240',
-        rightPanelLargerLeftMargin  : '520',
+        leftPanelWidth              : '22%',
+        rightPanelWidth             : '78%',
+        rightPanelSmallerLeftMargin : '168',
+        rightPanelLargerLeftMargin  : '592',
         editTaskPagePrefix          : 'edit-task-',
         metaByPagePrefix            : 'meta-by-',
         taskByPagePrefix            : 'task-by-',
@@ -20,7 +20,7 @@ var uiConfig = (function(){
 
 var appConfig = (function(){
     return {
-        debugMode : true,
+        debugMode : false,
     }
 
 })();

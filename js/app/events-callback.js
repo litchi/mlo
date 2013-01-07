@@ -65,4 +65,10 @@ function setActionBarSelectStatus(screenId){
     if(undefined != tab){
         bb.actionBar.highlightAction(tab);
     }
+    if(true != appConfig.debugMode){
+        var devTab = document.getElementById('development');
+        if(undefined != devTab){
+            devTab.style.display = 'none';
+        }
+    }
 }

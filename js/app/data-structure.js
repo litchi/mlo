@@ -10,24 +10,6 @@
 *
 */
 
-/*
- * -- SQL for initialize the database
- * CREATE TABLE IF NOT EXISTS task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_id int)
- * CREATE TABLE IF NOT EXISTS meta (id INTEGER PRIMARY KEY AUTOINCREMENT, meta_type_id INTEGER, name text, description text, UNIQUE(meta_type_id, name))
- * CREATE TABLE IF NOT EXISTS meta_type (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, description text, internal INTEGER DEFAULT 0)
- * CREATE TABLE IF NOT EXISTS task_note (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, content text, create_date real)
- * CREATE TABLE IF NOT EXISTS task_reminder (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, next_reminder_time real)
- * CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, status text default 'New')
- *
- * -- Initialize database data
- * insert into meta_type (name, description) values ('project', 'Predefined Project dimension for meta');
- * insert into meta_type (name, description) values ('context', 'Predefined Context dimension for meta');
- * insert into meta_type (name, description, internal) values ('GTD', 'Predefined GTD dimension for meta, includes in basket/(someday/maybe)/next action', 1);
- * insert into meta (meta_type_id , name , description) select id , 'In Basket'   , 'Predefined in basket meta for tasks' from meta_type where name = 'GTD';
- * insert into meta (meta_type_id , name , description) select id , 'Next Action' , 'Predefined next action meta for tasks' from meta_type where name = 'GTD';
- * insert into meta (meta_type_id , name , description) select id , 'Someday'     , 'Predefined Someday & Maybe meta for tasks' from meta_type where name = 'GTD';
- */
-
 var COMMON_SQL = {
     ID_COL : "id",
     GET_MAX_ID : 'select max(id) from ',
@@ -40,8 +22,8 @@ var seedData = {
     gtdMetaTypeName     : 'GTD',
     taskDoneStatus      : 'Done',
     taskNewStatus       : 'New',
-    projectMetaTypeName : 'project',
-    contextMetaTypeName : 'context',
+    projectMetaTypeName : 'Project',
+    contextMetaTypeName : 'Context',
 };
 
 var SQL = {

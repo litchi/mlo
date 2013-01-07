@@ -5,10 +5,10 @@ function switchPanelWidth(groupWidth,taskWidth,taskLeft) {
 }
 
 //TODO Optimize, first construct a document fragment and then append it to the element.
-function addTaskToList (id, name, project, tags) {
+function addTaskToList (id, name, project, contexts) {
     var item, taskList = document.getElementById(uiConfig.detailListElementId); 
     var items = taskList.getItems();
-    item = createItemElement(id, name, project, tags);
+    item = createItemElement(id, name, project, contexts);
     if(0 == items.length){
         taskList.innerHTML = uiConfig.emptyString;
         taskList.appendItem(item);
@@ -31,13 +31,34 @@ function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
             for(var key in arrays) {   
                 name = arrays[key][SQL.TASK.COLS.NAME];
                 id   = arrays[key][SQL.TASK.COLS.ID];
-                addTaskToList(id, name, null, null);    
+                dataAccess.appDb.transaction(
+                    (
+                        function(id, name){
+                            return function(tx){
+                                dataAccess.runSqlDirectly(
+                                    tx,
+                                    'select meta_name, meta_type_name from task_view where task_id = ?',
+                                    [id],
+                                    function(tx, result){
+                                        var context = new Array(), project = null, metaTypeName = null;              
+                                        for(i = 0, max = result.rows.length; i < max; i++){
+                                            var obj = result.rows.item(i);
+                                            metaTypeName = obj['meta_type_name'];
+                                            if(seedData.projectMetaTypeName == metaTypeName){
+                                                project = obj['meta_name'];
+                                            } else if(seedData.contextMetaTypeName == metaTypeName){
+                                                context.push(obj['meta_name']);
+                                            }
+                                        }
+                                        addTaskToList(id, name, project, context);    
+                                    });
+                            }
+                        }
+                    )(id, name)
+                );
             }
         }
-    }, function(transaction, error){
-        log.logSqlError("Error getting meta[" + metaName + "] and type[" + metaTypeName + "]", error);
     });
-    //TODO Application level cache support
     //TODO Performance optimize
     dataAccess.meta.getByName(metaName, function(tx, result, resultObj){
         u.setValue('v_meta_name', metaName);
@@ -53,7 +74,7 @@ function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
     });
 }
 
-function createItemElement(id, name, project, tags) {
+function createItemElement(id, name, project, contexts) {
     var item = document.createElement('div');
     item.setAttribute('data-bb-type','item');
     item.setAttribute('data-bb-style','stretch');
@@ -66,8 +87,14 @@ function createItemElement(id, name, project, tags) {
             item.setAttribute('title', name);
             item.setAttribute('data-bb-title',name);
         }
-        if (tags != null) {
-            item.innerText = tags;
+        if (contexts != null) {
+            var contextCount = contexts.length, contextText = '';
+            if(contextCount > 0){
+                for(var i = 0; i < contextCount; i++){
+                    contextText = contextText + "<span class='list-context'>" + contexts[i] + "</span>";
+                }
+            }
+            item.innerHTML = contextText;
         }
         item.onclick = function() {
             document.getElementById('task-operation-context-menu').menu.show({
