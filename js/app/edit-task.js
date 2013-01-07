@@ -16,7 +16,7 @@ function fillTaskToEditForm(id){
 }
 
 function prepareReminderData(taskId){
-    var reminderOn;
+    var reminderOn, time;
     dataAccess.appDb.transaction(function(tx){
         dataAccess.runSqlDirectly(
             tx,
@@ -24,13 +24,12 @@ function prepareReminderData(taskId){
             [taskId],
             function(tx, result){
                 if(null != result.rows && result.rows.length > 0){
+                    time = result.rows.item(0)['next_reminder_time'],
                     reminderOn = (result.rows.item(0)['reminder_on'] == 1);
-                    if(reminderOn != true){
-                        document.getElementById('is-reminder-on').setChecked(false);
-                    } else {
-                        document.getElementById('is-reminder-on').setChecked(true);
+                    document.getElementById('is-reminder-on').setChecked(reminderOn);
+                    if(null != time && 0 != time && false == isNaN(time)){
+                        u.setValue('due-date', new Date().setTime(time));
                     }
-                    //TODO set reminder time
                 }
             }
         );
@@ -40,7 +39,7 @@ function prepareReminderData(taskId){
 function prepareProjectData(){
     var projectSelect = document.createElement('select');
     projectSelect.setAttribute('id', seedData.projectMetaTypeName);
-    projectSelect.setAttribute('data-bb-label','> ');
+    projectSelect.setAttribute('data-bb-label','');
     u.appendOption(projectSelect, 0, 'No Project');
     dataAccess.appDb.transaction(function(tx){
         dataAccess.runSqlDirectly(
@@ -190,26 +189,27 @@ function saveContextInfo(taskId){
 }
 
 function saveReminderInfo(taskId){
-    reminderOn = document.getElementById('is-reminder-on').getChecked();
-    if(reminderOn){
-        var dueDate = u.valueOf('due-date'), dueTime = u.valueOf('due-time');
-        var myDate = new Date(dueDate + " " + dueTime).getTime();
-        var currDate = new Date().getTime();
-        if(myDate > currDate){ 
-            var reminderAfter = myDate - currDate;
-            console.log("Reminder after: " + reminderAfter);
-            dataAccess.appDb.transaction(function(tx){
-                dataAccess.runSqlDirectly(tx, 
-                    "update task set next_reminder_time = ?, reminder_on = ? where id = ?", [myDate, 1, taskId], 
-                    function(tx, result) {
-                        //TODO Set reminder, add to system notification hub. Or integrate with push service
-                    });
+    var reminderOn = document.getElementById('is-reminder-on').getChecked(),
+    dueDate = u.valueOf('due-date'), 
+    reminderOnInt = (reminderOn == true) ? 1 : 0,
+    myDate = new Date(dueDate);
+    dataAccess.appDb.transaction(function(tx){
+        dataAccess.runSqlDirectly(tx, 
+            "update task set next_reminder_time = ?, reminder_on = ? where id = ?", [myDate, reminderOnInt, taskId], 
+            function(tx, result) {
+                if(reminderOn){
+                    setReminder(taskId, dueDate);
+                }
             });
-        }
-    } else {
-        dataAccess.appDb.transaction(function(tx){
-            dataAccess.runSqlDirectly(tx, "update task set reminder_on = ? where id = ?", [0, taskId]); 
-        });
+    });
+}
+
+function setReminder(taskId, reminderDate){
+    var currDate = new Date().getTime();
+    if(reminderDate > currDate){ 
+        var reminderAfter = reminderDate - currDate;
+        //TODO Set reminder, add to system notification hub. Or integrate with push service
+        console.log("Reminder after: " + reminderAfter);
     }
 }
 
@@ -226,4 +226,3 @@ function saveProjectInfo(taskId, projectId){
         );
     });
 }
-
