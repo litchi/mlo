@@ -3,7 +3,7 @@
     <input type="hidden" value="" id="task-id">
     <script type="text/javascript" id='edit-task-js' src="js/app/edit-task.js"></script>
     <div id="foo" data-bb-type="title" data-bb-caption="Edit Task" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
-        onactionclick="saveTask(u.valueOf('task-id'), u.valueOf('task-name'), u.valueOf('project'))"></div>
+        onactionclick="saveTask(u.valueOf('task-id'), u.valueOf('task-name'), u.valueOf(seedData.projectMetaTypeName))"></div>
     <div data-bb-type="round-panel">
         <div data-bb-type="panel-header">
             Basic Information
@@ -24,9 +24,9 @@
                 </tr>
                 <tr>
                     <td class="td-label">Due</td>
-                    <td style="padding-left:23px;" colspan=2><input type="datetime" value="" id="due-date"/></td>
+                    <td style="padding-left:23px;" colspan=2><input type="datetime-local" value="" id="due-date"/></td>
                 </tr>
-                <tr> 
+                <tr style="display:none"> 
                     <td class="td-label">Reminder?</td>
                     <td colspan=2><div data-bb-type="toggle" data-bb-on="Yes" data-bb-off="No" id="is-reminder-on"/></div> </td>
                 </tr>
