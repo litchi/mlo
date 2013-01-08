@@ -16,11 +16,7 @@ function addTaskToList (id, name, project, contexts, dueDate) {
         taskList.innerHTML = uiConfig.emptyString;
         taskList.appendItem(item);
     } else if(items.length > 0){
-        if(items[0] != undefined){
-            taskList.insertItemBefore(item, items[0]);
-        } else {
-            taskList.appendItem(item);
-        }
+        taskList.appendItem(item);
     }
 }
 

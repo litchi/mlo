@@ -107,7 +107,7 @@ var SQL = {
         SELECT_BY_ID        : 'select id, name, reminder_on, strftime(\'%Y-%m-%dT%H:%M\', next_reminder_time, \'unixepoch\') as next_reminder_time from task where id = ?',
         SELECT_BY_NAME      : 'select id, name from task where name = ?',
         SELECT_BY_ID_NAME   : 'select id, name from task where id = ? and name = ?',
-        SELECT_BY_META_NAME : 'select distinct task.id, task.name, task.status, task_meta.meta_id from task inner join task_meta on task.id = task_meta.task_id where task_meta.meta_id = (select meta.id from meta where name= ? and meta_type_id = (select meta_type.id from meta_type where name = ?)) AND task.status != ?',
+        SELECT_BY_META_NAME : 'select distinct task.id, task.name, task.status, task_meta.meta_id from task inner join task_meta on task.id = task_meta.task_id where task_meta.meta_id = (select meta.id from meta where name= ? and meta_type_id = (select meta_type.id from meta_type where name = ?)) AND task.status != ? order by case when task.next_reminder_time is null then 1 else 0 end',
         UPDATE_BY_ID        : 'update task set name = ? where id = ?',
         UPDATE_STATUS_BY_ID : 'update task set status = ? where id = ?',
         DELETE_BY_ID        : 'delete from task where id = ?',
