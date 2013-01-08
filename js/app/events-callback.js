@@ -24,7 +24,7 @@ function webworksReadyCallback(e){
         onscreenready: onScreenReadyCallback,
         ondomready: onDomReadyCallback
     });
-    bb.pushScreen('task-list.html', seedData.nextActionMetaName);
+    bb.pushScreen('task-list.html', seedData.inBasketMetaName);
 }
 
 function onScreenReadyCallback(element, id){
