@@ -1,39 +1,32 @@
 var selectedContextIds = new Array();
 
 function fillTaskToEditForm(id){
-    var obj, option;
+    var obj, option, reminderOn, due;
     dataAccess.task.getById(id, function(tx, result, arrays) {
-        u.setValue('task-id', id);
+        //TODO Change coding style
+        //Change ABC_DEF to AbcDef and abcDef etc.
         u.setValue('task-name', arrays[0][SQL.TASK.COLS.NAME]);
-        prepareReminderData(id);
         prepareProjectData();
         setDefaultProjectForTask(id);
+        reminderOn = arrays[0][SQL.TASK.COLS.ReminderOn];
+        due = arrays[0][SQL.TASK.COLS.NextReminderTime];
+        prepareDueData(reminderOn, due);
         prepareContextData(id);
+        u.setValue('task-id', id);
         bb.refresh();
     }, function(tx, error) {
         log.logSqlError("Error filling task[" + id + "] to edit form", error);
     });
 }
 
-function prepareReminderData(taskId){
-    var reminderOn, time;
-    dataAccess.appDb.transaction(function(tx){
-        dataAccess.runSqlDirectly(
-            tx,
-            'select reminder_on, next_reminder_time from task where id = ?',
-            [taskId],
-            function(tx, result){
-                if(null != result.rows && result.rows.length > 0){
-                    time = result.rows.item(0)['next_reminder_time'],
-                    reminderOn = (result.rows.item(0)['reminder_on'] == 1);
-                    document.getElementById('is-reminder-on').setChecked(reminderOn);
-                    if(null != time && 0 != time && false == isNaN(time)){
-                        u.setValue('due-date', new Date().setTime(time));
-                    }
-                }
-            }
-        );
-    });
+function prepareDueData(reminderOn, due){
+    var reminderInput = document.getElementById('is-reminder-on');
+    if(undefined != reminderInput){
+        reminderInput.setChecked((1 == reminderOn));
+    }
+    if(null != due){
+        u.setValue('due-date', due);
+    }
 }
 
 function prepareProjectData(){
@@ -195,7 +188,7 @@ function saveReminderInfo(taskId){
     myDate = new Date(dueDate);
     dataAccess.appDb.transaction(function(tx){
         dataAccess.runSqlDirectly(tx, 
-            "update task set next_reminder_time = ?, reminder_on = ? where id = ?", [myDate, reminderOnInt, taskId], 
+            "update task set next_reminder_time = ?, reminder_on = ? where id = ?", [myDate.getTime()/1000, reminderOnInt, taskId], 
             function(tx, result) {
                 if(reminderOn){
                     setReminder(taskId, dueDate);

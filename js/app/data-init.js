@@ -16,7 +16,6 @@ function createTables(tx){
     dataAccess.runSqlDirectly(tx, SQL.META.CREATE_TABLE);
     dataAccess.runSqlDirectly(tx, SQL.TASK_META.CREATE_TABLE);
     dataAccess.runSqlDirectly(tx, SQL.TASK_NOTE.CREATE_TABLE);
-    dataAccess.runSqlDirectly(tx, SQL.TASK_REMINDER.CREATE_TABLE);
 }
 
 function insertSeedData(tx){

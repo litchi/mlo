@@ -5,7 +5,6 @@
 * drop table task;
 * drop table task_meta;
 * drop table task_note;
-* drop table task_reminder;
 * drop table __WebKitDatabaseInfoTable__;
 *
 */
@@ -89,25 +88,23 @@ var SQL = {
 
     TASK_NOTE : {
         TABLE_NAME : 'task_note',
-        CREATE_TABLE : 'CREATE TABLE IF NOT EXISTS task_note (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, content text, create_date real)'
-    },
-
-    TASK_REMINDER : {
-        TABLE_NAME : 'task_reminder',
-        CREATE_TABLE : 'CREATE TABLE IF NOT EXISTS task_reminder (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, next_reminder_time real)'
+        CREATE_TABLE : 'CREATE TABLE IF NOT EXISTS task_note (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, content text, create_date integer)'
     },
 
     TASK : {
         TABLE_NAME : 'task',
         COLS : {
             ID : COMMON_SQL.ID_COL,
-            NAME: 'name'
+            NAME: 'name',
+            ReminderOn : "reminder_on",
+            NextReminderTime : 'next_reminder_time', 
         },
+        //TODO Clean up/Remove these create tables sqls since they are not up to date.
         CREATE_TABLE        : "CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, status text default 'New')",
         INSERT_BY_NAME      : 'insert into task (id, name) values (null, ?)',
         INSERT_BY_ID_NAME   : 'insert into task(id, name) values (?, ?)',
         FILTER_BY_STATUS    : 'select id, name from task where status != ?',
-        SELECT_BY_ID        : 'select id, name from task where id = ?',
+        SELECT_BY_ID        : 'select id, name, reminder_on, strftime(\'%Y-%m-%dT%H:%M\', next_reminder_time, \'unixepoch\') as next_reminder_time from task where id = ?',
         SELECT_BY_NAME      : 'select id, name from task where name = ?',
         SELECT_BY_ID_NAME   : 'select id, name from task where id = ? and name = ?',
         SELECT_BY_META_NAME : 'select distinct task.id, task.name, task.status, task_meta.meta_id from task inner join task_meta on task.id = task_meta.task_id where task_meta.meta_id = (select meta.id from meta where name= ? and meta_type_id = (select meta_type.id from meta_type where name = ?)) AND task.status != ?',

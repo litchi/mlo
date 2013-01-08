@@ -20,7 +20,7 @@ var uiConfig = (function(){
 
 var appConfig = (function(){
     return {
-        debugMode : false,
+        debugMode : true,
     }
 
 })();
