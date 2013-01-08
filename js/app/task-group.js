@@ -7,10 +7,11 @@ function switchPanelWidth(groupWidth,taskWidth,taskLeft) {
 }
 
 //TODO Optimize, first construct a document fragment and then append it to the element.
-function addTaskToList (id, name, project, contexts) {
+//TODO Put project/contexts/dueDate to an array to avoid changing the method definition all the time.
+function addTaskToList (id, name, project, contexts, dueDate) {
     var item, taskList = document.getElementById(uiConfig.detailListElementId); 
     var items = taskList.getItems();
-    item = createItemElement(id, name, project, contexts);
+    item = createItemElement(id, name, project, contexts, dueDate);
     if(0 == items.length){
         taskList.innerHTML = uiConfig.emptyString;
         taskList.appendItem(item);
@@ -37,22 +38,31 @@ function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
                     (
                         function(id, name){
                             return function(tx){
+                            //TODO Change all reminder to due since this is actually not a reminder time
+                            //Places:
+                            //1. Table creation
+                            //2. View creation
+                            //3. Javascript codes
+                            //4. Html words.
                                 dataAccess.runSqlDirectly(
                                     tx,
-                                    'select meta_name, meta_type_name from task_view where task_id = ?',
+                                    'select meta_name, meta_type_name, task_reminder_time from task_view where task_id = ?',
                                     [id],
                                     function(tx, result){
-                                        var context = new Array(), project = null, metaTypeName = null;              
+                                        var context = new Array(), project = null, mt = null, rt = null;              
                                         for(i = 0, max = result.rows.length; i < max; i++){
                                             var obj = result.rows.item(i);
-                                            metaTypeName = obj['meta_type_name'];
-                                            if(seedData.projectMetaTypeName == metaTypeName){
-                                                project = obj['meta_name'];
-                                            } else if(seedData.contextMetaTypeName == metaTypeName){
+                                            mt = obj['meta_type_name'];
+                                            if(seedData.contextMetaTypeName == mt){
                                                 context.push(obj['meta_name']);
+                                            } else if(seedData.projectMetaTypeName == mt){
+                                                project = obj['meta_name'];
+                                            }
+                                            if(null == rt){
+                                                rt = obj['task_reminder_time'];
                                             }
                                         }
-                                        addTaskToList(id, name, project, context);    
+                                        addTaskToList(id, name, project, context, rt);    
                                     });
                             }
                         }
@@ -86,8 +96,8 @@ function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
     });
 }
 
-function createItemElement(id, name, project, contexts) {
-    var item = document.createElement('div');
+function createItemElement(id, name, project, contexts, dueDate) {
+    var innerContent = '', item = document.createElement('div');
     item.setAttribute('data-bb-type','item');
     item.setAttribute('data-bb-style','stretch');
     if(id != null) {
@@ -96,18 +106,26 @@ function createItemElement(id, name, project, contexts) {
             item.setAttribute('title', name);
             item.setAttribute('data-bb-title',name);
         }
+        if(project != null){
+            innerContent = "\n<span class='list-project'>p:" + project + "</span>";
+        }
         if (contexts != null) {
-            var contextCount = contexts.length, contextText = '';
+            var contextCount = contexts.length;
             if(contextCount > 0){
                 for(var i = 0; i < contextCount; i++){
-                    contextText = contextText + "<span class='list-context'>" + contexts[i] + "</span>";
+                    innerContent = innerContent + "\n<span class='list-context'>" + contexts[i] + "</span>";
                 }
             }
-            item.innerHTML = contextText;
         }
-        if(project != null){
-            item.innerHTML = "<span class='list-project'>p:" + project + "</span>" + item.innerHTML;
+        if(dueDate != null){
+            var dueClass, actualMs, ld;
+            var tzo = new Date().getTimezoneOffset();
+            actualMs = (dueDate + tzo * 60) * 1000;
+            ld = new Date(actualMs);
+            dueClass = (actualMs > new Date().getTime()) ? 'list-due' : 'list-overdue';
+            innerContent = innerContent + "\n<span class='" + dueClass + "'>" + u.getPrettyDateStr(ld) + "</span>";
         }
+        item.innerHTML = innerContent;
         item.onclick = function() {
             document.getElementById('task-operation-context-menu').menu.show({
                 title:'Edit Task',

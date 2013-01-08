@@ -60,6 +60,27 @@ var u = (function (){
             + ('0' + myDate.getHours()).slice(-2) + '-'
             + ('0' + myDate.getMinutes()).slice(-2);
             return resultStr;
+        },
+
+        getPrettyDateStr : function(myDate){
+            var d, t, now, resultStr;
+            now = new Date();
+            if(now.getFullYear() == myDate.getFullYear() && now.getMonth() == myDate.getMonth()){
+                if(now.getDate() == myDate.getDate()){ 
+                    d = 'Today '; 
+                } else if(1 == (myDate.getDate() - now.getDate())){ 
+                    d = 'Tomorrow '; 
+                } else if(-1 == (myDate.getDate() - now.getDate())){ 
+                    d = 'Yesterday '; 
+                } else { 
+                    d = (myDate.getMonth()+1) + '/' + (myDate.getDate()) + ' ';
+                }
+            } else {
+                d = myDate.getFullYear() +  '/' + (myDate.getMonth()+1) + '/' + (myDate.getDate()) + ' ';
+            }
+            t = (myDate.getHours()) + ':' + (myDate.getMinutes());
+            resultStr =  d + t;
+            return resultStr;
         }
     };
 })();

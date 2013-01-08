@@ -7,7 +7,8 @@ function createTask(name, metaId){
                 "insert into task_meta (id, task_id, meta_id) values (null, ?, ?)", 
                 [taskId, metaId],
                 function(tx1, r2){
-                    addTaskToList(taskId, name, null, null);
+                    //TODO context and project should not always be empty
+                    addTaskToList(taskId, name, null, null, null);
                     u.setValue('ctsi', uiConfig.emptyString);
                 }, 
                 function(tx1, e){

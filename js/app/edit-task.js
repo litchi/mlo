@@ -197,10 +197,10 @@ function saveReminderInfo(taskId){
     });
 }
 
-function setReminder(taskId, reminderDate){
-    var currDate = new Date().getTime();
-    if(reminderDate > currDate){ 
-        var reminderAfter = reminderDate - currDate;
+function setReminder(taskId, reminderTime){
+    var currTime = new Date().getTime();
+    if(reminderTime > currTime){ 
+        var reminderAfter = reminderTime - currTime;
         //TODO Set reminder, add to system notification hub. Or integrate with push service
         console.log("Reminder after: " + reminderAfter);
     }
