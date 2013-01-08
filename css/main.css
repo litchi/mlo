@@ -53,15 +53,21 @@
 .list-due {
     margin-left: 10px;
     font-size:24px;
-    text-decoration:underline;
+    border-bottom: 1px solid #222;
+    padding-bottom: 2px;
+    /*border-top: 1px solid #333;*/
+    /*padding-top: 5px;*/
 }
 
 .list-overdue {
     margin-left: 10px; 
     font-size:24px;
     color: red !important;
-    font-weight: bold;
-    text-decoration:underline;
+    /*font-weight: bold;*/
+    border-bottom: 1px solid red;
+    padding-bottom: 2px;
+    /*border-top: 1px solid red;*/
+    /*padding-top: 5px;*/
 }
 
 #group {
