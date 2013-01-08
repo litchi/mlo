@@ -1,7 +1,9 @@
 function switchPanelWidth(groupWidth,taskWidth,taskLeft) {
-    document.getElementById('group').style.width=groupWidth;
-    document.getElementById(uiConfig.detailListPanelElementId).style.width=taskWidth;
-    document.getElementById(uiConfig.detailListPanelElementId).style.left=taskLeft + 'px';
+    if(document.getElementById('group').style.width != groupWidth){
+        document.getElementById('group').style.width=groupWidth;
+        document.getElementById(uiConfig.detailListPanelElementId).style.width=taskWidth;
+        document.getElementById(uiConfig.detailListPanelElementId).style.left=taskLeft + 'px';
+    }
 }
 
 //TODO Optimize, first construct a document fragment and then append it to the element.
@@ -62,13 +64,23 @@ function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
     //TODO Performance optimize
     dataAccess.meta.getByName(metaName, function(tx, result, resultObj){
         u.setValue('v_meta_name', metaName);
-        u.setValue('v_meta_id', resultObj[0][SQL.META.COLS.ID]);
+        if(null != resultObj && (resultObj.length > 0) && 
+        null != resultObj[0] && null != resultObj[0][SQL.META.COLS.ID]){
+            u.setValue('v_meta_id', resultObj[0][SQL.META.COLS.ID]);
+        } else {
+            console.warn("Meta with name '%s' not found", metaName);
+        }
     }, function(tx, error){
         log.logSqlError("Error getting meta[" + metaName + "]", error);    
     });
     dataAccess.metaType.getByName(metaTypeName, function(tx, result, resultObj){
         u.setValue('v_meta_type_name', metaTypeName);
-        u.setValue('v_meta_type_id', resultObj[0][SQL.META_TYPE.COLS.ID]);
+        if(null != resultObj && (resultObj.length > 0) && 
+        null != resultObj[0] && null != resultObj[0][SQL.META.COLS.ID]){
+            u.setValue('v_meta_type_id', resultObj[0][SQL.META_TYPE.COLS.ID]);
+        } else {
+            console.warn("Meta Type with name '%s' not found", metaTypeName);
+        }
     }, function(tx, error){
         log.logSqlError("Error getting metaType[" + metaTypeName + "]", error);    
     });
@@ -80,9 +92,6 @@ function createItemElement(id, name, project, contexts) {
     item.setAttribute('data-bb-style','stretch');
     if(id != null) {
         item.setAttribute('id', 'task-' + id);
-        if(project != null){
-            item.setAttribute('data-bb-accent-text', project);
-        }
         if (name != null) {                     
             item.setAttribute('title', name);
             item.setAttribute('data-bb-title',name);
@@ -95,6 +104,9 @@ function createItemElement(id, name, project, contexts) {
                 }
             }
             item.innerHTML = contextText;
+        }
+        if(project != null){
+            item.innerHTML = "<span class='list-project'>p:" + project + "</span>" + item.innerHTML;
         }
         item.onclick = function() {
             document.getElementById('task-operation-context-menu').menu.show({
@@ -166,7 +178,11 @@ function fillMetaListToPanel(metaTypeId, pageType){
 
 function fillMetaListToPanelByTypeName(metaTypeName, pageType){
     dataAccess.metaType.getByName(metaTypeName, function(tx, result, objs){
-        fillMetaListToPanel(objs[0][SQL.META_TYPE.COLS.ID], pageType);
+        if(null != objs && undefined != objs && objs.length > 0 && null != objs[0] && undefined != objs[0]){
+            fillMetaListToPanel(objs[0][SQL.META_TYPE.COLS.ID], pageType);
+        } else {
+            console.warn("Meta type with name[%s] was not found on page type[%s]", metaTypeName, pageType);
+        }
     }, function(tx, error){
         log.logSqlError("Error getting meta type[" + metaTypeName + "], pageType: [" + pageType + "]", error);
     })

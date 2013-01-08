@@ -1,6 +1,6 @@
 <div data-bb-type="action-bar" data-bb-back-caption="Back" id="action-bar">
-    <!-- TODO Make this action bar dynamic-->
-    <!--
+    <!-- 
+    -TODO Make this action bar dynamic
     -The id of each action bar should be the same as the 
     -pushScreen id to make Javascript code setting the 
     -active bar selected status working
@@ -15,18 +15,20 @@
         data-bb-img="resources/next-action.png" data-bb-accent-text="Next Action" id="Next Action"> 
         Next Action 
     </div>
+    <!--
     <div data-bb-type="action" data-bb-style="tab" 
         onclick="bb.pushScreen('due-tasks.html','due-tasks');" 
         data-bb-img="resources/due.png" data-bb-accent-text="Due" id="due-tasks"> 
         Due 
     </div>
+    -->
     <div data-bb-type="action" data-bb-style="tab" 
         onclick="bb.pushScreen('task-by-meta.html', uiConfig.taskByPagePrefix + 'Project');" 
         data-bb-img="resources/project.png"  data-bb-accent-text="Project" id="task-by-Project"> Project 
     </div>
     <div data-bb-type="action" data-bb-style="tab" id="task-by-Context"
-        data-bb-pin="true" data-bb-overflow="true" onclick="bb.pushScreen('task-by-meta.html', uiConfig.taskByPagePrefix + 'Context');" 
-        data-bb-pin="true" data-bb-overflow="true" data-bb-img="resources/context.png" data-bb-accent-text="Context"> 
+        onclick="bb.pushScreen('task-by-meta.html', uiConfig.taskByPagePrefix + 'Context');" 
+        data-bb-img="resources/context.png" data-bb-accent-text="Context"> 
         Context 
     </div>
     <div data-bb-type="action" data-bb-style="tab"

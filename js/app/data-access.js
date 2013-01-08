@@ -1,6 +1,5 @@
-﻿
-var dataAccess = (function (){
-    var seedDb, db_schema_version; 
+﻿var dataAccess = (function (){
+    var appInfoDb, db_schema_version = ''; 
 
     sqlMatch = function(pattern, sql){
         return (new RegExp(pattern, 'i')).test(sql);
@@ -55,31 +54,8 @@ var dataAccess = (function (){
     function openAppDb(){
         dataAccess.appDb = openDatabase(SQL.DB_NAME, db_schema_version, SQL.DB_DESCRIPTION, SQL.DB_SIZE, dataAccess.initAppDb);
         log.logDbInfo(SQL.DB_NAME, SQL.DB_DESCRIPTION, db_schema_version, dataAccess.logInfo);
-        applyPatch003to004(dataAccess.appDb);
         if(null == dataAccess.appDb){
             console.error("Failed to open application database");
-        }
-    }
-
-    function applyPatch003to004(db){
-        if(db_schema_version == '0.0.3'){
-            db.changeVersion('0.0.3', '0.0.4', function(tx){
-                dataAccess.runSqlDirectly(tx, 'alter table task add column reminder_on integer');                
-                dataAccess.runSqlDirectly(tx, 'alter table task add column next_reminder_time real');                
-                dataAccess.runSqlDirectly(tx, 'drop table task_reminder');                
-            }, function(error){
-                log.logSqlError("Failed to apply DB patch from V0.0.3 to V0.0.4", error);
-            }, function(){
-                seedDb.transaction(function(tx){
-                    dataAccess.runSqlDirectly(tx, 'update app_info set db_schema_version = ? where app_id = ?', ['0.0.4', 'BB10GTD']);
-                }, function(error){
-                    log.logSqlError("Failed to update app_info table for DB patch 0.0.3->0.0.4", error);
-                }, function(){
-                    console.info("Successfully update app_info table for DB patch 0.0.3->0.0.4");
-                    console.info("Successfully apply DB patch from V0.0.3 to V0.0.4");
-                });
-                console.info("Successfully change DB schema for patch 0.0.3->0.0.4, about to update app_info table");
-            });
         }
     }
 
@@ -99,20 +75,13 @@ var dataAccess = (function (){
 
         initAppDb : function(db){
             db.transaction(function(tx){
-                dataAccess.runSqlDirectly(tx, SQL.TASK.CREATE_TABLE);
-                dataAccess.runSqlDirectly(tx, SQL.META_TYPE.CREATE_TABLE);
-                dataAccess.runSqlDirectly(tx, SQL.META.CREATE_TABLE);
-                dataAccess.runSqlDirectly(tx, SQL.TASK_META.CREATE_TABLE);
-                dataAccess.runSqlDirectly(tx, SQL.TASK_NOTE.CREATE_TABLE);
-                dataAccess.runSqlDirectly(tx, SQL.TASK_REMINDER.CREATE_TABLE);
-                dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('Project', 'Predefined Project dimension for meta')");
-                dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('Context', 'Predefined Context dimension for meta')");
-                dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description, internal) VALUES ('GTD', 'Predefined GTD dimension for meta, includes in basket/(someday/maybe)/next action', 1)");
-                dataAccess.runSqlDirectly(tx, "INSERT INTO meta (meta_type_id , name , description) select id , 'In Basket'   , 'Predefined in basket meta for tasks' from meta_type where name = 'GTD'");
-                dataAccess.runSqlDirectly(tx, "INSERT INTO meta (meta_type_id , name , description) select id , 'Next Action' , 'Predefined next action meta for tasks' from meta_type where name = 'GTD'");
-                dataAccess.runSqlDirectly(tx, "INSERT INTO meta (meta_type_id , name , description) select id , 'Someday'     , 'Predefined Someday & Maybe meta for tasks' from meta_type where name = 'GTD'");
+                createTables(tx);
+                dataAccess.runSqlDirectly(tx, 'alter table task add column reminder_on integer');                
+                dataAccess.runSqlDirectly(tx, 'alter table task add column next_reminder_time real');                
+                dataAccess.runSqlDirectly(tx, 'drop table task_reminder');                
                 dataAccess.runSqlDirectly(tx, 'CREATE VIEW task_view AS select task.id as task_id, task.name as task_name, task.status as task_status, task.reminder_on as task_reminder_on, task.next_reminder_time as task_reminder_time, meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from task join task_meta on task_meta.task_id = task.id join meta on task_meta.meta_id = meta.id join meta_type on meta_type.id = meta.meta_type_id');
-                dataAccess.runSqlDirectly(tx, 'CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name, meta_type.internal as internal from meta join meta_type on meta_type.id = meta.meta_type_id');
+                dataAccess.runSqlDirectly(tx, 'CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from meta join meta_type on meta_type.id = meta.meta_type_id');
+                loadSeedAndSampleData();
             }, function(error){
                 log.logSqlError("Failed to create tables", error);
             }, function(){
@@ -155,27 +124,27 @@ var dataAccess = (function (){
 
         createDatabaseConnection: function (){
             if(dataAccess.appDb === null){
-                seedDb = openDatabase('xiangqian_liu_apps_info_db', '0.0.1', 'App info for Liu Xiangqian\'s Applications', 1024, dataAccess.initAppInfoDb);
+                appInfoDb = openDatabase('xiangqian_liu_apps_info_db', '', 'App info for Liu Xiangqian\'s Applications', 1024, dataAccess.initAppInfoDb);
                 setTimeout(function(){
-                    seedDb.transaction(function(tx){
+                    appInfoDb.transaction(function(tx){
                         dataAccess.runSqlDirectly(tx, "select db_schema_version from app_info where app_id = ?", ['BB10GTD'], 
                             function(tx, result){
                                 if((result != null) 
                                     && (result.rows != null)
-                                    && (1 == result.rows.length )
-                                    && (result.rows.item != null)
-                                    && (result.rows.item(0) != null)
-                                    && (result.rows.item(0)['db_schema_version'] != null)){
+                                && (1 == result.rows.length )
+                                && (result.rows.item != null)
+                                && (result.rows.item(0) != null)
+                                && (result.rows.item(0)['db_schema_version'] != null)){
                                     db_schema_version = result.rows.item(0)['db_schema_version'];                
                                     console.info("DB Schema version for app[BB10GTD] is [" + db_schema_version + "]");
                                     openAppDb();
                                 } else {
                                     console.info("DB Schema version for app[BB10GTD] not existing");
-                                    seedDb.transaction(function(tx1){
+                                    appInfoDb.transaction(function(tx1){
                                         dataAccess.runSqlDirectly(
                                             tx1, 
                                             "insert into app_info(app_id, name, version, db_schema_version, additional_info) values (?, ?, ?, ?, ?)", 
-                                            ['BB10GTD', 'Peaceful & Better Life App', '0.0.1', '0.0.3','Peaceful & Better Life App']
+                                            ['BB10GTD', 'Peaceful & Better Life App', '0.0.1', '','Peaceful & Better Life App']
                                         );
                                     }, function(error){
                                         log.logSqlError("Failed to insert app info for BB10GTD app", error);
@@ -188,7 +157,7 @@ var dataAccess = (function (){
                     }, function(error){
                         log.logSqlError("Failed to query for db_schema_version for app[BB10GTD]", error);
                     });
-                }, 500);
+                }, 100);
             }
         },
 
