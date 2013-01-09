@@ -134,48 +134,34 @@ function saveTask(id, name, projectId){
     dataAccess.task.update(id, name, function(tx, result, rows){
         saveReminderInfo(id);
         saveProjectInfo(id, projectId);
-        saveContextInfo(id);
-        bb.popScreen();
+        saveContextPopScreen(id);
     }, function(tx, error) {
         log.logSqlError("Failed to update task[" + id + "][" + name + "]", error);
     });
 }
 
-function saveContextInfo(taskId){
-    log.logObjectData("selectedContextIds before save to DB", selectedContextIds, true);
+function saveContextPopScreen(taskId){
     dataAccess.appDb.transaction(function(tx1){
-    //TODO Performance optimize, put into one transaction
     dataAccess.runSqlDirectly(tx1,
         SQL.TASK_META.DELETE_META_BY_TYPE, 
         [taskId, seedData.contextMetaTypeName], 
         function(tx, result) {
-            //selectedContextIds is a global variable used to save selected contexts
-            dataAccess.appDb.transaction(function(tx2){
-                for(var key in selectedContextIds) {
-                    var val = selectedContextIds[key];
-                    if(null != val && null != key){
-                        var data = [taskId, key];
-                        log.logSqlStatement(SQL.TASK_META.INSERT, data, dataAccess.logQuerySql);
-                        tx2.executeSql(SQL.TASK_META.INSERT, data,
-                            (
-                                function(data){
-                                    return function(tx, result){
-                                        console.debug("Successfully create context[%s] link with task[%s]", data[1], taskId);
-                                    }
-                                }
-                            )(data), 
-                            (
-                                function(data){
-                                    return function(tx, error){
-                                        log.logSqlError("Failed to create context[" + data[1] + "] link with task[" + taskId + "]", error);
-                                    }
-                                }
-                            )(data) 
-                        );
-                    }
-                }
-            });
+            saveContextToDb(taskId);
+            bb.popScreen();
         });
+    });
+}
+
+function saveContextToDb(taskId){
+    dataAccess.appDb.transaction(function(tx2){
+        for(var key in selectedContextIds) {
+            var val = selectedContextIds[key];
+            if(null != val && null != key){
+                var data = [taskId, key];
+                log.logSqlStatement(SQL.TASK_META.INSERT, data, dataAccess.logQuerySql);
+                dataAccess.runSqlDirectly(tx2,SQL.TASK_META.INSERT, data);
+            }
+        }
     });
 }
 
