@@ -1,4 +1,4 @@
-/*jslint browser: true, todo: true */
+/*jslint browser: true */
 /*global u, dataAccess, SQL, seedData, bb, log, console, uiConfig*/
 "use strict";
 function createTask(name, metaId) {
@@ -137,7 +137,10 @@ function moveTaskToGtdList(metaName) {
             //TODO Generate the context menu dynamically based on current task status
             dataAccess.taskMeta.moveTaskToGtdList(selectedId, metaName,
                 function (tx3, result3, rows3) {
-                    document.getElementById('task-' + selectedId).remove();
+                    var metaTypeName = u.valueOf('v_meta_type_name');
+                    if (metaTypeName !== seedData.projectMetaTypeName && metaTypeName !== seedData.contextMetaTypeName) {
+                        document.getElementById('task-' + selectedId).remove();
+                    }
                 },
                 function (tx3, error3) {
                     console.error("Failed to create task meta for task[" + selectedId + "], meta[" + metaName + "]");
