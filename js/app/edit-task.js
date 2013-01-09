@@ -203,6 +203,10 @@ function saveProjectInfo(taskId, projectId) {
 }
 
 function saveTask(id, name, projectId) {
+    if (uiConfig.emptyString === name) {
+        document.getElementById('task-name').setAttribute('placeholder', 'Please fill in task name');
+        return;
+    }
     dataAccess.task.update(id, name, function (tx, result, rows) {
         saveReminderInfo(id);
         if (projectId !== 0) {

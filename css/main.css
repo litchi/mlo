@@ -100,3 +100,8 @@
     text-align: center;
     margin-top: 10px;
 }
+
+#meta_name::-webkit-input-placeholder, 
+#task-name::-webkit-input-placeholder {
+    color: red;
+}

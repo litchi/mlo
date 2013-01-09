@@ -260,7 +260,7 @@ function fillMetaToEditForm(id) {
         dataAccess.meta.getById(id, function (tx, results, arrays) {
             log.logObjectData("Meta", arrays[0], dataAccess.logQueryResult);
             u.setValue(SQL.META.COLS.ID, arrays[0][SQL.META.COLS.ID]);
-            u.setValue(SQL.META.COLS.NAME, arrays[0][SQL.META.COLS.NAME]);
+            u.setValue('meta_name', arrays[0][SQL.META.COLS.NAME]);
             u.setValue(SQL.META.COLS.DESCRIPTION, arrays[0][SQL.META.COLS.DESCRIPTION]);
             dataAccess.metaType.getById(arrays[0][SQL.META.COLS.META_TYPE_ID], function (tx, result, objs) {
                 u.setValue('meta_type_id', objs[0][SQL.META_TYPE.COLS.ID]);

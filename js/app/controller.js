@@ -84,6 +84,16 @@ function editMeta() {
 }
 
 function saveMeta(id, name, meta_type_id, description) {
+    var placeholder;
+    if (uiConfig.emptyString === name) {
+        if (seedData.projectMetaTypeName === u.valueOf('meta_type_name')) {
+            placeholder = 'Please fill in project name';
+        } else if (seedData.contextMetaTypeName === u.valueOf('meta_type_name')) {
+            placeholder = 'Please fill in context name';
+        }
+        document.getElementById('meta_name').setAttribute('placeholder', placeholder);
+        return;
+    }
     if (id !== null && id !== undefined && id !== uiConfig.emptyString) {//If update a meta
         dataAccess.meta.update(id, name, description, function (tx, result, rows) {
             bb.pushScreen('meta-by-type.html', uiConfig.metaByPagePrefix + meta_type_id);
