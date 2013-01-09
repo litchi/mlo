@@ -268,7 +268,7 @@ function fillMetaTypeToPanel (){
 function fillMetaToEditForm(id){
     if(id != null && id != undefined){
         dataAccess.meta.getById(id, function(tx, results, arrays){
-            log.logObjectData("Meta", arrays[0], true);
+            log.logObjectData("Meta", arrays[0], dataAccess.logQueryResult);
             u.setValue(SQL.META.COLS.ID, arrays[0][SQL.META.COLS.ID]);
             u.setValue(SQL.META.COLS.NAME, arrays[0][SQL.META.COLS.NAME]);
             u.setValue(SQL.META.COLS.DESCRIPTION, arrays[0][SQL.META.COLS.DESCRIPTION]);
