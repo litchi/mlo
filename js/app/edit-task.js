@@ -1,10 +1,8 @@
-var selectedContextIds = new Array();
+var selectedContextIds = {};
 
 function fillTaskToEditForm(id){
     var obj, option, reminderOn, due;
     dataAccess.task.getById(id, function(tx, result, arrays) {
-        //TODO Change coding style
-        //Change ABC_DEF to AbcDef and abcDef etc.
         u.setValue('task-name', arrays[0][SQL.TASK.COLS.NAME]);
         prepareProjectData();
         setDefaultProjectForTask(id);
@@ -106,7 +104,7 @@ function createContextSpan(container, taskId, metaId, metaName){
                         span.setAttribute('class', 'selectedContext');
                         span.setAttribute('onclick', 'unSelectContext("' + metaId + '", "' + metaName + '")');
                         selectedContextIds[metaId] = metaName;
-                        log.logObjectData('selectedContextIds', selectedContextIds, true);
+                        log.logObjectData('selectedContextIds after add [' + metaId + '][' + metaName + ']', selectedContextIds, true);
                     } else {
                         span.setAttribute('class', 'context');
                         span.setAttribute('onclick', 'selectContext("' + metaId + '", "' + metaName + '")');
@@ -127,7 +125,7 @@ function selectContext(metaId, metaName){
 
 function unSelectContext(metaId, metaName){
     var span = document.getElementById(metaId);
-    selectedContextIds.splice(metaId, 1);
+    delete selectedContextIds[metaId];
     span.setAttribute('class', 'context');
     span.setAttribute('onclick', 'selectContext("' + metaId + '", "' + metaName + '")');
 }
@@ -144,7 +142,7 @@ function saveTask(id, name, projectId){
 }
 
 function saveContextInfo(taskId){
-    log.logObjectData("selectedContextIds", selectedContextIds);
+    log.logObjectData("selectedContextIds before save to DB", selectedContextIds, true);
     dataAccess.appDb.transaction(function(tx1){
     //TODO Performance optimize, put into one transaction
     dataAccess.runSqlDirectly(tx1,
@@ -157,7 +155,7 @@ function saveContextInfo(taskId){
                     var val = selectedContextIds[key];
                     if(null != val && null != key){
                         var data = [taskId, key];
-                        log.logSqlStatement(SQL.TASK_META.INSERT, data, dataAccess.logDebug);
+                        log.logSqlStatement(SQL.TASK_META.INSERT, data, dataAccess.logQuerySql);
                         tx2.executeSql(SQL.TASK_META.INSERT, data,
                             (
                                 function(data){
