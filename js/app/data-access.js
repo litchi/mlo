@@ -11,7 +11,7 @@
     isDelete = function(sql){ return sqlMatch('^delete\\s', sql);}
 
     sqlProcessor = function (transaction, sql, data, finalSuccessCallback, finalFailureCallback) {
-        log.logSqlStatement(sql,data, dataAccess.logInfo);
+        log.logSqlStatement(sql,data, dataAccess.logQuerySql);
         finalSuccessCallback = (finalSuccessCallback === void 0) ? function(){} : finalSuccessCallback;
         finalFailureCallback = (finalFailureCallback === void 0) ? function(){} : finalFailureCallback;
         successCallback = function (transaction, sqlResultSet) {
@@ -21,11 +21,11 @@
             } else if(isInsert(sql)){
                 resultObjs[0] = sqlResultSet.insertId;
             }
-            log.logObjectData("Result Array", resultObjs, dataAccess.logDebug);
+            log.logObjectData("Result Array", resultObjs, dataAccess.logQueryResult);
             finalSuccessCallback(transaction, sqlResultSet, resultObjs);
         };
         failureCallback = function(transaction, error){
-            log.logObjectData("Error Message", error, dataAccess.logInfo);
+            log.logSqlError("Error run SQL: [" + sql + "], data[" + data + "]", error, dataAccess.logError);
             finalFailureCallback(transaction, error);
         };   
         transaction.executeSql(sql, data, successCallback, failureCallback);
@@ -60,9 +60,11 @@
     }
 
     return {
-        logInfo: true,
-        logError: true,
-        logDebug: true,
+        logInfo     : true,
+        logError    : true,
+        logDebug    : true,
+        logQueryResult : false,
+        logQuerySql : false,
         appDb : null,
         dropAllTables : function(tx){
             dataAccess.runSqlDirectly(tx, 'drop table task');
@@ -102,7 +104,7 @@
                 data = [];
             }
             tx.executeSql(sql, data, function(tx, result){
-                console.debug("SQL: [" + sql + "], data: [" + data + "]");
+                log.logSqlStatement(sql,data, dataAccess.logQuerySql);
                 if(u.isFunction(callback)){
                     callback(tx, result);
                 }
