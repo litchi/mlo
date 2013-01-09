@@ -1,4 +1,6 @@
-var uiConfig = (function(){
+/*jslint browser: true, white: true*/
+"use strict";
+var uiConfig = (function () {
 
     return {
         leftPanelWidth              : '22%',
@@ -13,14 +15,13 @@ var uiConfig = (function(){
         detailListElementId         : 'detail-list',
         detailListPanelElementId    : 'detail-list-panel',
         msgForNoTask                : '<div style="text-align: center; margin: 50px 20px 0 20px">Wow, great, all tasks are done, go and stay with your family or friends.</div>',
-        emptyString                 : '',
+        emptyString                 : ''
     };
 
-})(); 
+}()),
 
-var appConfig = (function(){
+appConfig = (function () {
     return {
-        debugMode : true,
-    }
-
-})();
+        debugMode : true
+    };
+}());

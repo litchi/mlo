@@ -1,3 +1,7 @@
+/*jslint browser: true, white: true */
+/*global u, dataAccess, SQL, seedData, bb, log, console, uiConfig, openDatabase, APP_SQL*/
+"use strict";
+
 /*
 * SQL for clean up testing
 * drop table meta;
@@ -11,10 +15,10 @@
 
 var COMMON_SQL = {
     ID_COL : "id",
-    GET_MAX_ID : 'select max(id) from ',
-};
+    GET_MAX_ID : 'select max(id) from '
+},
 
-var seedData = {
+seedData = {
     inBasketMetaName    : 'In Basket',
     nextActionMetaName  : 'Next Action',
     somedayMetaName     : 'Someday',
@@ -22,10 +26,10 @@ var seedData = {
     taskDoneStatus      : 'Done',
     taskNewStatus       : 'New',
     projectMetaTypeName : 'Project',
-    contextMetaTypeName : 'Context',
-};
+    contextMetaTypeName : 'Context'
+},
 
-var SQL = {
+SQL = {
     DB_NAME        : 'peaceful_better_life_xiangqian_liu',
     DB_DESCRIPTION : 'Local Database for Peaceful & Better Life App',
     DB_SIZE        : 2*1024*1024,
@@ -34,7 +38,7 @@ var SQL = {
         COLS : {
             ID      : COMMON_SQL.ID_COL,
             TASK_ID : 'task_id',
-            META_ID : 'meta_id',
+            META_ID : 'meta_id'
         },
         CREATE_TABLE           : 'CREATE TABLE IF NOT EXISTS task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_id int)',
         INSERT                 : 'INSERT INTO task_meta (id, task_id, meta_id) VALUES (null, ?, ?)',
@@ -43,6 +47,7 @@ var SQL = {
         SELECT_TASK_BY_META_ID : 'SELECT task.id, task.name, task.status, task_meta.meta_id FROM task INNER JOIN task_meta ON task.id = task_meta.task_id WHERE task_meta.meta_id = ?',
         SELECT_META_BY_TASK_ID : 'SELECT meta.id, meta.name, meta.meta_type_id, meta.description FROM meta INNER JOIN task_meta ON meta.id = task_meta.meta_id WHERE task_meta.task_id = ?',
         DELETE_META_BY_TYPE    : 'DELETE FROM task_meta where task_id = ? and meta_id in (select id from meta where meta_type_id = (select id from meta_type where name = ?))',
+        DeleteTaskFromList     : 'delete from task_meta where task_id = ? and meta_id = (select id from meta where name = ? and meta_type_id = (select id from meta_type where name = ?))'
     },
 
     META : {
@@ -51,7 +56,7 @@ var SQL = {
             ID           : COMMON_SQL.ID_COL,
             NAME         : 'name',
             META_TYPE_ID : 'meta_type_id',
-            DESCRIPTION  : 'description',
+            DESCRIPTION  : 'description'
         },
         CREATE_TABLE        : 'CREATE TABLE IF NOT EXISTS meta (id INTEGER PRIMARY KEY AUTOINCREMENT, meta_type_id INTEGER, name text, description text, UNIQUE(meta_type_id, name))',
         INSERT_BY_NAME_TYPE : 'insert into meta (id, name, meta_type_id, description) values (null, ?, ?, ?)',
@@ -63,7 +68,7 @@ var SQL = {
         UPDATE_NAME_BY_ID   : 'update meta set name = ? where id = ?',
         UPDATE_BY_ID        : 'update meta set name = ? ,description = ? where id = ?',
         DELETE_BY_ID        : 'delete from meta where id = ?',
-        DELETE_ALL          : 'delete from meta',
+        DELETE_ALL          : 'delete from meta'
     },
 
     META_TYPE : {
@@ -83,7 +88,7 @@ var SQL = {
         UPDATE_BY_ID: 'update meta_type set name = ? , description = ? where id = ?',
         DELETE_BY_ID : 'delete from meta_type where id = ?',
         DELETE_ALL : 'delete from meta_type',
-        GET_MAX_ID : COMMON_SQL.GET_MAX_ID + 'meta_type',
+        GET_MAX_ID : COMMON_SQL.GET_MAX_ID + 'meta_type'
     },
 
     TASK_NOTE : {
@@ -97,7 +102,7 @@ var SQL = {
             ID : COMMON_SQL.ID_COL,
             NAME: 'name',
             ReminderOn : "reminder_on",
-            NextReminderTime : 'next_reminder_time', 
+            NextReminderTime : 'next_reminder_time' 
         },
         //TODO Clean up/Remove these create tables sqls since they are not up to date.
         CREATE_TABLE        : "CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, status text default 'New')",
@@ -113,13 +118,12 @@ var SQL = {
         UPDATE_STATUS_BY_ID : 'update task set status = ? where id = ?',
         DELETE_BY_ID        : 'delete from task where id = ?',
         DELETE_ALL          : 'delete from task',
-        GET_MAX_ID          : COMMON_SQL.GET_MAX_ID + 'task',
-    },
-};
+        GET_MAX_ID          : COMMON_SQL.GET_MAX_ID + 'task'
+    }
+},
 
-var APP_SQL = {
+APP_SQL = {
     APP_INFO : {
-        CREATE_TABLE : 'CREATE TABLE IF NOT EXISTS app_info (id INTEGER PRIMARY KEY AUTOINCREMENT, app_id text, name text, version text, db_schema_version text, additional_info text, UNIQUE(app_id))',
-    },
+        CREATE_TABLE : 'CREATE TABLE IF NOT EXISTS app_info (id INTEGER PRIMARY KEY AUTOINCREMENT, app_id text, name text, version text, db_schema_version text, additional_info text, UNIQUE(app_id))'
+    }
 };
-//console.log(SQL);
