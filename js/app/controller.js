@@ -2,7 +2,7 @@
 /*global u, dataAccess, SQL, seedData, bb, log, console, uiConfig*/
 "use strict";
 function createTask(name, metaId) {
-    var taskId;
+    var taskId, project = null, metaTypeName, metaName, context = null;
     dataAccess.task.create(name, function (tx, result, rows) {
         taskId = result.insertId;
         dataAccess.appDb.transaction(function (transaction) {
@@ -10,8 +10,14 @@ function createTask(name, metaId) {
                 "insert into task_meta (id, task_id, meta_id) values (null, ?, ?)",
                 [taskId, metaId],
                 function (tx1, r2) {
-                    //TODO context and project should not always be empty
-                    addTaskToList(taskId, name, null, null, null);
+                    metaTypeName = u.valueOf('v_meta_type_name');
+                    metaName = u.valueOf('v_meta_name');
+                    if (metaTypeName === seedData.projectMetaTypeName) {
+                        project = metaName;
+                    } else if (metaTypeName === seedData.contextMetaTypeName) {
+                        context = [metaName];
+                    }
+                    addTaskToList(taskId, name, project, context, null);
                     u.setValue('ctsi', uiConfig.emptyString);
                 },
                 function (tx1, e) {
