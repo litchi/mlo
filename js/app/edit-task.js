@@ -205,7 +205,9 @@ function saveProjectInfo(taskId, projectId) {
 function saveTask(id, name, projectId) {
     dataAccess.task.update(id, name, function (tx, result, rows) {
         saveReminderInfo(id);
-        saveProjectInfo(id, projectId);
+        if (projectId !== 0) {
+            saveProjectInfo(id, projectId);
+        }
         saveContextPopScreen(id);
     }, function (tx, error) {
         log.logSqlError("Failed to update task[" + id + "][" + name + "]", error);
