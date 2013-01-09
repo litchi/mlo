@@ -175,6 +175,9 @@
             getByMeta: function(metaTypeName, metaName, successCallback, failureCallback){
                 runSQL(SQL.TASK.SELECT_BY_META_NAME,[metaName, metaTypeName, seedData.taskDoneStatus], successCallback, failureCallback);
             },
+            getByMetaType: function(metaTypeName, successCallback, failureCallback){
+                runSQL(SQL.TASK.SELECT_BY_META_TYPE,[metaTypeName, seedData.taskDoneStatus], successCallback, failureCallback);
+            },
             getAll: function(successCallback, failureCallback) {
                 runSQL(SQL.TASK.FILTER_BY_STATUS, [seedData.taskDoneStatus], successCallback, failureCallback);
             },

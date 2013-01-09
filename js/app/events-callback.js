@@ -43,6 +43,7 @@ function onDomReadyCallback(element, id){
         } else if(u.startsWith(id, uiConfig.taskByPagePrefix)){
             metaTypeName = id.substring(uiConfig.taskByPagePrefix.length);
             fillMetaListToPanelByTypeName(metaTypeName, uiConfig.taskByPagePrefix);
+            fillTasksToGroupByMetaInfo(metaTypeName, uiConfig.emptyString);
         } else if(id === 'dimensions'){
             fillMetaTypeToPanel();
         } else if(u.startsWith(id, uiConfig.editMetaPagePrefix)){

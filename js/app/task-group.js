@@ -20,65 +20,70 @@ function addTaskToList (id, name, project, contexts, dueDate) {
     }
 }
 
+function tasksFromDbToUI(tasks, taskList){
+    taskList.clear();
+    if(null == tasks || undefined == tasks || 0 == tasks.length){
+        taskList.innerHTML = uiConfig.msgForNoTask;
+    } else {
+        for(var key in tasks) {   
+            name = tasks[key][SQL.TASK.COLS.NAME];
+            id   = tasks[key][SQL.TASK.COLS.ID];
+            dataAccess.appDb.transaction(
+                (
+                    function(id, name){
+                        return function(tx){
+                            dataAccess.runSqlDirectly(
+                                tx,
+                                'select meta_name, meta_type_name, task_reminder_time from task_view where task_id = ?',
+                                [id],
+                                function(tx, result){
+                                    var context = new Array(), project = null, mt = null, rt = null;              
+                                    for(i = 0, max = result.rows.length; i < max; i++){
+                                        var obj = result.rows.item(i);
+                                        mt = obj['meta_type_name'];
+                                        if(seedData.contextMetaTypeName == mt){
+                                            context.push(obj['meta_name']);
+                                        } else if(seedData.projectMetaTypeName == mt){
+                                            project = obj['meta_name'];
+                                        }
+                                        if(null == rt){
+                                            rt = obj['task_reminder_time'];
+                                        }
+                                    }
+                                    addTaskToList(id, name, project, context, rt);    
+                                });
+                        }
+                    }
+                )(id, name)
+            );
+        }
+    }
+}
+
 function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
     var id, name, taskList = document.getElementById(uiConfig.detailListElementId);
-    dataAccess.task.getByMeta(metaTypeName, metaName, function(transaction, results, arrays){
-        if(null == arrays || undefined == arrays || 0 == arrays.length){
-            taskList.innerHTML = uiConfig.msgForNoTask;
-        } else {
-            document.getElementById(uiConfig.detailListElementId).clear();
-            for(var key in arrays) {   
-                name = arrays[key][SQL.TASK.COLS.NAME];
-                id   = arrays[key][SQL.TASK.COLS.ID];
-                dataAccess.appDb.transaction(
-                    (
-                        function(id, name){
-                            return function(tx){
-                            //TODO Change all reminder to due since this is actually not a reminder time
-                            //Places:
-                            //1. Table creation
-                            //2. View creation
-                            //3. Javascript codes
-                            //4. Html words.
-                                dataAccess.runSqlDirectly(
-                                    tx,
-                                    'select meta_name, meta_type_name, task_reminder_time from task_view where task_id = ?',
-                                    [id],
-                                    function(tx, result){
-                                        var context = new Array(), project = null, mt = null, rt = null;              
-                                        for(i = 0, max = result.rows.length; i < max; i++){
-                                            var obj = result.rows.item(i);
-                                            mt = obj['meta_type_name'];
-                                            if(seedData.contextMetaTypeName == mt){
-                                                context.push(obj['meta_name']);
-                                            } else if(seedData.projectMetaTypeName == mt){
-                                                project = obj['meta_name'];
-                                            }
-                                            if(null == rt){
-                                                rt = obj['task_reminder_time'];
-                                            }
-                                        }
-                                        addTaskToList(id, name, project, context, rt);    
-                                    });
-                            }
-                        }
-                    )(id, name)
-                );
-            }
-        }
-    });
-    //TODO Performance optimize
-    dataAccess.meta.getByName(metaName, function(tx, result, resultObj){
-        u.setValue('v_meta_name', metaName);
-        if(null != resultObj && (resultObj.length > 0) && 
-        null != resultObj[0] && null != resultObj[0][SQL.META.COLS.ID]){
-            u.setValue('v_meta_id', resultObj[0][SQL.META.COLS.ID]);
-        } else {
-            console.warn("Meta with name '%s' not found", metaName);
-        }
-    }, function(tx, error){
-        log.logSqlError("Error getting meta[" + metaName + "]", error);    
-    });
+    if(uiConfig.emptyString != metaName){
+        dataAccess.task.getByMeta(metaTypeName, metaName, function(transaction, results, arrays){
+            tasksFromDbToUI(arrays, taskList);
+        });
+    } else {
+        dataAccess.task.getByMetaType(metaTypeName, function(transaction, results, arrays){
+            tasksFromDbToUI(arrays, taskList);
+        });
+    }
+    if(uiConfig.emptyString != metaName){
+        setMetaFields(metaName);
+    } else {
+        console.debug("Meta Name is empty, will not set v_meta_name and v_meta_id");
+    } 
+    if(uiConfig.emptyString != metaTypeName){
+        setMetaTypeFields(metaTypeName);
+    } else {
+        console.warn("Meta Type Name is empty, will not set v_meta_type_name and v_meta_type_id");
+    }
+}
+
+function setMetaTypeFields(metaTypeName){
     dataAccess.metaType.getByName(metaTypeName, function(tx, result, resultObj){
         u.setValue('v_meta_type_name', metaTypeName);
         if(null != resultObj && (resultObj.length > 0) && 
@@ -92,8 +97,22 @@ function fillTasksToGroupByMetaInfo (metaTypeName, metaName) {
     });
 }
 
+function setMetaFields(metaName){
+    dataAccess.meta.getByName(metaName, function(tx, result, resultObj){
+        u.setValue('v_meta_name', metaName);
+        if(null != resultObj && (resultObj.length > 0) && 
+        null != resultObj[0] && null != resultObj[0][SQL.META.COLS.ID]){
+            u.setValue('v_meta_id', resultObj[0][SQL.META.COLS.ID]);
+        } else {
+            console.warn("Meta with name '%s' not found", metaName);
+        }
+    }, function(tx, error){
+        log.logSqlError("Error getting meta[" + metaName + "]", error);    
+    });
+}
+
 function createItemElement(id, name, project, contexts, dueDate) {
-    var innerContent = '', item = document.createElement('div');
+    var innerContent = uiConfig.emptyString, item = document.createElement('div');
     item.setAttribute('data-bb-type','item');
     item.setAttribute('data-bb-style','stretch');
     if(id != null) {
@@ -133,6 +152,19 @@ function createItemElement(id, name, project, contexts, dueDate) {
     return item;
 }
 
+function makeAllTasksItem(metaTypeName){
+    var item = document.createElement('div');
+    item.setAttribute('data-bb-type','item');
+    item.setAttribute('data-bb-style','stretch');
+    item.setAttribute('title', 'All Tasks');
+    item.setAttribute('data-bb-title','All Tasks');
+    item.setAttribute(
+        'onclick',
+        "fillTasksToGroupByMetaInfo('" + metaTypeName + "', '" + uiConfig.emptyString + "');switchPanelWidth('" + uiConfig.leftPanelWidth + "', '" + uiConfig.rightPanelWidth +"', '" + uiConfig.rightPanelSmallerLeftMargin +"');"
+    );
+    return item;
+}
+
 function fillMetaListToPanel(metaTypeId, pageType){
     var metaTypeName,
         addNewLink      = document.getElementById('add-new-link'),
@@ -147,6 +179,9 @@ function fillMetaListToPanel(metaTypeId, pageType){
             }
             if(null != metaListTitle && undefined != metaListTitle){
                 metaListTitle.innerText= metaTypeName;
+            }
+            if(uiConfig.taskByPagePrefix == pageType){ 
+                metaList.appendItem(makeAllTasksItem(metaTypeName));
             }
             u.setValue('v_meta_type_id', metaTypeId);
             u.setValue('v_meta_type_name', metaTypeName);
