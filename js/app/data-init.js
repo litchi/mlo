@@ -19,9 +19,9 @@ function createTables(tx){
 }
 
 function insertSeedData(tx){
-    dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('Project', 'Predefined Project dimension for meta')");
-    dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('Context', 'Predefined Context dimension for meta')");
-    dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('GTD', 'Predefined GTD dimension for meta, includes in basket/(someday/maybe)/next action')");
+    dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('Project', 'Predefined Project field for task')");
+    dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('Context', 'Predefined Context field for task')");
+    dataAccess.runSqlDirectly(tx, "INSERT INTO meta_type (name, description) VALUES ('GTD', 'Predefined GTD lists for task, includes in basket/(someday/maybe)/next action')");
     dataAccess.runSqlDirectly(tx, "INSERT INTO meta (meta_type_id , name , description) select id , 'In Basket'   , 'Predefined in basket meta for tasks' from meta_type where name = 'GTD'");
     dataAccess.runSqlDirectly(tx, "INSERT INTO meta (meta_type_id , name , description) select id , 'Next Action' , 'Predefined next action meta for tasks' from meta_type where name = 'GTD'");
     dataAccess.runSqlDirectly(tx, "INSERT INTO meta (meta_type_id , name , description) select id , 'Someday'     , 'Predefined Someday & Maybe meta for tasks' from meta_type where name = 'GTD'");

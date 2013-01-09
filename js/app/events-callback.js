@@ -44,7 +44,7 @@ function onDomReadyCallback(element, id){
             metaTypeName = id.substring(uiConfig.taskByPagePrefix.length);
             fillMetaListToPanelByTypeName(metaTypeName, uiConfig.taskByPagePrefix);
             fillTasksToGroupByMetaInfo(metaTypeName, uiConfig.emptyString);
-        } else if(id === 'dimensions'){
+        } else if(id === 'fields'){
             fillMetaTypeToPanel();
         } else if(u.startsWith(id, uiConfig.editMetaPagePrefix)){
             metaId = id.substring(uiConfig.editMetaPagePrefix.length);
