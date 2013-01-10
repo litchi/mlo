@@ -34,7 +34,7 @@ var UIListController = (function () {
             }
             item.innerHTML = innerContent;
             item.onclick = function () {
-                document.getElementById('task-operation-context-menu').menu.show({
+                document.getElementById('task-operation-context-menu').menu.peek({
                     title : 'Edit Task',
                     description : name,
                     selected : id
@@ -270,7 +270,7 @@ var UIListController = (function () {
                                 }
                                 item.setAttribute(
                                     'onclick',
-                                    "document.getElementById('meta-operation-context-menu').menu.show({ title : '" + name + "', description : '" + metaTypeName + "', selected : '" + id + "'});"
+                                    "document.getElementById('meta-operation-context-menu').menu.peek({ title : '" + name + "', description : '" + metaTypeName + "', selected : '" + id + "'});"
                                 );
                             }
                             metaList.appendItem(item);

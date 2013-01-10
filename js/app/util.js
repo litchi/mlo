@@ -1,6 +1,5 @@
 /*jslint browser: true*/
-/*global u, dataAccess, SQL, seedData, bb, log, console, UIConfig, openDatabase, APP_SQL*/
-//TODO Add unit test for utility
+/*global blackberry, DataAccess, Sql, seedData, bb, log, console, UIConfig, openDatabase, AppSql*/
 var Util = (function () {
     "use strict";
     return {
@@ -85,6 +84,23 @@ var Util = (function () {
             t = (('0' + myDate.getHours()).slice(-2)) + ':' + (('0' + myDate.getMinutes()).slice(-2));
             resultStr =  d + t;
             return resultStr;
+        },
+
+
+        showErrorToast : function (message, buttonText, onToastDismissed, onButtonSelected) {
+            var toastId, dismissed, selected, options;
+            dismissed = Util.isFunction(onToastDismissed) ? onToastDismissed :  function () {
+                console.debug("show Error Toast[%s][%s][%s]", message, buttonText, onButtonSelected);
+            };
+            selected = Util.isFunction(onButtonSelected) ? onButtonSelected : function () {
+                console.debug("show Error Toast[%s][%s][%s]", message, buttonText, onToastDismissed);
+            };
+            options = {
+                buttonText : buttonText,
+                dismissCallback : dismissed,
+                buttonCallback : selected
+            };
+            toastId = blackberry.ui.toast.show(message, options);
         },
 
         switchPanelWidth : function (groupWidth, taskWidth, taskLeft) {

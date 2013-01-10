@@ -57,17 +57,18 @@ Sql = {
             MetaTypeId  : 'meta_type_id',
             Description : 'description'
         },
-        CreateTable    : 'create table if not exists meta (id integer primary key autoincrement, meta_type_id integer, name text, description text, unique(meta_type_id, name))',
-        Insert         : 'insert into meta (id, name, meta_type_id, description) values (null, ?, ?, ?)',
-        SelectAll      : 'select id, meta_type_id, name, description from meta',
-        SelectById     : 'select id, meta_type_id, name, description from meta where id = ?',
-        SelectByName   : 'select id, meta_type_id, name, description from meta where name = ?',
-        SelectByIdName : 'select id, meta_type_id, name, description from meta where id = ? and name = ?',
-        SelectByTypeId : 'select id, meta_type_id, name, description from meta where meta_type_id = ?',
-        UpdateNameById : 'update meta set name = ? where id = ?',
-        UpdateById     : 'update meta set name = ? ,description = ? where id = ?',
-        DeleteById     : 'delete from meta where id = ?',
-        DeleteAll      : 'delete from meta'
+        CreateTable        : 'create table if not exists meta (id integer primary key autoincrement, meta_type_id integer, name text, description text, unique(meta_type_id, name))',
+        Insert             : 'insert into meta (id, name, meta_type_id, description) values (null, ?, ?, ?)',
+        SelectAll          : 'select id, meta_type_id, name, description from meta',
+        SelectById         : 'select id, meta_type_id, name, description from meta where id = ?',
+        SelectByName       : 'select id, meta_type_id, name, description from meta where name = ?',
+        SelectByIdName     : 'select id, meta_type_id, name, description from meta where id = ? and name = ?',
+        SelectByTypeId     : 'select id, meta_type_id, name, description from meta where meta_type_id = ?',
+        SelectByNameTypeId : 'select id from meta where meta_type_id = ? and name = ?',
+        UpdateNameById     : 'update meta set name = ? where id = ?',
+        UpdateById         : 'update meta set name = ? ,description = ? where id = ?',
+        DeleteById         : 'delete from meta where id = ?',
+        DeleteAll          : 'delete from meta'
     },
 
     MetaType : {
