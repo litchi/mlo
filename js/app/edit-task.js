@@ -31,9 +31,9 @@ function prepareProjectData() {
 
 
 function prepareDueData(reminderOn, due) {
-    var reminderInput = document.getElementById('is-reminder-on');
-    if (undefined !== reminderInput) {
-        reminderInput.setChecked((1 === reminderOn));
+    var reminderOnInput = document.getElementById('is-reminder-on');
+    if (undefined !== reminderOnInput) {
+        reminderOnInput.setChecked((1 === reminderOn));
     }
     if (null !== due) {
         u.setValue('due-date', due);
@@ -112,7 +112,7 @@ function fillTaskToEditForm(id) {
         prepareProjectData();
         setDefaultProjectForTask(id);
         reminderOn = arrays[0][SQL.TASK.COLS.ReminderOn];
-        due = arrays[0][SQL.TASK.COLS.NextReminderTime];
+        due = arrays[0][SQL.TASK.COLS.DueDate];
         prepareDueData(reminderOn, due);
         prepareContextData(id);
         u.setValue('task-id', id);
@@ -172,14 +172,14 @@ function setReminder(taskId, reminderTime) {
     }
 }
 
-function saveReminderInfo(taskId) {
+function saveDueInfo(taskId) {
     var reminderOn = document.getElementById('is-reminder-on').getChecked(),
         dueDate = u.valueOf('due-date'),
         reminderOnInt = (reminderOn === true) ? 1 : 0,
         myDate = new Date(dueDate);
     dataAccess.appDb.transaction(function (tx) {
         dataAccess.runSqlDirectly(tx,
-            "update task set next_reminder_time = ?, reminder_on = ? where id = ?", [myDate.getTime() / 1000, reminderOnInt, taskId],
+            "update task set due_date = ?, reminder_on = ? where id = ?", [myDate.getTime() / 1000, reminderOnInt, taskId],
             function (tx, result) {
                 if (reminderOn) {
                     setReminder(taskId, dueDate);
@@ -208,7 +208,7 @@ function saveTask(id, name, projectId) {
         return;
     }
     dataAccess.task.update(id, name, function (tx, result, rows) {
-        saveReminderInfo(id);
+        saveDueInfo(id);
         if (projectId !== 0) {
             saveProjectInfo(id, projectId);
         }

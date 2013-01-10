@@ -87,9 +87,6 @@ describe("Unit Test for Data Access API", function() {
             assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [SQL.TASK_NOTE.TABLE_NAME], tableExistsAssert);
         });
 
-        it("#7 task_reminder table should be created", function(){
-            assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [SQL.TASK_REMINDER.TABLE_NAME], tableExistsAssert);
-        });
     });
     describe("Task data access", function(){
         it("#8 Insert into task table", function(){

@@ -102,18 +102,18 @@ SQL = {
             ID : COMMON_SQL.ID_COL,
             NAME: 'name',
             ReminderOn : "reminder_on",
-            NextReminderTime : 'next_reminder_time' 
+            DueDate: 'due_date' 
         },
         //TODO Clean up/Remove these create tables sqls since they are not up to date.
         CREATE_TABLE        : "CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, status text default 'New')",
         INSERT_BY_NAME      : 'insert into task (id, name) values (null, ?)',
         INSERT_BY_ID_NAME   : 'insert into task(id, name) values (?, ?)',
         FILTER_BY_STATUS    : 'select id, name from task where status != ?',
-        SELECT_BY_ID        : 'select id, name, reminder_on, strftime(\'%Y-%m-%dT%H:%M\', next_reminder_time, \'unixepoch\') as next_reminder_time from task where id = ?',
+        SELECT_BY_ID        : 'select id, name, reminder_on, strftime(\'%Y-%m-%dT%H:%M\', due_date, \'unixepoch\') as due_date from task where id = ?',
         SELECT_BY_NAME      : 'select id, name from task where name = ?',
         SELECT_BY_ID_NAME   : 'select id, name from task where id = ? and name = ?',
-        SELECT_BY_META_NAME : 'select distinct task_id as id, task_name as name, task_status as status from task_view where meta_name = ? AND meta_type_name = ? AND task_status != ? order by case when task_reminder_time is null then 1 else 0 end',
-        SELECT_BY_META_TYPE : 'select distinct task_id as id, task_name as name, task_status as status from task_view where meta_type_name = ? AND task_status != ? order by case when task_reminder_time is null then 1 else 0 end',
+        SELECT_BY_META_NAME : 'select distinct task_id as id, task_name as name, task_status as status from task_view where meta_name = ? AND meta_type_name = ? AND task_status != ? order by case when task_due_date is null then 1 else 0 end',
+        SELECT_BY_META_TYPE : 'select distinct task_id as id, task_name as name, task_status as status from task_view where meta_type_name = ? AND task_status != ? order by case when task_due_date is null then 1 else 0 end',
         UPDATE_BY_ID        : 'update task set name = ? where id = ?',
         UPDATE_STATUS_BY_ID : 'update task set status = ? where id = ?',
         DELETE_BY_ID        : 'delete from task where id = ?',

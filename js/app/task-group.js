@@ -79,7 +79,7 @@ function tasksFromDbToUI(tasks, taskList) {
                         return function (tx) {
                             dataAccess.runSqlDirectly(
                                 tx,
-                                'select meta_name, meta_type_name, task_reminder_time from task_view where task_id = ?',
+                                'select meta_name, meta_type_name, task_due_date from task_view where task_id = ?',
                                 [id],
                                 function (tx, result) {
                                     var context = [], project = null, mt = null, rt = null, obj;
@@ -92,7 +92,7 @@ function tasksFromDbToUI(tasks, taskList) {
                                             project = obj.meta_name;
                                         }
                                         if (null === rt) {
-                                            rt = obj.task_reminder_time;
+                                            rt = obj.task_due_date;
                                         }
                                     }
                                     addTaskToList(id, name, project, context, rt);

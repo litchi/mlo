@@ -21,7 +21,8 @@ function onScreenReadyCallback(element, id) {
 function setActionBarSelectStatus(screenId) {
     var tab = document.getElementById(screenId),
         devTab = document.getElementById('development');
-    if (undefined !== tab) {
+    if (null !== tab &&
+            undefined !== tab) {
         bb.actionBar.highlightAction(tab);
     }
     if (true !== appConfig.debugMode) {
@@ -34,6 +35,7 @@ function setActionBarSelectStatus(screenId) {
 function onDomReadyCallback(element, id) {
     var taskId, metaTypeName, metaId, metaTypeId;
     if (id !== null) {
+        setActionBarSelectStatus(id);
         if (id === seedData.inBasketMetaName || id === seedData.nextActionMetaName || id === seedData.somedayMetaName) {
             fillTasksToGroupByMetaInfo(seedData.gtdMetaTypeName, id);
         } else if (u.startsWith(id, uiConfig.editTaskPagePrefix)) {
@@ -56,7 +58,6 @@ function onDomReadyCallback(element, id) {
             metaTypeId = id.substring(uiConfig.metaByPagePrefix.length);
             fillMetaListToPanel(metaTypeId, uiConfig.metaByPagePrefix);
         }
-        setActionBarSelectStatus(id);
     }
 }
 
