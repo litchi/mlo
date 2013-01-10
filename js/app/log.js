@@ -1,7 +1,7 @@
 /*jslint browser: true*/
-/*global u, dataAccess, SQL, seedData, bb, log, console, uiConfig, openDatabase, APP_SQL*/
-"use strict";
+/*global u, DataAccess, SQL, seedData, bb, log, console, uiConfig, openDatabase, APP_SQL*/
 var log = (function () {
+    "use strict";
     function getFunctionName(func) {
         var name;
         if (typeof func === 'function' || typeof func === 'object') {
@@ -43,7 +43,7 @@ var log = (function () {
         },
         logSqlStatement : function (sql, data, logEnable) {
             if (logEnable) {
-                console.debug("SQL: [" + sql + "], Data: [" + data + "]");
+                console.debug("Sql: [" + sql + "], Data: [" + data + "]");
             }
         },
         logDbInfo : function (name, displayname, version, logEnable) {

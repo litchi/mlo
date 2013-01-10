@@ -1,18 +1,10 @@
 <div data-bb-type="context-menu" id="task-operation-context-menu">
-    <div data-bb-type="action" data-bb-img="resources/mark-as-done.png"    
-        onclick ="markTaskAsDone()">Yahoo, Done!</div>
-    <div data-bb-type="action" data-bb-img="resources/postpone-task.png"
-        onclick = "postponeTask()">Postpone</div>
-    <div data-bb-type="action" data-bb-img="resources/edit-task.png"
-        onclick="editTask()">Edit</div>
-    <div data-bb-type="action" data-bb-img="resources/star_add.png"    
-        onclick ="moveTaskToNextAction()">Next Action</div>
-    <div data-bb-type="action" data-bb-img="resources/basket_add.png"
-        onclick ="moveTaskToInBasket()">in Basket</div>
-    <div data-bb-type="action" data-bb-img="resources/someday.png"
-        onclick ="moveTaskToSomeday()">Someday/Maybe</div>
-    <div data-bb-type="action" data-bb-img="resources/mark-as-new.png"
-        onclick ="markTaskAsNew()">Haven't Done :(</div>
-    <div data-bb-type="action" data-bb-img="resources/delete-task.png"
-        data-bb-pin="true" onclick="deleteTask()">Delete</div>
+    <div data-bb-type="action" data-bb-img="resources/mark-as-done.png"  onclick="UIContextMenuController.markTaskAsDone()">Yahoo, Done!</div>
+    <div data-bb-type="action" data-bb-img="resources/postpone-task.png" onclick="UIContextMenuController.postponeTask()">Postpone</div>
+    <div data-bb-type="action" data-bb-img="resources/edit-task.png"     onclick="UIContextMenuController.editTask()">Edit</div>
+    <div data-bb-type="action" data-bb-img="resources/star_add.png"      onclick ="UIContextMenuController.moveTaskToNextAction()">Next Action</div>
+    <div data-bb-type="action" data-bb-img="resources/basket_add.png"    onclick ="UIContextMenuController.moveTaskToInBasket()">in Basket</div>
+    <div data-bb-type="action" data-bb-img="resources/someday.png"       onclick ="UIContextMenuController.moveTaskToSomeday()">Someday/Maybe</div>
+    <div data-bb-type="action" data-bb-img="resources/mark-as-new.png"   onclick ="UIContextMenuController.markTaskAsNew()">Haven't Done :(</div>
+    <div data-bb-type="action" data-bb-img="resources/delete-task.png"   onclick="UIContextMenuController.deleteTask()" data-bb-pin="true">Delete</div>
 </div>
