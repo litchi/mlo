@@ -1,8 +1,8 @@
 /*jslint browser: true*/
-/*global u, dataAccess, SQL, seedData, bb, log, console, uiConfig, openDatabase, APP_SQL*/
-"use strict";
+/*global u, dataAccess, SQL, seedData, bb, log, console, UIConfig, openDatabase, APP_SQL*/
 //TODO Add unit test for utility
-var u = (function () {
+var Util = (function () {
+    "use strict";
     return {
         endsWith : function (str, suffix) {
             return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -82,9 +82,18 @@ var u = (function () {
             } else {
                 d = myDate.getFullYear() + '/' + (myDate.getMonth() + 1) + '/' + (myDate.getDate()) + ' ';
             }
-            t = (myDate.getHours()) + ':' + (myDate.getMinutes());
+            t = (('0' + myDate.getHours()).slice(-2)) + ':' + (('0' + myDate.getMinutes()).slice(-2));
             resultStr =  d + t;
             return resultStr;
+        },
+
+        switchPanelWidth : function (groupWidth, taskWidth, taskLeft) {
+            if (document.getElementById('group').style.width !== groupWidth) {
+                document.getElementById('group').style.width = groupWidth;
+                document.getElementById(UIConfig.detailListPanelElementId).style.width = taskWidth;
+                document.getElementById(UIConfig.detailListPanelElementId).style.left = taskLeft + 'px';
+            }
         }
     };
+
 }());

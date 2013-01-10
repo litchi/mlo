@@ -1,70 +1,70 @@
 ﻿/*jslint browser: true*/
-/*global u, dataAccess, SQL, seedData, bb, log, console, uiConfig, openDatabase, APP_SQL*/
-"use strict";
-var dataAccess = (function () {
-    var appInfoDb, db_schema_version = '', sqlMatch, isSelect, isInsert, isUpdate, isDelete, sqlProcessor, runSQL, openAppDb;
+/*global Util, DataAccess, Sql, seedData, bb, log, console, uiConfig, openDatabase, AppSql, SeedSampleDataProvider*/
+var DataAccess = (function () {
+    "use strict";
+    var appInfoDb, db_schema_version = '';
 
-    sqlMatch = function (pattern, sql) { return (new RegExp(pattern, 'i')).test(sql); };
-    isSelect = function (sql) { return sqlMatch('^select\\s', sql); };
-    isInsert = function (sql) { return sqlMatch('^insert\\s', sql); };
-    isUpdate = function (sql) { return sqlMatch('^update\\s', sql); };
-    isDelete = function (sql) { return sqlMatch('^delete\\s', sql); };
+    function sqlMatch(pattern, sql) { return (new RegExp(pattern, 'i')).test(sql); }
+    function isSelect(sql) { return sqlMatch('^select\\s', sql); }
+    function isInsert(sql) { return sqlMatch('^insert\\s', sql); }
+    function isUpdate(sql) { return sqlMatch('^update\\s', sql); }
+    function isDelete(sql) { return sqlMatch('^delete\\s', sql); }
 
-    sqlProcessor = function (transaction, sql, data, finalSuccessCallback, finalFailureCallback) {
+    function sqlProcessor(transaction, sql, data, finalSuccessCallback, finalFailureCallback) {
         var successCallback, failureCallback;
-        log.logSqlStatement(sql, data, dataAccess.logQuerySql);
+        log.logSqlStatement(sql, data, DataAccess.logQuerySql);
         finalSuccessCallback = (finalSuccessCallback === void 0) ? function () {} : finalSuccessCallback;
         finalFailureCallback = (finalFailureCallback === void 0) ? function () {} : finalFailureCallback;
         successCallback = function (transaction, sqlResultSet) {
             var resultObjs = [];
             if (isSelect(sql)) {
-                resultObjs = dataAccess.sqlResultSetToArray(sqlResultSet);
+                resultObjs = DataAccess.sqlResultSetToArray(sqlResultSet);
             } else if (isInsert(sql)) {
                 resultObjs[0] = sqlResultSet.insertId;
             }
-            log.logObjectData("Result Array", resultObjs, dataAccess.logQueryResult);
+            log.logObjectData("Result Array", resultObjs, DataAccess.logQueryResult);
             finalSuccessCallback(transaction, sqlResultSet, resultObjs);
         };
         failureCallback = function (transaction, error) {
-            log.logSqlError("Error run SQL: [" + sql + "], data[" + data + "]", error, dataAccess.logError);
+            log.logSqlError("Error run SQL: [" + sql + "], data[" + data + "]", error, DataAccess.logError);
             finalFailureCallback(transaction, error);
         };
         transaction.executeSql(sql, data, successCallback, failureCallback);
-    };
+    }
 
-    runSQL = function (sql, data, successCallback, failureCallback) {
-        if (null === dataAccess.appDb) {
-            dataAccess.createDatabaseConnection();
+    function runSQL(sql, data, successCallback, failureCallback) {
+        if (null === DataAccess.appDb) {
+            DataAccess.createDatabaseConnection();
             setTimeout(function () {
-                dataAccess.appDb.transaction(function (tx) {
+                DataAccess.appDb.transaction(function (tx) {
                     sqlProcessor(tx, sql, data, successCallback, failureCallback);
                 }, function (error) {
                     log.logSqlError("Failed to run SQL[" + sql + "] with data[" + data + "]", error);
                 }, function () {});
             }, 1000);
         } else {
-            dataAccess.appDb.transaction(function (tx) {
+            DataAccess.appDb.transaction(function (tx) {
                 sqlProcessor(tx, sql, data, successCallback, failureCallback);
             }, function (error) {
                 log.logSqlError("Failed to run SQL[" + sql + "] with data[" + data + "]", error);
             }, function () {});
         }
-    };
+    }
 
-    openAppDb = function () {
-        dataAccess.appDb = openDatabase(SQL.DB_NAME, db_schema_version, SQL.DB_DESCRIPTION, SQL.DB_SIZE, dataAccess.initAppDb);
-        log.logDbInfo(SQL.DB_NAME, SQL.DB_DESCRIPTION, db_schema_version, dataAccess.logInfo);
-        if (null === dataAccess.appDb) {
+    function openAppDb() {
+        DataAccess.appDb = openDatabase(Sql.DbName, db_schema_version, Sql.DbDescription, Sql.DbSize, DataAccess.initAppDb);
+        log.logDbInfo(Sql.DbName, Sql.DbDescription, db_schema_version, DataAccess.logInfo);
+        if (null === DataAccess.appDb) {
             console.error("Failed to open application database");
         }
-    };
+    }
 
     function createTables(tx) {
-        dataAccess.runSqlDirectly(tx, SQL.TASK.CREATE_TABLE);
-        dataAccess.runSqlDirectly(tx, SQL.META_TYPE.CREATE_TABLE);
-        dataAccess.runSqlDirectly(tx, SQL.META.CREATE_TABLE);
-        dataAccess.runSqlDirectly(tx, SQL.TASK_META.CREATE_TABLE);
-        dataAccess.runSqlDirectly(tx, SQL.TASK_NOTE.CREATE_TABLE);
+        DataAccess.runSqlDirectly(tx, Sql.Task.CreateTable);
+        DataAccess.runSqlDirectly(tx, Sql.MetaType.CreateTable);
+        DataAccess.runSqlDirectly(tx, Sql.Meta.CreateTable);
+        DataAccess.runSqlDirectly(tx, Sql.TaskMeta.CreateTable);
+        DataAccess.runSqlDirectly(tx, Sql.TaskNote.CreateTable);
     }
 
     return {
@@ -75,21 +75,21 @@ var dataAccess = (function () {
         logQuerySql : false,
         appDb : null,
         dropAllTables : function (tx) {
-            dataAccess.runSqlDirectly(tx, 'drop table task');
-            dataAccess.runSqlDirectly(tx, 'drop table task_meta');
-            dataAccess.runSqlDirectly(tx, 'drop table meta_type');
-            dataAccess.runSqlDirectly(tx, 'drop table meta');
-            dataAccess.runSqlDirectly(tx, 'drop table task_note');
+            DataAccess.runSqlDirectly(tx, 'drop table task');
+            DataAccess.runSqlDirectly(tx, 'drop table task_meta');
+            DataAccess.runSqlDirectly(tx, 'drop table meta_type');
+            DataAccess.runSqlDirectly(tx, 'drop table meta');
+            DataAccess.runSqlDirectly(tx, 'drop table task_note');
         },
 
         initAppDb : function (db) {
             db.transaction(function (tx) {
                 createTables(tx);
-                dataAccess.runSqlDirectly(tx, 'alter table task add column reminder_on integer');
-                dataAccess.runSqlDirectly(tx, 'alter table task add column due_date integer');
-                dataAccess.runSqlDirectly(tx, 'CREATE VIEW task_view AS select task.id as task_id, task.name as task_name, task.status as task_status, task.reminder_on as task_reminder_on, task.due_date as task_due_date, meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from task join task_meta on task_meta.task_id = task.id join meta on task_meta.meta_id = meta.id join meta_type on meta_type.id = meta.meta_type_id');
-                dataAccess.runSqlDirectly(tx, 'CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from meta join meta_type on meta_type.id = meta.meta_type_id');
-                loadSeedAndSampleData();
+                DataAccess.runSqlDirectly(tx, 'alter table task add column reminder_on integer');
+                DataAccess.runSqlDirectly(tx, 'alter table task add column due_date integer');
+                DataAccess.runSqlDirectly(tx, 'CREATE VIEW task_view AS select task.id as task_id, task.name as task_name, task.status as task_status, task.reminder_on as task_reminder_on, task.due_date as task_due_date, meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from task join task_meta on task_meta.task_id = task.id join meta on task_meta.meta_id = meta.id join meta_type on meta_type.id = meta.meta_type_id');
+                DataAccess.runSqlDirectly(tx, 'CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from meta join meta_type on meta_type.id = meta.meta_type_id');
+                SeedSampleDataProvider.loadSeedAndSampleData();
             }, function (error) {
                 log.logSqlError("Failed to create tables", error);
             }, function () {
@@ -99,7 +99,7 @@ var dataAccess = (function () {
 
         initAppInfoDb : function (db) {
             db.transaction(function (tx) {
-                dataAccess.runSqlDirectly(tx, APP_SQL.APP_INFO.CREATE_TABLE);
+                DataAccess.runSqlDirectly(tx, AppSql.AppInfo.CreateTable);
             }, function (error) {
                 log.logSqlError("Failed to create app info table", error);
             }, function () {
@@ -112,8 +112,8 @@ var dataAccess = (function () {
                 data = [];
             }
             tx.executeSql(sql, data, function (tx, result) {
-                log.logSqlStatement(sql, data, dataAccess.logQuerySql);
-                if (u.isFunction(callback)) {
+                log.logSqlStatement(sql, data, DataAccess.logQuerySql);
+                if (Util.isFunction(callback)) {
                     callback(tx, result);
                 }
             }, function (tx, error) {
@@ -131,11 +131,11 @@ var dataAccess = (function () {
         },
 
         createDatabaseConnection: function () {
-            if (dataAccess.appDb === null) {
-                appInfoDb = openDatabase('xiangqian_liu_apps_info_db', '', 'App info for Liu Xiangqian\'s Applications', 1024, dataAccess.initAppInfoDb);
+            if (DataAccess.appDb === null) {
+                appInfoDb = openDatabase('xiangqian_liu_apps_info_db', '', 'App info for Liu Xiangqian\'s Applications', 1024, DataAccess.initAppInfoDb);
                 setTimeout(function () {
                     appInfoDb.transaction(function (tx) {
-                        dataAccess.runSqlDirectly(tx, "select db_schema_version from app_info where app_id = ?", ['BB10GTD'],
+                        DataAccess.runSqlDirectly(tx, "select db_schema_version from app_info where app_id = ?", ['BB10GTD'],
                             function (tx, result) {
                                 if ((result !== null)
                                         && (result.rows !== null)
@@ -149,7 +149,7 @@ var dataAccess = (function () {
                                 } else {
                                     console.info("DB Schema version for app[BB10GTD] not existing");
                                     appInfoDb.transaction(function (tx1) {
-                                        dataAccess.runSqlDirectly(
+                                        DataAccess.runSqlDirectly(
                                             tx1,
                                             "insert into app_info(app_id, name, version, db_schema_version, additional_info) values (?, ?, ?, ?, ?)",
                                             ['BB10GTD', 'Peaceful & Better Life App', '0.0.1', '', 'Peaceful & Better Life App']
@@ -171,97 +171,97 @@ var dataAccess = (function () {
 
         task : {
             create: function (name, successCallback, failureCallback) {
-                runSQL(SQL.TASK.INSERT_BY_NAME, [name], successCallback, failureCallback);
+                runSQL(Sql.Task.InsertByName, [name], successCallback, failureCallback);
             },
             deleteById: function (id, successCallback, failureCallback) {
-                runSQL(SQL.TASK.DELETE_BY_ID, [id], successCallback, failureCallback);
+                runSQL(Sql.Task.DeleteById, [id], successCallback, failureCallback);
             },
             update: function (id, name, successCallback, failureCallback) {
-                runSQL(SQL.TASK.UPDATE_BY_ID, [name, id], successCallback, failureCallback);
+                runSQL(Sql.Task.UpdateById, [name, id], successCallback, failureCallback);
             },
             updateStatus: function (id, statusKey, successCallback, failureCallback) {
-                runSQL(SQL.TASK.UPDATE_STATUS_BY_ID, [statusKey, id], successCallback, failureCallback);
+                runSQL(Sql.Task.UpdateStatusById, [statusKey, id], successCallback, failureCallback);
             },
             getByMeta: function (metaTypeName, metaName, successCallback, failureCallback) {
-                runSQL(SQL.TASK.SELECT_BY_META_NAME, [metaName, metaTypeName, seedData.taskDoneStatus], successCallback, failureCallback);
+                runSQL(Sql.Task.SelectByMetaName, [metaName, metaTypeName, seedData.taskDoneStatus], successCallback, failureCallback);
             },
             getByMetaType: function (metaTypeName, successCallback, failureCallback) {
-                runSQL(SQL.TASK.SELECT_BY_META_TYPE, [metaTypeName, seedData.taskDoneStatus], successCallback, failureCallback);
+                runSQL(Sql.Task.SelectByMetaType, [metaTypeName, seedData.taskDoneStatus], successCallback, failureCallback);
             },
             getAll: function (successCallback, failureCallback) {
-                runSQL(SQL.TASK.FILTER_BY_STATUS, [seedData.taskDoneStatus], successCallback, failureCallback);
+                runSQL(Sql.Task.FilterByStatus, [seedData.taskDoneStatus], successCallback, failureCallback);
             },
             getById: function (id, successCallback, failureCallback) {
-                runSQL(SQL.TASK.SELECT_BY_ID, [id], successCallback, failureCallback);
+                runSQL(Sql.Task.SelectById, [id], successCallback, failureCallback);
             },
             getByName: function (name, successCallback, failureCallback) {
-                runSQL(SQL.TASK.SELECT_BY_NAME, [name], successCallback, failureCallback);
+                runSQL(Sql.Task.SelectByName, [name], successCallback, failureCallback);
             },
             getByIdAndName: function (id, name, successCallback, failureCallback) {
-                runSQL(SQL.TASK.SELECT_BY_ID_NAME, [id, name], successCallback, failureCallback);
+                runSQL(Sql.Task.SelectByIdName, [id, name], successCallback, failureCallback);
             }
         },
 
         metaType : {
             create : function (name, description, successCallback, failureCallback) {
-                runSQL(SQL.META_TYPE.INSERT_BY_NAME, [name, description], successCallback, failureCallback);
+                runSQL(Sql.MetaType.InsertByName, [name, description], successCallback, failureCallback);
             },
             deleteById : function (id, successCallback, failureCallback) {
-                runSQL(SQL.META_TYPE.DELETE_BY_ID, [id], successCallback, failureCallback);
+                runSQL(Sql.MetaType.DeleteById, [id], successCallback, failureCallback);
             },
             update : function (id, name, description, successCallback, failureCallback) {
-                runSQL(SQL.META_TYPE.UPDATE_BY_ID, [name, description, id], successCallback, failureCallback);
+                runSQL(Sql.MetaType.UpdateById, [name, description, id], successCallback, failureCallback);
             },
             //Write Test case for this method.
             getAll : function (successCallback, failureCallback) {
-                runSQL(SQL.META_TYPE.SELECT_ALL, [], successCallback, failureCallback);
+                runSQL(Sql.MetaType.SelectAll, [], successCallback, failureCallback);
             },
             getById : function (id, successCallback, failureCallback) {
-                runSQL(SQL.META_TYPE.SELECT_BY_ID, [id], successCallback, failureCallback);
+                runSQL(Sql.MetaType.SelectById, [id], successCallback, failureCallback);
             },
             getByName : function (name, successCallback, failureCallback) {
-                runSQL(SQL.META_TYPE.SELECT_BY_NAME, [name], successCallback, failureCallback);
+                runSQL(Sql.MetaType.SelectByName, [name], successCallback, failureCallback);
             },
             getByIdAndName : function (id, name, successCallback, failureCallback) {
-                runSQL(SQL.META_TYPE.SELECT_BY_ID_NAME, [id, name], successCallback, failureCallback);
+                runSQL(Sql.MetaType.SelectByIdName, [id, name], successCallback, failureCallback);
             }
         },
 
         meta : {
             create : function (name, meta_type_id, description, successCallback, failureCallback) {
-                runSQL(SQL.META.INSERT_BY_NAME_TYPE, [name, meta_type_id, description], successCallback, failureCallback);
+                runSQL(Sql.Meta.Insert, [name, meta_type_id, description], successCallback, failureCallback);
             },
             deleteById : function (id, successCallback, failureCallback) {
-                runSQL(SQL.META.DELETE_BY_ID, [id], successCallback, failureCallback);
+                runSQL(Sql.Meta.DeleteById, [id], successCallback, failureCallback);
             },
             update : function (id, name, description, successCallback, failureCallback) {
                 if (null === description) {
-                    runSQL(SQL.META.UPDATE_NAME_BY_ID, [name, id], successCallback, failureCallback);
+                    runSQL(Sql.Meta.UpdateNameById, [name, id], successCallback, failureCallback);
                 } else {
-                    runSQL(SQL.META.UPDATE_BY_ID, [name, description, id], successCallback, failureCallback);
+                    runSQL(Sql.Meta.UpdateById, [name, description, id], successCallback, failureCallback);
                 }
             },
             getById : function (id, successCallback, failureCallback) {
-                runSQL(SQL.META.SELECT_BY_ID, [id], successCallback, failureCallback);
+                runSQL(Sql.Meta.SelectById, [id], successCallback, failureCallback);
             },
             //TODO Possible bug: if user creates a meta has the same name with Pre-defined, then there will be issue
             getByName : function (name, successCallback, failureCallback) {
-                runSQL(SQL.META.SELECT_BY_NAME, [name], successCallback, failureCallback);
+                runSQL(Sql.Meta.SelectByName, [name], successCallback, failureCallback);
             },
             getInBasketMeta: function (successCallback, failureCallback) {
-                dataAccess.meta.getByName(seedData.inBasketMetaName, successCallback, failureCallback);
+                DataAccess.meta.getByName(seedData.inBasketMetaName, successCallback, failureCallback);
             },
             getNextActionMeta: function (successCallback, failureCallback) {
-                dataAccess.meta.getByName(seedData.nextActionMetaName, successCallback, failureCallback);
+                DataAccess.meta.getByName(seedData.nextActionMetaName, successCallback, failureCallback);
             },
             getSomedayMeta: function (successCallback, failureCallback) {
-                dataAccess.meta.getByName(seedData.somedayMetaName, successCallback, failureCallback);
+                DataAccess.meta.getByName(seedData.somedayMetaName, successCallback, failureCallback);
             },
             getByTypeId : function (metaTypeId, successCallback, failureCallback) {
-                runSQL(SQL.META.SELECT_BY_TYPE_ID, [metaTypeId], successCallback, failureCallback);
+                runSQL(Sql.Meta.SelectByTypeId, [metaTypeId], successCallback, failureCallback);
             },
             getByTypeName : function (metaTypeName, successCallback, failureCallback) {
-                dataAccess.metaType.getByName(metaTypeName, function (tx, results, arrays) {
+                DataAccess.metaType.getByName(metaTypeName, function (tx, results, arrays) {
                     var metaTypeId;
                     if (arrays !== null &&
                             arrays !== undefined &&
@@ -269,8 +269,8 @@ var dataAccess = (function () {
                             arrays[0] !== undefined &&
                             arrays[0] !== null
                             ) {
-                        metaTypeId = arrays[0][SQL.META_TYPE.COLS.ID];
-                        dataAccess.meta.getByTypeId(metaTypeId, successCallback, failureCallback);
+                        metaTypeId = arrays[0][Sql.MetaType.Cols.Id];
+                        DataAccess.meta.getByTypeId(metaTypeId, successCallback, failureCallback);
                     } else {
                         console.error("Meta Type with name [" + metaTypeName + "] not exists");
                     }
@@ -282,20 +282,20 @@ var dataAccess = (function () {
 
         taskMeta : {
             create : function (taskId, metaId, successCallback, failureCallback) {
-                runSQL(SQL.TASK_META.INSERT, [taskId, metaId], successCallback, failureCallback);
+                runSQL(Sql.TaskMeta.Insert, [taskId, metaId], successCallback, failureCallback);
             },
             getTasksByMetaId : function (metaId, successCallback, failureCallback) {
-                runSQL(SQL.TASK_META.SELECT_TASK_BY_META_ID, [metaId], successCallback, failureCallback);
+                runSQL(Sql.TaskMeta.SelectTaskByMetaId, [metaId], successCallback, failureCallback);
             },
             getMetasByTaskId: function (taskId, successCallback, failureCallback) {
-                runSQL(SQL.TASK_META.SELECT_META_BY_TASK_ID, [taskId], successCallback, failureCallback);
+                runSQL(Sql.TaskMeta.SelectMetaByTaskId, [taskId], successCallback, failureCallback);
             },
             throwTaskToList : function (taskId, metaName, metaTypeName, successCallback, failureCallback) {
-                runSQL(SQL.TASK_META.THROW_TASK_TO_LIST, [taskId, metaName, metaTypeName], successCallback, failureCallback);
+                runSQL(Sql.TaskMeta.ThrowTaskToList, [taskId, metaName, metaTypeName], successCallback, failureCallback);
             },
             moveTaskToGtdList : function (taskId, metaName, successCallback, failureCallback) {
-                runSQL(SQL.TASK_META.DELETE_META_BY_TYPE, [taskId, seedData.gtdMetaTypeName], function (tx, result, objs) {
-                    runSQL(SQL.TASK_META.THROW_TASK_TO_LIST, [taskId, metaName, seedData.gtdMetaTypeName], successCallback, failureCallback);
+                runSQL(Sql.TaskMeta.DeleteByMetaTypeName, [taskId, seedData.gtdMetaTypeName], function (tx, result, objs) {
+                    runSQL(Sql.TaskMeta.ThrowTaskToList, [taskId, metaName, seedData.gtdMetaTypeName], successCallback, failureCallback);
                 }, failureCallback);
             }
         }

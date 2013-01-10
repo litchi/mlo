@@ -1,7 +1,6 @@
-/*jslint browser: true, white: true*/
-"use strict";
-var uiConfig = (function () {
-
+/*jslint browser: true*/
+var UIConfig = (function () {
+    "use strict";
     return {
         leftPanelWidth              : '22%',
         rightPanelWidth             : '78%',
@@ -18,9 +17,10 @@ var uiConfig = (function () {
         emptyString                 : ''
     };
 
-}()),
+}());
 
-appConfig = (function () {
+var AppConfig = (function () {
+    "use strict";
     return {
         debugMode : true
     };

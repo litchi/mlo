@@ -1,4 +1,4 @@
-﻿<html> 
+﻿<html>
     <head>
         <meta name="x-blackberry-defaultHoverEffect" content="false" />
         <title>Peaceful and Better Life Comes from Organize</title>
@@ -9,17 +9,19 @@
         <!-- Application level shared javascripts -->
         <script type="text/javascript" src="js/app/config.js"></script>
         <script type="text/javascript" src="js/app/log.js"></script>
-        <script type="text/javascript" src="js/app/events-callback.js"></script>
-        <script type="text/javascript" src="js/app/data-structure.js"></script>
-        <script type="text/javascript" src="js/app/data-init.js"></script>
-        <script type="text/javascript" src="js/app/data-access.js"></script>
-        <script type="text/javascript" src="js/app/controller.js"></script>
-        <script type="text/javascript" src="js/app/task-group.js"></script>
         <script type="text/javascript" src="js/app/util.js"></script>
+        <script type="text/javascript" src="js/app/EventCallback.js"></script>
+        <script type="text/javascript" src="js/app/DataStructure.js"></script>
+        <script type="text/javascript" src="js/app/SeedSampleDataProvider.js"></script>
+        <script type="text/javascript" src="js/app/DataAccess.js"></script>
+        <script type="text/javascript" src="js/app/UIContextMenuController.js"></script>
+        <script type="text/javascript" src="js/app/UIListController.js"></script>
         <script src="local:///chrome/webworks.js" type="text/javascript"></script>
         <script type="text/javascript">
-            document.addEventListener('webworksready', webworksReadyCallback, false);
-            window.addEventListener('load',loadCallback);
+            /*jslint browser: true*/
+            /*global EventCallback*/
+            document.addEventListener('webworksready', EventCallback.webworksReadyCallback, false);
+            window.addEventListener('load', EventCallback.loadCallback);
         </script>
     </head>
     <body></body>

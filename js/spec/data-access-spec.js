@@ -6,7 +6,7 @@ describe("Unit Test for Data Access API", function() {
     var testIdentity = new Date().getMilliseconds(); 
 
     beforeEach(function(){
-        dataAccess.createDatabaseConnection();
+        DataAccess.createDatabaseConnection();
     });
     function generateTestField (topic, caseNo) {
         return "[" + testIdentity + '|Case #' + caseNo + "] " + topic + " " + new Date().valueOf(); 
@@ -53,7 +53,7 @@ describe("Unit Test for Data Access API", function() {
         expect(helloworld).toEqual("Hello World!");
     });
     it("#1 The database should be opened successfully", function(){
-        db = dataAccess.createDatabaseConnection();
+        db = DataAccess.createDatabaseConnection();
         expect(db).toBeDefined();
         var notNull = (db == null);
         expect(notNull).toBeFalsy();
@@ -68,46 +68,46 @@ describe("Unit Test for Data Access API", function() {
         }
 
         it("#2 task table should exists", function(){
-            assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [SQL.TASK.TABLE_NAME], tableExistsAssert);
+            assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [Sql.TASK.TableName], tableExistsAssert);
         });
 
         it("#3 task_meta table should be created", function(){
-            assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [SQL.TASK_META.TABLE_NAME], tableExistsAssert);
+            assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [Sql.TaskMeta.TableName], tableExistsAssert);
         });
 
         it("#4 meta table should be created", function(){
-            assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [SQL.META.TABLE_NAME], tableExistsAssert);
+            assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [Sql.Meta.TableName], tableExistsAssert);
         });
 
         it("#5 meta_type table should be created", function(){
-            assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [SQL.META_TYPE.TABLE_NAME], tableExistsAssert);
+            assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [Sql.MetaType.TableName], tableExistsAssert);
         });
 
         it("#6 task_note table should be created", function(){
-            assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [SQL.TASK_NOTE.TABLE_NAME], tableExistsAssert);
+            assertSqlExecuter(CHECK_TABLE_EXISTS_SQL, [Sql.TaskNote.TableName], tableExistsAssert);
         });
 
     });
     describe("Task data access", function(){
         it("#8 Insert into task table", function(){
-            var taskName = generateTestField(SQL.TASK.COLS.NAME, 8);
-            dataAccess.task.create(taskName);
-            assertSqlExecuter(SQL.TASK.SELECT_BY_NAME, [taskName], function(t_results, t_arrays, t_error) {
-                assertSqlResultAndField(t_arrays, t_error, SQL.TASK.COLS.NAME, taskName);
+            var taskName = generateTestField(Sql.TASK.Cols.Name, 8);
+            DataAccess.task.create(taskName);
+            assertSqlExecuter(Sql.TASK.SelectByName, [taskName], function(t_results, t_arrays, t_error) {
+                assertSqlResultAndField(t_arrays, t_error, Sql.TASK.Cols.Name, taskName);
             });
         });
 
         it("#9 Delete from task table", function() {
-            var taskName = generateTestField(SQL.TASK.COLS.NAME, 9);
+            var taskName = generateTestField(Sql.TASK.Cols.Name, 9);
             var id;
 
-            assertSqlExecuter(SQL.TASK.GET_MAX_ID,null, function(results, arrays, errors){
+            assertSqlExecuter(Sql.TASK.GetMaxId,null, function(results, arrays, errors){
                 id = arrays[0]["max(id)"] + 1;
-                assertSqlExecuter(SQL.TASK.INSERT_BY_ID_NAME, [id, taskName], function(t_results, t_arrays, t_error) {
-                    assertSqlExecuter(SQL.TASK.SELECT_BY_ID_NAME, [id, taskName], function(t_results, t_arrays, t_error){
+                assertSqlExecuter(Sql.TASK.InsertByIdName, [id, taskName], function(t_results, t_arrays, t_error) {
+                    assertSqlExecuter(Sql.TASK.SelectByIdName, [id, taskName], function(t_results, t_arrays, t_error){
                         assertTaskFields(t_arrays, t_error, id, taskName);
-                        dataAccess.task.delete(id);
-                        assertSqlExecuter(SQL.TASK.SELECT_BY_ID, [id], function(t_results, t_arrays, t_error) {
+                        DataAccess.task.delete(id);
+                        assertSqlExecuter(Sql.TASK.SelectById, [id], function(t_results, t_arrays, t_error) {
                             expect(t_arrays).toBeDefined();
                             expect(t_arrays.length).toEqual(0);
                         });
@@ -118,15 +118,15 @@ describe("Unit Test for Data Access API", function() {
 
         it("#10 Update task table", function(){
             //Create a task
-            var taskName = generateTestField(SQL.TASK.COLS.NAME, 10);
-            dataAccess.task.create(taskName);
+            var taskName = generateTestField(Sql.TASK.Cols.Name, 10);
+            DataAccess.task.create(taskName);
             //Update the task
-            assertSqlExecuter(SQL.TASK.GET_MAX_ID,null, function(results, arrays, errors){
+            assertSqlExecuter(Sql.TASK.GetMaxId,null, function(results, arrays, errors){
                 id = arrays[0]["max(id)"];
-                updatedTaskName = generateTestField(SQL.TASK.COLS.NAME, 10) + " updated";
-                dataAccess.task.update(id, updatedTaskName);
+                updatedTaskName = generateTestField(Sql.TASK.Cols.Name, 10) + " updated";
+                DataAccess.task.update(id, updatedTaskName);
                 //Assert
-                assertSqlExecuter(SQL.TASK.SELECT_BY_ID_NAME, [id, updatedTaskName], function(t_results, t_arrays, t_error){
+                assertSqlExecuter(Sql.TASK.SelectByIdName, [id, updatedTaskName], function(t_results, t_arrays, t_error){
                     assertTaskFields(t_arrays, t_error, id, updatedTaskName);
                 });
             });
@@ -134,7 +134,7 @@ describe("Unit Test for Data Access API", function() {
 
         it("#11 Read from task table by id", function(){
             assertReadTask(11, function(id, taskName){
-                dataAccess.task.getById(id, function(transaction, results, arrays){
+                DataAccess.task.getById(id, function(transaction, results, arrays){
                     assertTaskFields(arrays, undefined, id, taskName);
                 });
             });
@@ -142,7 +142,7 @@ describe("Unit Test for Data Access API", function() {
 
         it("#12 Read from task table by name", function(){
             assertReadTask(12, function(id, taskName){
-                dataAccess.task.getByName(taskName, function(transaction, results, arrays){
+                DataAccess.task.getByName(taskName, function(transaction, results, arrays){
                     assertTaskFields(arrays, undefined, id, taskName);
                 });
             });
@@ -150,7 +150,7 @@ describe("Unit Test for Data Access API", function() {
 
         it("#13 Read from task table by name and id", function(){
             assertReadTask(13, function(id, taskName){
-                dataAccess.task.getByIdAndName(id, taskName, function(transaction, results, arrays){
+                DataAccess.task.getByIdAndName(id, taskName, function(transaction, results, arrays){
                     assertTaskFields(arrays, undefined, id, taskName);
                 });
             });                                  
@@ -176,13 +176,13 @@ describe("Unit Test for Data Access API", function() {
         });
 
         function assertTaskFields(arrays, errors, id, name){
-            assertSqlResultAndField(arrays, errors, SQL.TASK.COLS.ID, id);
-            assertSqlResultAndField(arrays, errors, SQL.TASK.COLS.NAME, name);
+            assertSqlResultAndField(arrays, errors, Sql.TASK.Cols.Id, id);
+            assertSqlResultAndField(arrays, errors, Sql.TASK.Cols.Name, name);
         };
 
         function assertReadTask(caseId, assertCallback){
-            var id, taskName = generateTestField(SQL.TASK.COLS.NAME, caseId);
-            dataAccess.task.create(taskName, function(transaction, results, arrays){
+            var id, taskName = generateTestField(Sql.TASK.Cols.Name, caseId);
+            DataAccess.task.create(taskName, function(transaction, results, arrays){
                 id = results.insertId;
             }, function(error, statement){
                 expect(error).toBeUndefined();
@@ -196,34 +196,34 @@ describe("Unit Test for Data Access API", function() {
     describe("Meta Type data access", function (){
 
         it("#14 Insert into Meta Type table", function(){
-            var name = generateTestField(SQL.META_TYPE.COLS.NAME, 14);
-            dataAccess.metaType.create(name);
-            assertSqlExecuter(SQL.META_TYPE.SELECT_BY_NAME, [name], function(t_results, t_arrays, t_error) {
-                assertSqlResultAndField(t_arrays, t_error, SQL.META_TYPE.COLS.NAME, name);
+            var name = generateTestField(Sql.MetaType.Cols.Name, 14);
+            DataAccess.metaType.create(name);
+            assertSqlExecuter(Sql.MetaType.SelectByName, [name], function(t_results, t_arrays, t_error) {
+                assertSqlResultAndField(t_arrays, t_error, Sql.MetaType.Cols.Name, name);
             });
         });    
         it("#15 Insert into Type table with description", function(){
-            var name = generateTestField(SQL.META_TYPE.COLS.NAME, 15);
-            var desc = generateTestField(SQL.META_TYPE.COLS.DESCRIPTION, 15);
-            dataAccess.metaType.create(name, desc);
-            assertSqlExecuter(SQL.META_TYPE.SELECT_BY_NAME, [name], function(t_results, t_arrays, t_error) {
-                assertSqlResultAndField(t_arrays, t_error, SQL.META_TYPE.COLS.NAME, name);
-                assertSqlResultAndField(t_arrays, t_error, SQL.META_TYPE.COLS.DESCRIPTION, desc);
+            var name = generateTestField(Sql.MetaType.Cols.Name, 15);
+            var desc = generateTestField(Sql.MetaType.Cols.Description, 15);
+            DataAccess.metaType.create(name, desc);
+            assertSqlExecuter(Sql.MetaType.SelectByName, [name], function(t_results, t_arrays, t_error) {
+                assertSqlResultAndField(t_arrays, t_error, Sql.MetaType.Cols.Name, name);
+                assertSqlResultAndField(t_arrays, t_error, Sql.MetaType.Cols.Description, desc);
             });
         });    
         it("#16 Delete from Meta Type table", function() {
-            var name = generateTestField(SQL.META_TYPE.COLS.NAME, 16);
-            var desc = generateTestField(SQL.META_TYPE.COLS.DESCRIPTION, 16);
+            var name = generateTestField(Sql.MetaType.Cols.Name, 16);
+            var desc = generateTestField(Sql.MetaType.Cols.Description, 16);
             var id;
 
-            assertSqlExecuter(SQL.META_TYPE.GET_MAX_ID,null, function(results, arrays, errors){
+            assertSqlExecuter(Sql.MetaType.GetMaxId,null, function(results, arrays, errors){
                 id = arrays[0]["max(id)"] + 1;
-                assertSqlExecuter(SQL.META_TYPE.INSERT_BY_ID_NAME, [id, name, desc], function(t_results, t_arrays, t_error) {
-                    assertSqlExecuter(SQL.META_TYPE.SELECT_BY_ID_NAME, [id, name], function(t_results, t_arrays, t_error){
+                assertSqlExecuter(Sql.MetaType.InsertByIdName, [id, name, desc], function(t_results, t_arrays, t_error) {
+                    assertSqlExecuter(Sql.MetaType.SelectByIdName, [id, name], function(t_results, t_arrays, t_error){
                         expect(t_error).toBeUndefined();
                         assertMetaTypeFields(t_arrays, id, name, desc);
-                        dataAccess.metaType.delete(id);
-                        assertSqlExecuter(SQL.META_TYPE.SELECT_BY_ID, [id], function(t_results, t_arrays, t_error) {
+                        DataAccess.metaType.delete(id);
+                        assertSqlExecuter(Sql.MetaType.SelectById, [id], function(t_results, t_arrays, t_error) {
                             expect(t_arrays).toBeDefined();
                             expect(t_arrays.length).toEqual(0);
                         });
@@ -233,15 +233,15 @@ describe("Unit Test for Data Access API", function() {
         });
 
         it("#17 Update Meta Type table", function(){
-            var name = generateTestField(SQL.META_TYPE.COLS.NAME, 17);
-            var desc = generateTestField(SQL.META_TYPE.COLS.DESCRIPTION, 17);
-            dataAccess.metaType.create(name, desc);
-            assertSqlExecuter(SQL.META_TYPE.GET_MAX_ID,null, function(results, arrays, errors){
+            var name = generateTestField(Sql.MetaType.Cols.Name, 17);
+            var desc = generateTestField(Sql.MetaType.Cols.Description, 17);
+            DataAccess.metaType.create(name, desc);
+            assertSqlExecuter(Sql.MetaType.GetMaxId,null, function(results, arrays, errors){
                 id = arrays[0]["max(id)"];
                 updatedName = name + " updated";
                 updatedDesc = desc + " updated";
-                dataAccess.metaType.update(id, updatedName, updatedDesc);
-                assertSqlExecuter(SQL.META_TYPE.SELECT_BY_ID_NAME, [id, updatedName], function(t_results, t_arrays, t_error){
+                DataAccess.metaType.update(id, updatedName, updatedDesc);
+                assertSqlExecuter(Sql.MetaType.SelectByIdName, [id, updatedName], function(t_results, t_arrays, t_error){
                     expect(t_error).toBeUndefined();
                     assertMetaTypeFields(t_arrays, id, updatedName, updatedDesc);
                 });
@@ -249,7 +249,7 @@ describe("Unit Test for Data Access API", function() {
         });
         it("#18 Read from Meta Type table by id", function(){
             assertReadMetaType(18, function(id, name, desc){
-                dataAccess.metaType.getById(id, function(transaction, results, arrays){
+                DataAccess.metaType.getById(id, function(transaction, results, arrays){
                     assertMetaTypeFields(arrays, id, name, desc);
                 });
             });
@@ -257,7 +257,7 @@ describe("Unit Test for Data Access API", function() {
 
         it("#19 Read from Meta Type table by name", function(){
             assertReadMetaType(19, function(id, name, desc){
-                dataAccess.metaType.getByName(name, function(transaction, results, arrays){
+                DataAccess.metaType.getByName(name, function(transaction, results, arrays){
                     assertMetaTypeFields(arrays, id, name, desc);
                 });
             });
@@ -265,7 +265,7 @@ describe("Unit Test for Data Access API", function() {
 
         it("#20 Read from Meta Type table by name and id", function(){
             assertReadMetaType(20, function(id, name, desc){
-                dataAccess.metaType.getByIdAndName(id, name, function(transaction, results, arrays){
+                DataAccess.metaType.getByIdAndName(id, name, function(transaction, results, arrays){
                     assertMetaTypeFields(arrays, id, name, desc);
                 });
             });                                  
@@ -281,9 +281,9 @@ describe("Unit Test for Data Access API", function() {
 
         function assertReadMetaType(caseId, assertCallback){
             var id, 
-            name = generateTestField(SQL.META_TYPE.COLS.NAME, caseId),
-            desc = generateTestField(SQL.META_TYPE.COLS.DESCRIPTION, caseId);
-            dataAccess.metaType.create(name, desc, function(transaction, results, arrays){
+            name = generateTestField(Sql.MetaType.Cols.Name, caseId),
+            desc = generateTestField(Sql.MetaType.Cols.Description, caseId);
+            DataAccess.metaType.create(name, desc, function(transaction, results, arrays){
                 id = results.insertId;
             }, function(error, statement){
                 expect(error).toBeUndefined();
@@ -299,15 +299,15 @@ describe("Unit Test for Data Access API", function() {
             expect(t_arrays.length).toEqual(1);
             expect(t_arrays[0]).toBeDefined();
 
-            assertObject(t_arrays[0][SQL.META_TYPE.COLS.ID], id);
-            assertObject(t_arrays[0][SQL.META_TYPE.COLS.NAME], name);
-            assertObject(t_arrays[0][SQL.META_TYPE.COLS.DESCRIPTION], desc);
+            assertObject(t_arrays[0][Sql.MetaType.Cols.Id], id);
+            assertObject(t_arrays[0][Sql.MetaType.Cols.Name], name);
+            assertObject(t_arrays[0][Sql.MetaType.Cols.Description], desc);
         }
     });
     describe("Meta data access", function() {
-        var metaTypeId, metaTypeName = generateTestField(SQL.META.COLS.NAME, "21 - #24");
+        var metaTypeId, metaTypeName = generateTestField(Sql.Meta.Cols.Name, "21 - #24");
         beforeEach(function(){
-            dataAccess.metaType.create(metaTypeName, null, function(tx, result, arrays){
+            DataAccess.metaType.create(metaTypeName, null, function(tx, result, arrays){
                 metaTypeId = result.insertId;
             });
             waits(100);
@@ -323,7 +323,7 @@ describe("Unit Test for Data Access API", function() {
         });
         it("#24 Get Meta by Meta Type Name", function(){
             doMetaAssert(24, function(){}, function(id, metaTypeId, name, desc){
-                dataAccess.meta.getByTypeName(metaTypeName, function(tx, results, arrays){
+                DataAccess.meta.getByTypeName(metaTypeName, function(tx, results, arrays){
                     assertMetaFieldsInArray(arrays, id, metaTypeId, name, desc);
                 }, assertFails);
             });
@@ -348,9 +348,9 @@ describe("Unit Test for Data Access API", function() {
             doMetaAssert(caseId, function(id, name, desc){
                 updatedName = name + " Updated";
                 updatedDesc = desc + " Updated";
-                dataAccess.meta.update(id, updatedName, updatedDesc); 
+                DataAccess.meta.update(id, updatedName, updatedDesc);
             }, function(id){
-                assertSqlExecuter(SQL.META.SELECT_BY_ID, [id], function(results, arrays, error) {
+                assertSqlExecuter(Sql.Meta.SelectById, [id], function(results, arrays, error) {
                     expect(error).toBeUndefined();
                     assertMetaFieldsInArray(arrays, id, metaTypeId, updatedName, updatedDesc);
                 });
@@ -358,9 +358,9 @@ describe("Unit Test for Data Access API", function() {
         }
         function doMetaDeleteAssert(caseId){
             doMetaAssert(caseId, function(id){
-                dataAccess.meta.delete(id);
+                DataAccess.meta.delete(id);
             }, function(id){
-                assertSqlExecuter(SQL.META.SELECT_BY_ID, [id], function(results, arrays, error) {
+                assertSqlExecuter(Sql.Meta.SelectById, [id], function(results, arrays, error) {
                     expect(arrays).toBeDefined();
                     expect(arrays.length).toEqual(0);
                 });
@@ -369,7 +369,7 @@ describe("Unit Test for Data Access API", function() {
         function doMetaCreateAssert(caseId){
             doMetaAssert(caseId, function(id){
             }, function(id, metaTypeId, name, desc){
-                assertSqlExecuter(SQL.META.SELECT_BY_NAME, [name], function(results, arrays, error) {
+                assertSqlExecuter(Sql.Meta.SelectByName, [name], function(results, arrays, error) {
                     expect(error).toBeUndefined();
                     assertMetaFieldsInArray(arrays, id, metaTypeId, name, desc);
                 });
@@ -377,9 +377,9 @@ describe("Unit Test for Data Access API", function() {
         }
         function doMetaAssert(caseId, operCallback, assertCallback){
             var id, 
-            name = generateTestField(SQL.META.COLS.NAME, caseId),
-            desc = generateTestField(SQL.META.COLS.DESCRIPTION, caseId);
-            dataAccess.meta.create(name, metaTypeId, desc, function(tx, results, arrays){
+            name = generateTestField(Sql.Meta.Cols.Name, caseId),
+            desc = generateTestField(Sql.Meta.Cols.Description, caseId);
+            DataAccess.meta.create(name, metaTypeId, desc, function(tx, results, arrays){
                 id = results.insertId;
             });
             waits(100);
@@ -398,10 +398,10 @@ describe("Unit Test for Data Access API", function() {
         }
         function assertMetaFields(value, id, meta_type_id, name, desc){
             expect(value).toBeDefined();
-            assertObject(value[SQL.META.COLS.ID], id);
-            assertObject(value[SQL.META.COLS.META_TYPE_ID], meta_type_id);
-            assertObject(value[SQL.META.COLS.NAME], name);
-            assertObject(value[SQL.META.COLS.DESCRIPTION], desc);
+            assertObject(value[Sql.Meta.Cols.Id], id);
+            assertObject(value[Sql.Meta.Cols.MetaTypeId], meta_type_id);
+            assertObject(value[Sql.Meta.Cols.Name], name);
+            assertObject(value[Sql.Meta.Cols.Description], desc);
         }
     });
 
@@ -412,23 +412,23 @@ describe("Unit Test for Data Access API", function() {
             var metaTypeDesc = generateTestField('MetaType Desc', 26);
             var metaName = generateTestField('Meta', 26);
             var metaDesc = generateTestField('Meta Desc', 26);
-            dataAccess.task.create(taskName, function(tx1, taskResult, obj1){
+            DataAccess.task.create(taskName, function(tx1, taskResult, obj1){
                 expect(taskResult).toBeDefined();
                 expect(taskResult.insertId).toBeDefined();
-                dataAccess.metaType.create(metaTypeName, metaTypeDesc, function(tx2, metaTypeResult, obj2){
+                DataAccess.metaType.create(metaTypeName, metaTypeDesc, function(tx2, metaTypeResult, obj2){
                     expect(metaTypeResult).toBeDefined();
                     expect(metaTypeResult.insertId).toBeDefined();
-                    dataAccess.meta.create(metaName, metaTypeResult.insertId, metaDesc, function(tx3, metaResult, obj3){
+                    DataAccess.meta.create(metaName, metaTypeResult.insertId, metaDesc, function(tx3, metaResult, obj3){
                         expect(metaResult).toBeDefined();
                         expect(metaResult.insertId).toBeDefined();
-                        dataAccess.taskMeta.create(taskResult.insertId, metaResult.insertId, function(tx4, taskMetaResult, obj4){
+                        DataAccess.taskMeta.create(taskResult.insertId, metaResult.insertId, function(tx4, taskMetaResult, obj4){
                             expect(taskMetaResult).toBeDefined();
                             expect(taskMetaResult.insertId).toBeDefined();
-                            assertSqlExecuter(SQL.TASK_META.SELECT_BY_IDS, [taskResult.insertId, metaResult.insertId], function(t_results, t_arrays, t_error) {
+                            assertSqlExecuter(Sql.TaskMeta.SelectByIds, [taskResult.insertId, metaResult.insertId], function(t_results, t_arrays, t_error) {
                                expect(t_arrays).toBeDefined();
                                expect(t_arrays.length).toEqual(1);
-                               assertObject(t_arrays[0][SQL.TASK_META.COLS.TASK_ID], taskResult.insertId);
-                               assertObject(t_arrays[0][SQL.TASK_META.COLS.META_ID], metaResult.insertId);
+                               assertObject(t_arrays[0][Sql.TaskMeta.Cols.TaskId], taskResult.insertId);
+                               assertObject(t_arrays[0][Sql.TaskMeta.Cols.MetaId], metaResult.insertId);
                             });
                         }, assertFails);
                     }, assertFails);
