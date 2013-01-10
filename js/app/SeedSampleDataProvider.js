@@ -74,15 +74,17 @@ var SeedSampleDataProvider = (function () {
         insertSampleTasks(tx);
     }
 
-    function loadSeedAndSampleData() {
-        console.info("First time init db, about to insert seed and sample data");
-        DataAccess.appDb.transaction(function (tx) {
-            insertSeedData(tx);
-            insertSampleData(tx);
-        }, function (error) {
-            log.logSqlError("Error inserting seed and sample data", error);
-        }, function () {
-            console.info("First time init db, insert seed and sample data completed");
-        });
-    }
+    return {
+        loadSeedAndSampleData : function () {
+            console.info("First time init db, about to insert seed and sample data");
+            DataAccess.appDb.transaction(function (tx) {
+                insertSeedData(tx);
+                insertSampleData(tx);
+            }, function (error) {
+                log.logSqlError("Error inserting seed and sample data", error);
+            }, function () {
+                console.info("First time init db, insert seed and sample data completed");
+            });
+        }
+    };
 }());

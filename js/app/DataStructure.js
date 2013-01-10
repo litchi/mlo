@@ -57,7 +57,7 @@ Sql = {
             MetaTypeId  : 'meta_type_id',
             Description : 'description'
         },
-        CreateTable    : 'CREATE TABLE IF NOT EXISTS meta (id INTEGER PRIMARY KEY AUTOINCREMENT, meta_type_id INTEGER, name text, description text, UNIQUE(meta_type_id, name))',
+        CreateTable    : 'create table if not exists meta (id integer primary key autoincrement, meta_type_id integer, name text, description text, unique(meta_type_id, name))',
         Insert         : 'insert into meta (id, name, meta_type_id, description) values (null, ?, ?, ?)',
         SelectAll      : 'select id, meta_type_id, name, description from meta',
         SelectById     : 'select id, meta_type_id, name, description from meta where id = ?',
@@ -77,7 +77,7 @@ Sql = {
             Name        : 'name',
             Description : 'description'
         },
-        CreateTable    : 'CREATE TABLE IF NOT EXISTS meta_type (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, description text, internal INTEGER DEFAULT 0)',
+        CreateTable    : 'create table if not exists meta_type (id integer primary key autoincrement, name text, description text, internal integer default 0)',
         InsertByName   : 'insert into meta_type (name, description) values (?, ?)',
         InsertByIdName : 'insert into meta_type (id, name, description) values (?, ?, ?)',
         SelectAll      : 'select id, name, description from meta_type',
@@ -92,7 +92,7 @@ Sql = {
 
     TaskNote : {
         TableName   : 'task_note',
-        CreateTable : 'CREATE TABLE IF NOT EXISTS task_note (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, content text, create_date integer)'
+        CreateTable : 'create table if not exists task_note (id integer primary key autoincrement, task_id int, content text, create_date integer)'
     },
 
     Task : {
@@ -104,7 +104,7 @@ Sql = {
             DueDate    : 'due_date'
         },
         //TODO Clean up/Remove these create tables sqls since they are not up to date.
-        CreateTable      : "CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, status text default 'New')",
+        CreateTable      : "create table if not exists task (id integer primary key autoincrement, name text, status text default 'New')",
         InsertByName     : 'insert into task (id, name) values (null, ?)',
         InsertByIdName   : 'insert into task(id, name) values (?, ?)',
         FilterByStatus   : 'select id, name from task where status != ?',
@@ -123,6 +123,6 @@ Sql = {
 
 AppSql = {
     AppInfo : {
-        CreateTable : 'CREATE TABLE IF NOT EXISTS app_info (id INTEGER PRIMARY KEY AUTOINCREMENT, app_id text, name text, version text, db_schema_version text, additional_info text, UNIQUE(app_id))'
+        CreateTable : 'create table if not exists app_info (id integer primary key autoincrement, app_id text, name text, version text, db_schema_version text, additional_info text, unique(app_id))'
     }
 };
