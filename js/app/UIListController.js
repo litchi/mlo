@@ -120,16 +120,36 @@ var UIListController = (function () {
 
 
     function makeAllTasksItem(metaTypeName) {
-        var item = document.createElement('div');
+        var item = document.createElement('div'),
+            title = 'All tasks assigned ' + metaTypeName;
         item.setAttribute('data-bb-type', 'item');
         item.setAttribute('data-bb-style', 'stretch');
-        item.setAttribute('title', 'All Tasks');
-        item.setAttribute('data-bb-title', 'All Tasks');
+        item.setAttribute('title', title);
+        item.setAttribute('data-bb-title', title);
         item.setAttribute(
             'onclick',
             "UIListController.fillTasksToGroupByMetaInfo('" + metaTypeName + "', '" + Sql.FilterAllMeta + "');Util.switchPanelWidth('" + UIConfig.leftPanelWidth + "', '" + UIConfig.rightPanelWidth + "', '" + UIConfig.rightPanelSmallerLeftMargin + "');"
         );
         return item;
+    }
+
+    function setCreateTaskInputPlaceHolder(metaName, metaTypeName) {
+        var placeholder = 'Create new task',
+            ctf = document.getElementById('ctsi');
+        if (undefined !== ctf) {
+            if (!Util.isEmpty(metaName) &&
+                    Sql.FilterAllMeta !== metaName &&
+                    seedData.dueMetaTypeName !== metaTypeName) {
+                if (seedData.gtdMetaTypeName === metaTypeName) {
+                    placeholder = placeholder + ' on ' + metaName;
+                } else {
+                    placeholder = placeholder + ' on ' + metaTypeName + ' ' + metaName;
+                }
+            } else {
+                placeholder = placeholder + '(Goes to list Basket)';
+            }
+            ctf.setAttribute('placeholder', placeholder);
+        }
     }
 
     return {
@@ -150,6 +170,7 @@ var UIListController = (function () {
                     });
                 }
             }
+            setCreateTaskInputPlaceHolder(metaName, metaTypeName);
             if (Sql.FilterAllMeta !== metaName) {
                 setMetaFields(metaName);
             } else {

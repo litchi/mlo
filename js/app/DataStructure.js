@@ -19,7 +19,7 @@ CommonSql = {
 };
 
 seedData = {
-    inBasketMetaName         : 'In Basket',
+    inBasketMetaName         : 'Basket',
     nextActionMetaName       : 'Next Action',
     somedayMetaName          : 'Someday',
     gtdMetaTypeName          : 'GTD',

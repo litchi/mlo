@@ -43,34 +43,56 @@ var UIContextMenuController = (function () {
         }
     }
 
-    return {
-        createTask : function (name, metaId) {
-            var taskId, project = null, metaTypeName, metaName, context = null;
-            DataAccess.task.create(name, function (tx, result, rows) {
-                taskId = result.insertId;
-                DataAccess.appDb.transaction(function (transaction) {
-                    transaction.executeSql(
-                        "insert into task_meta (id, task_id, meta_id) values (null, ?, ?)",
-                        [taskId, metaId],
-                        function (tx1, r2) {
-                            metaTypeName = Util.valueOf('v_meta_type_name');
-                            metaName = Util.valueOf('v_meta_name');
+    function createTaskInternal(name, metaId) {
+        var taskId, metaTypeName, metaName, project = null, context = null;
+        DataAccess.task.create(name, function (tx, result, rows) {
+            taskId = result.insertId;
+            DataAccess.appDb.transaction(function (transaction) {
+                transaction.executeSql(
+                    "insert into task_meta (id, task_id, meta_id) values (null, ?, ?)",
+                    [taskId, metaId],
+                    function (tx1, r2) {
+                        metaTypeName = Util.valueOf('v_meta_type_name');
+                        metaName = Util.valueOf('v_meta_name');
+                        if (Util.isEmpty(metaName)) {
                             if (metaTypeName === seedData.projectMetaTypeName) {
                                 project = metaName;
                             } else if (metaTypeName === seedData.contextMetaTypeName) {
                                 context = [metaName];
                             }
-                            UIListController.addTaskToList(taskId, name, project, context, null);
-                            Util.setValue('ctsi', UIConfig.emptyString);
-                        },
-                        function (tx1, e) {
-                            log.logSqlError("Failed to add task[" + taskId + "] to in basket", e);
                         }
-                    );
-                });
-            }, function (tx, e1) {
-                log.logSqlError("Failed creating task[" + name + "]", e1);
+                        UIListController.addTaskToList(taskId, name, project, context, null);
+                        Util.setValue('ctsi', UIConfig.emptyString);
+                    },
+                    function (tx1, e) {
+                        log.logSqlError("Failed to add task[" + taskId + "] to in basket", e);
+                    }
+                );
             });
+        }, function (tx, e1) {
+            log.logSqlError("Failed creating task[" + name + "]", e1);
+        });
+    }
+
+    return {
+        createTask : function (name, metaId) {
+            var taskId, project = null, metaIdToDb, metaTypeName, metaName, context = null;
+            if (Util.isEmpty(metaId)) {
+                DataAccess.appDb.transaction(function (tx) {
+                    DataAccess.runSqlDirectly(tx,
+                        'select id from meta where name = ?',
+                        [seedData.inBasketMetaName],
+                        function (tx, result) {
+                            if (1 === result.rows.length) {
+                                createTaskInternal(name, result.rows.item(0).id);
+                            } else {
+                                console.warn("Meta with name[%s] was not found when trying to insert task to it", seedData.inBasketMetaName);
+                            }
+                        });
+                });
+            } else {
+                createTaskInternal(name, metaId);
+            }
             return false;
         },
 

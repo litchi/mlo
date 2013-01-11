@@ -3,9 +3,15 @@
 var Util = (function () {
     "use strict";
     return {
+        
+        isEmpty : function (str) {
+            return (null === str || undefined === str || '' === str);
+        },
+
         endsWith : function (str, suffix) {
             return str.indexOf(suffix, str.length - suffix.length) !== -1;
         },
+
         startsWith : function (str, prefix) {
             var result;
             if (str === null && prefix === null) {
@@ -17,6 +23,7 @@ var Util = (function () {
             }
             return result;
         },
+
         valueOf : function (id) {
             var element, value;
             if (id !== null) {
@@ -31,6 +38,7 @@ var Util = (function () {
             }
             return value;
         },
+
         setValue : function (id, value) {
             var element;
             if (id !== null) {
@@ -85,7 +93,6 @@ var Util = (function () {
             resultStr =  d + t;
             return resultStr;
         },
-
 
         showErrorToast : function (message, buttonText, onToastDismissed, onButtonSelected) {
             var toastId, dismissed, selected, options;

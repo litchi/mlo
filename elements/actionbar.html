@@ -1,5 +1,5 @@
 <div data-bb-type="action-bar" data-bb-back-caption="Back" id="action-bar">
-    <div data-bb-type="action" data-bb-style="tab" id="In Basket"
+    <div data-bb-type="action" data-bb-style="tab" id="Basket"
         onclick="bb.pushScreen('task-list.html', seedData.inBasketMetaName)" 
         data-bb-img="resources/inbox.png" data-bb-accent-text="Basket">Basket</div>
     <div data-bb-type="action" data-bb-style="tab" id="Next Action"
@@ -12,7 +12,7 @@
         onclick="bb.pushScreen('task-by-meta.html', UIConfig.taskByPagePrefix + seedData.dueMetaTypeName);"
         data-bb-img="resources/due.png"  data-bb-accent-text="Due">Due</div>
     <div data-bb-type="action" data-bb-style="tab" id="task-by-Context"
-        onclick="bb.pushScreen('task-by-meta.html', UIConfig.taskByPagePrefix + seedData.contextMetaTypeName);"
+        data-bb-overflow="true" onclick="bb.pushScreen('task-by-meta.html', UIConfig.taskByPagePrefix + seedData.contextMetaTypeName);"
         data-bb-img="resources/context.png" data-bb-accent-text="Context">Context</div>
     <div data-bb-type="action" data-bb-style="tab" id="Someday"
         data-bb-overflow="true" onclick="bb.pushScreen('task-list.html', seedData.somedayMetaName);" 

@@ -172,7 +172,7 @@ var UIEditFormController = (function () {
 
     return {
 
-        saveTask : function (id, name, projectId) {
+        updateTask : function (id, name, projectId) {
             if (UIConfig.emptyString === name) {
                 document.getElementById('task-name').setAttribute('placeholder', 'Please fill in task name');
                 return;

@@ -5,7 +5,7 @@ var SeedSampleDataProvider = (function () {
 
     function insertGtdSeedData(tx) {
         DataAccess.runSqlDirectly(tx, "insert into meta_type (name, description, internal) values ('GTD', 'Predefined GTD lists for task, includes in basket/(someday/maybe)/next action', 1)");
-        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'In Basket'   , 'Predefined in basket meta for tasks' from meta_type where name       = 'GTD'");
+        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'Basket'   , 'Predefined in basket meta for tasks' from meta_type where name       = 'GTD'");
         DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'Next Action' , 'Predefined next action meta for tasks' from meta_type where name     = 'GTD'");
         DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'Someday'     , 'Predefined Someday & Maybe meta for tasks' from meta_type where name = 'GTD'");
     }
@@ -72,8 +72,8 @@ var SeedSampleDataProvider = (function () {
         insertSampleTask(tx, 'Click "Context" icon below to group tasks by context', 'App Usage', 'Next Action');
         insertSampleTask(tx, 'Show overflow menu and click "Someday/Maybe" to display Someday/Maybe list', 'App Usage', 'Next Action');
         insertSampleTask(tx, 'Show overflow menu and click "Dimensions" to manage Project/Context', 'App Usage', 'Next Action');
-        insertSampleTask(tx, 'Sample: Call Jenny and say happy birthday to her', 'call', 'In Basket', 'errands');
-        insertSampleTask(tx, 'Sample: Read the book "Getting things Done"', 'subway', 'In Basket', 'home');
+        insertSampleTask(tx, 'Sample: Call Jenny and say happy birthday to her', 'call', 'Basket', 'errands');
+        insertSampleTask(tx, 'Sample: Read the book "Getting things Done"', 'subway', 'Basket', 'home');
         insertSampleTask(tx, 'Sample: Travel to Tibet with Honny, next spring', 'Someday', 'bank', 'online');
     }
 
