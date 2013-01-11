@@ -57,8 +57,20 @@ var UIEditFormController = (function () {
         });
     }
 
+    function genContextDeleteIconId(metaId) {
+        return metaId + "_img";
+    }
+
+    function createContextDeleteIcon(metaId) {
+        var icon = document.createElement('img');
+        icon.setAttribute('id', genContextDeleteIconId(metaId));
+        icon.setAttribute('class', 'deleteIcon');
+        icon.setAttribute('src', './resources/remove-context.png');
+        return icon;
+    }
+
     function createContextSpan(container, taskId, metaId, metaName) {
-        var span, count;
+        var span, count, icon;
         DataAccess.appDb.transaction(function (tx) {
             DataAccess.runSqlDirectly(
                 tx,
@@ -73,12 +85,15 @@ var UIEditFormController = (function () {
                             span.setAttribute('class', 'selectedContext');
                             span.setAttribute('onclick', 'UIEditFormController.unSelectContext("' + metaId + '", "' + metaName + '")');
                             selectedContextIds[metaId] = metaName;
-                            log.logObjectData('selectedContextIds after add [' + metaId + '][' + metaName + ']', selectedContextIds, true);
+                            icon = createContextDeleteIcon(metaId);
                         } else {
                             span.setAttribute('class', 'context');
                             span.setAttribute('onclick', 'UIEditFormController.selectContext("' + metaId + '", "' + metaName + '")');
                         }
                         span.innerText = metaName;
+                        if (Util.notEmpty(icon)) {
+                            span.appendChild(icon);
+                        }
                         container.appendChild(span);
                     }
                 }
@@ -189,15 +204,26 @@ var UIEditFormController = (function () {
         },
 
         selectContext : function (metaId, metaName) {
-            var span = document.getElementById(metaId);
+            var icon = document.getElementById(genContextDeleteIconId(metaId)),
+                span = document.getElementById(metaId);
             selectedContextIds[metaId] = metaName;
             span.setAttribute('class', 'selectedContext');
             span.setAttribute('onclick', 'UIEditFormController.unSelectContext("' + metaId + '", "' + metaName + '")');
+            if (Util.isEmpty(icon)) {
+                icon = createContextDeleteIcon(metaId);
+            } else {
+                icon.style.display = 'inline-block';
+            }
+            span.appendChild(icon);
         },
 
         unSelectContext : function (metaId, metaName) {
-            var span = document.getElementById(metaId);
+            var icon = document.getElementById(genContextDeleteIconId(metaId)),
+                span = document.getElementById(metaId);
             delete selectedContextIds[metaId];
+            if (Util.notEmpty(icon)) {
+                icon.style.display = 'none';
+            }
             span.setAttribute('class', 'context');
             span.setAttribute('onclick', 'UIEditFormController.selectContext("' + metaId + '", "' + metaName + '")');
         },

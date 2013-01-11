@@ -175,9 +175,9 @@ var UIListController = (function () {
                 console.error("Meta List(id: [%s]) is empty or null[%s]", 'group-list', metaList);
             }
         } else if (UIConfig.metaByPagePrefix === pageType) {
-            metaList = document.getElementById('detail-list');
+            metaList = document.getElementById(UIConfig.detailListElementId);
             if (Util.isEmpty(metaList)) {
-                console.error("Meta List(id: [%s]) is empty or null[%s]", 'detail-list', metaList);
+                console.error("Meta List(id: [%s]) is empty or null[%s]", UIConfig.detailListElementId, metaList);
             }
         }
         return metaList;
