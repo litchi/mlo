@@ -70,9 +70,9 @@ var DataAccess = (function () {
     return {
         logInfo        : true,
         logError       : true,
-        logDebug       : true,
-        logQueryResult : true,
-        logQuerySql    : true,
+        logDebug       : false,
+        logQueryResult : false,
+        logQuerySql    : false,
         appDb          : null,
         dropAllTables : function (tx) {
             DataAccess.runSqlDirectly(tx, 'drop table task');

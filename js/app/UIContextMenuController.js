@@ -170,13 +170,13 @@ var UIContextMenuController = (function () {
                             } else {
                                 if (id !== null && id !== undefined && id !== UIConfig.emptyString) {
                                     DataAccess.meta.update(id, name, description, function (tx, result, rows) {
-                                        bb.pushScreen('meta-by-type.html', UIConfig.metaByPagePrefix + meta_type_id);
+                                        bb.pushScreen('master-detail.html', UIConfig.metaByPagePrefix + meta_type_id);
                                     }, function (tx, error) {
                                         log.logSqlError("Failed to update meta[" + id + "][" + name + "][" + meta_type_id + "][" + description + "]", error);
                                     });
                                 } else {
                                     DataAccess.meta.create(name, meta_type_id, description, function (tx, result, rows) {
-                                        bb.pushScreen('meta-by-type.html', UIConfig.metaByPagePrefix + meta_type_id);
+                                        bb.pushScreen('master-detail.html', UIConfig.metaByPagePrefix + meta_type_id);
                                     }, function (tx, error) {
                                         log.logSqlError("Failed to create meta[" + id + "][" + name + "][" + meta_type_id + "][" + description + "]", error);
                                     });

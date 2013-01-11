@@ -48,7 +48,7 @@ var UIListController = (function () {
     //TODO Put project/contexts/dueDate to an array to avoid changing the method definition all the time.
 
     function tasksFromDbToUI(tasks, taskList) {
-        var key, id, name, i, max;
+        var key, id, name, i, max, height;
         taskList.clear();
         if (null === tasks || undefined === tasks || 0 === tasks.length) {
             taskList.innerHTML = UIConfig.msgForNoTask;
@@ -87,6 +87,21 @@ var UIListController = (function () {
                     );
                 }
             }
+        }
+    }
+
+    function setGroupPanelEmptyHeight() {
+        var height,
+            groupParent      = document.getElementById('group'),
+            metaListTitle    = document.getElementById('group-title'),
+            metaListDiv      = document.getElementById('group-list'),
+            metaListSpaceDiv = document.getElementById('group-space');
+        if (!Util.isEmpty(groupParent) &&
+                !Util.isEmpty(metaListTitle) &&
+                !Util.isEmpty(metaListDiv) &&
+                !Util.isEmpty(metaListSpaceDiv)) {
+            height = groupParent.offsetHeight - metaListTitle.offsetHeight - metaListDiv.offsetHeight;
+            metaListSpaceDiv.style.height = height + 'px';
         }
     }
 
@@ -197,7 +212,11 @@ var UIListController = (function () {
 
         fillMetaTypeToPanel : function () {
             var item, name,
-                metaTypeList = document.getElementById('meta-type-list');
+                metaTypeListTitle  = document.getElementById('group-title'),
+                metaTypeList       = document.getElementById('group-list');
+            if (!Util.isEmpty(metaTypeListTitle)) {
+                metaTypeListTitle.innerText = 'Fields';
+            }
             DataAccess.metaType.getAll(function (tx, result, arrays) {
                 var key, name, id, desc, item;
                 for (key in arrays) {
@@ -222,6 +241,7 @@ var UIListController = (function () {
                         }
                     }
                 }
+                setGroupPanelEmptyHeight();
             }, function (tx, error) {
                 log.logSqlError("Error getting all meta type", error);
             });
@@ -247,18 +267,23 @@ var UIListController = (function () {
         },
 
         fillMetaListToPanel : function (metaTypeId, pageType) {
-            var metaTypeName,
+            var metaTypeName, metaList,
                 addNewLink      = document.getElementById('add-new-link'),
-                metaListTitle   = document.getElementById('meta-type-name-title'),
-                metaList        = document.getElementById('meta-list');
+                metaListTitle   = document.getElementById('group-title');
+            if (UIConfig.taskByPagePrefix === pageType) {
+                metaList = document.getElementById('group-list');
+            } else if (UIConfig.metaByPagePrefix === pageType) {
+                metaList = document.getElementById('detail-list');
+            }
             metaList.clear();
             DataAccess.metaType.getById(metaTypeId, function (tx, result, objs) {
                 if (objs !== null && objs !== undefined && objs[0] !== undefined) {
                     metaTypeName = objs[0][Sql.MetaType.Cols.Name];
-                    if (null !== addNewLink && undefined !== addNewLink) {
+                    if ((null !== addNewLink && undefined !== addNewLink) && (UIConfig.metaByPagePrefix === pageType)) {
                         addNewLink.innerText = 'Add New ' + metaTypeName;
+                        addNewLink.style.display = 'block';
                     }
-                    if (null !== metaListTitle && undefined !== metaListTitle) {
+                    if (null !== metaListTitle && undefined !== metaListTitle && (UIConfig.taskByPagePrefix === pageType)) {
                         metaListTitle.innerText = metaTypeName;
                     }
                     if (UIConfig.taskByPagePrefix === pageType) {
@@ -304,6 +329,7 @@ var UIListController = (function () {
                         }
                     }
                 }
+                setGroupPanelEmptyHeight();
             }, function (tx, error) {
                 log.logSqlError("Error getting meta list[" + metaTypeId + "]", error);
             });
