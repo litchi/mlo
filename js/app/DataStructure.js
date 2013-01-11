@@ -1,5 +1,5 @@
 /*jslint browser: true, white: true */
-/*global Util, DataAccess, Sql, seedData, bb, log, console, UIConfig, openDatabase, AppSql*/
+/*global CommonSql:true, seedData:true, Sql:true, AppSql:true */
 
 /*
 * SQL for clean up testing
@@ -11,27 +11,36 @@
 * drop table __WebKitDatabaseInfoTable__;
 *
 */
+var CommonSql, Sql, seedData, Sql;
 
-var CommonSql = {
+CommonSql = {
     IdCol    : "id",
     GetMaxId : 'select max(id) from '
-},
+};
 
 seedData = {
-    inBasketMetaName    : 'In Basket',
-    nextActionMetaName  : 'Next Action',
-    somedayMetaName     : 'Someday',
-    gtdMetaTypeName     : 'GTD',
-    taskDoneStatus      : 'Done',
-    taskNewStatus       : 'New',
-    projectMetaTypeName : 'Project',
-    contextMetaTypeName : 'Context'
-},
+    inBasketMetaName         : 'In Basket',
+    nextActionMetaName       : 'Next Action',
+    somedayMetaName          : 'Someday',
+    gtdMetaTypeName          : 'GTD',
+    taskDoneStatus           : 'Done',
+    taskNewStatus            : 'New',
+    projectMetaTypeName      : 'Project',
+    contextMetaTypeName      : 'Context',
+    dueMetaTypeName          : 'Due',
+    todayMetaName            : 'Today',
+    tomorrowMetaName         : 'Tomorrow',
+    thisWeekMetaName         : 'This Week',
+    nextWeekMetaName         : 'Next Week',
+    yesterdayDoneMetaName    : 'Yesterday Done',
+    yesterdayOverDueMetaName : 'Yesterday Overdue'
+};
 
 Sql = {
     DbName        : 'peaceful_better_life_xiangqian_liu',
     DbDescription : 'Local Database for Peaceful & Better Life App',
     DbSize        : 2*1024*1024,
+    FilterAllMeta : 'All',
     TaskMeta : {
         TableName             : 'task_meta',
         Cols : {
@@ -63,7 +72,7 @@ Sql = {
         SelectById         : 'select id, meta_type_id, name, description from meta where id = ?',
         SelectByName       : 'select id, meta_type_id, name, description from meta where name = ?',
         SelectByIdName     : 'select id, meta_type_id, name, description from meta where id = ? and name = ?',
-        SelectByTypeId     : 'select id, meta_type_id, name, description from meta where meta_type_id = ?',
+        SelectByTypeId     : 'select id, meta_type_id, name, description from meta where meta_type_id = ? order by ui_rank desc',
         SelectByNameTypeId : 'select id from meta where meta_type_id = ? and name = ?',
         UpdateNameById     : 'update meta set name = ? where id = ?',
         UpdateById         : 'update meta set name = ? ,description = ? where id = ?',
@@ -109,7 +118,7 @@ Sql = {
         InsertByName     : 'insert into task (id, name) values (null, ?)',
         InsertByIdName   : 'insert into task(id, name) values (?, ?)',
         FilterByStatus   : 'select id, name from task where status != ?',
-        SelectById       : 'select id, name, reminder_on, strftime(\'%Y-%m-%dT%H:%M\', due_date, \'unixepoch\') as due_date from task where id = ?',
+        SelectById       : "select id, name, reminder_on, strftime('%Y-%m-%dT%H:%M', due_date, 'unixepoch') as due_date from task where id = ?",
         SelectByName     : 'select id, name from task where name = ?',
         SelectByIdName   : 'select id, name from task where id = ? and name = ?',
         SelectByMetaName : 'select distinct task_id as id, task_name as name, task_status as status from task_view where meta_name = ? AND meta_type_name = ? AND task_status != ? order by case when task_due_date is null then 1 else 0 end',
@@ -118,9 +127,20 @@ Sql = {
         UpdateStatusById : 'update task set status = ? where id = ?',
         DeleteById       : 'delete from task where id = ?',
         DeleteAll        : 'delete from task',
-        GetMaxId         : CommonSql.GetMaxId + 'task'
+        GetMaxId         : CommonSql.GetMaxId + 'task',
+        DueFilterBaseSql : 'select id, name, due_date from task where %DueFilter% order by due_date',
+        DueFilterKey     : 'DueFilter',
+        DueFilter : {
+            'All'               : "due_date is not null and status != '" + seedData.taskDoneStatus + "'",
+            'Today'             : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now') and status != '" + seedData.taskDoneStatus + "'",
+            'Tomorrow'          : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','+1 day') and status != '" + seedData.taskDoneStatus + "'",
+            'This Week'         : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now') and status != '" + seedData.taskDoneStatus + "'",
+            'Next Week'         : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now', '+7 days') and status != '" + seedData.taskDoneStatus + "'",
+            'Yesterday Done'    : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = '" + seedData.taskDoneStatus + "'",
+            'Yesterday Overdue' : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != '" + seedData.taskDoneStatus + "'"
+        }
     }
-},
+};
 
 AppSql = {
     AppInfo : {

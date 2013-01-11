@@ -109,6 +109,16 @@ var Util = (function () {
                 document.getElementById(UIConfig.detailListPanelElementId).style.width = taskWidth;
                 document.getElementById(UIConfig.detailListPanelElementId).style.left = taskLeft + 'px';
             }
+        },
+
+        applySqlFilter : function (baseSql, filterName, filterStatement) {
+            var result = baseSql;
+            if (null === baseSql || undefined === baseSql || '' === baseSql) {
+                console.warn("Base Sql is [%s] when apply filter[%s], statement[%s]", baseSql, filterName, filterStatement);
+            } else {
+                result = baseSql.replace('%' + filterName + '%', filterStatement);
+            }
+            return result;
         }
     };
 

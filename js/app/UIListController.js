@@ -127,7 +127,7 @@ var UIListController = (function () {
         item.setAttribute('data-bb-title', 'All Tasks');
         item.setAttribute(
             'onclick',
-            "UIListController.fillTasksToGroupByMetaInfo('" + metaTypeName + "', '" + UIConfig.emptyString + "');Util.switchPanelWidth('" + UIConfig.leftPanelWidth + "', '" + UIConfig.rightPanelWidth + "', '" + UIConfig.rightPanelSmallerLeftMargin + "');"
+            "UIListController.fillTasksToGroupByMetaInfo('" + metaTypeName + "', '" + Sql.FilterAllMeta + "');Util.switchPanelWidth('" + UIConfig.leftPanelWidth + "', '" + UIConfig.rightPanelWidth + "', '" + UIConfig.rightPanelSmallerLeftMargin + "');"
         );
         return item;
     }
@@ -135,16 +135,22 @@ var UIListController = (function () {
     return {
         fillTasksToGroupByMetaInfo : function (metaTypeName, metaName) {
             var id, name, taskList = document.getElementById(UIConfig.detailListElementId);
-            if (UIConfig.emptyString !== metaName) {
-                DataAccess.task.getByMeta(metaTypeName, metaName, function (transaction, results, arrays) {
+            if (seedData.dueMetaTypeName === metaTypeName) {
+                DataAccess.task.getByDueMeta(metaName, function (tx, result, arrays) {
                     tasksFromDbToUI(arrays, taskList);
                 });
             } else {
-                DataAccess.task.getByMetaType(metaTypeName, function (transaction, results, arrays) {
-                    tasksFromDbToUI(arrays, taskList);
-                });
+                if (Sql.FilterAllMeta !== metaName) {
+                    DataAccess.task.getByMeta(metaTypeName, metaName, function (transaction, results, arrays) {
+                        tasksFromDbToUI(arrays, taskList);
+                    });
+                } else {
+                    DataAccess.task.getByMetaType(metaTypeName, function (transaction, results, arrays) {
+                        tasksFromDbToUI(arrays, taskList);
+                    });
+                }
             }
-            if (UIConfig.emptyString !== metaName) {
+            if (Sql.FilterAllMeta !== metaName) {
                 setMetaFields(metaName);
             } else {
                 console.debug("Meta Name is empty, will not set v_meta_name and v_meta_id");

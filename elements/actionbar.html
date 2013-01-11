@@ -1,49 +1,26 @@
 <div data-bb-type="action-bar" data-bb-back-caption="Back" id="action-bar">
-    <!-- 
-    -TODO Make this action bar dynamic
-    -The id of each action bar should be the same as the 
-    -pushScreen id to make Javascript code setting the 
-    -active bar selected status working
-    -->
-    <div data-bb-type="action" data-bb-style="tab" 
+    <div data-bb-type="action" data-bb-style="tab" id="In Basket"
         onclick="bb.pushScreen('task-list.html', seedData.inBasketMetaName)" 
-        data-bb-img="resources/inbox.png" data-bb-accent-text="Basket" id="In Basket"> 
-        Basket 
-    </div>
-    <div data-bb-type="action" data-bb-style="tab" 
+        data-bb-img="resources/inbox.png" data-bb-accent-text="Basket">Basket</div>
+    <div data-bb-type="action" data-bb-style="tab" id="Next Action"
         onclick="bb.pushScreen('task-list.html',seedData.nextActionMetaName);" 
-        data-bb-img="resources/next-action.png" data-bb-accent-text="Next Action" id="Next Action"> 
-        Next Action 
-    </div>
-    <!--
-    <div data-bb-type="action" data-bb-style="tab" 
-        onclick="bb.pushScreen('due-tasks.html','due-tasks');" 
-        data-bb-img="resources/due.png" data-bb-accent-text="Due" id="due-tasks"> 
-        Due 
-    </div>
-    -->
-    <div data-bb-type="action" data-bb-style="tab" 
-        onclick="bb.pushScreen('task-by-meta.html', UIConfig.taskByPagePrefix + 'Project');"
-        data-bb-img="resources/project.png"  data-bb-accent-text="Project" id="task-by-Project"> Project 
-    </div>
+        data-bb-img="resources/next-action.png" data-bb-accent-text="Next Action">Next Action</div>
+    <div data-bb-type="action" data-bb-style="tab" id="task-by-Project"
+        onclick="bb.pushScreen('task-by-meta.html', UIConfig.taskByPagePrefix + seedData.projectMetaTypeName);"
+        data-bb-img="resources/project.png"  data-bb-accent-text="Project">Project</div>
+    <div data-bb-type="action" data-bb-style="tab" id="task-by-Due"
+        onclick="bb.pushScreen('task-by-meta.html', UIConfig.taskByPagePrefix + seedData.dueMetaTypeName);"
+        data-bb-img="resources/due.png"  data-bb-accent-text="Due">Due</div>
     <div data-bb-type="action" data-bb-style="tab" id="task-by-Context"
-        onclick="bb.pushScreen('task-by-meta.html', UIConfig.taskByPagePrefix + 'Context');"
-        data-bb-img="resources/context.png" data-bb-accent-text="Context"> 
-        Context 
-    </div>
-    <div data-bb-type="action" data-bb-style="tab"
+        onclick="bb.pushScreen('task-by-meta.html', UIConfig.taskByPagePrefix + seedData.contextMetaTypeName);"
+        data-bb-img="resources/context.png" data-bb-accent-text="Context">Context</div>
+    <div data-bb-type="action" data-bb-style="tab" id="Someday"
         data-bb-overflow="true" onclick="bb.pushScreen('task-list.html', seedData.somedayMetaName);" 
-        data-bb-img="resources/someday.png" data-bb-accent-text="Someday" id="Someday"> 
-        Someday
-    </div>
-    <div data-bb-type="action" data-bb-style="tab"
+        data-bb-img="resources/someday.png" data-bb-accent-text="Someday">Someday</div>
+    <div data-bb-type="action" data-bb-style="tab" id="fields"
         data-bb-overflow="true" onclick="bb.pushScreen('meta-by-type.html','fields');" 
-        data-bb-img="resources/fields.png" data-bb-accent-text="Fields" id="fields"> 
-        Fields
-    </div>
-    <div data-bb-type="action" data-bb-style="tab"
+        data-bb-img="resources/fields.png" data-bb-accent-text="Fields">Fields</div>
+    <div data-bb-type="action" data-bb-style="tab" id="development"
         data-bb-overflow="true" onclick="bb.pushScreen('development.html','development');" 
-        data-bb-img="resources/development.png" data-bb-accent-text="Development" id="development"> 
-        Development 
-    </div>
+        data-bb-img="resources/development.png" data-bb-accent-text="Development">Development</div>
 </div>

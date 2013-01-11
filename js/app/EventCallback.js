@@ -36,7 +36,7 @@ var EventCallback = (function () {
             } else if (Util.startsWith(id, UIConfig.taskByPagePrefix)) {
                 metaTypeName = id.substring(UIConfig.taskByPagePrefix.length);
                 UIListController.fillMetaListToPanelByTypeName(metaTypeName, UIConfig.taskByPagePrefix);
-                UIListController.fillTasksToGroupByMetaInfo(metaTypeName, UIConfig.emptyString);
+                UIListController.fillTasksToGroupByMetaInfo(metaTypeName, Sql.FilterAllMeta);
             } else if (id === 'fields') {
                 UIListController.fillMetaTypeToPanel();
             } else if (Util.startsWith(id, UIConfig.editMetaPagePrefix)) {
