@@ -14,6 +14,7 @@ var SeedSampleDataProvider = (function () {
         DataAccess.runSqlDirectly(tx, "insert into meta_type (name, description, internal) values ('Due', 'Predefined Due lists for items, includes today/tomorrow/this week etc', 1)");
         DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , ui_rank, description) select id , 'Today'             , 30, 'Today''s due tasks' from meta_type where name          = 'Due'");
         DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , ui_rank, description) select id , 'Tomorrow'          , 25, 'Tomorrow''s due tasks' from meta_type where name       = 'Due'");
+        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , ui_rank, description) select id , 'All Overdue'       , 27, 'Overdue tasks' from meta_type where name               = 'Due'");
         DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , ui_rank, description) select id , 'Yesterday Overdue' , 20, 'Yesterday''s overdue tasks' from meta_type where name  = 'Due'");
         DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , ui_rank, description) select id , 'This Week'         , 15, 'This week''s due tasks' from meta_type where name      = 'Due'");
         DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , ui_rank, description) select id , 'Next Week'         , 10, 'Next week''s Due Tasks' from meta_type where name      = 'Due'");
