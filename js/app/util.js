@@ -8,6 +8,10 @@ var Util = (function () {
             return (null === str || undefined === str || '' === str);
         },
 
+        notEmpty : function (str) {
+            return !Util.isEmpty(str);
+        },
+
         endsWith : function (str, suffix) {
             return str.indexOf(suffix, str.length - suffix.length) !== -1;
         },

@@ -96,10 +96,10 @@ var UIListController = (function () {
             metaListTitle    = document.getElementById('group-title'),
             metaListDiv      = document.getElementById('group-list'),
             metaListSpaceDiv = document.getElementById('group-space');
-        if (!Util.isEmpty(groupParent) &&
-                !Util.isEmpty(metaListTitle) &&
-                !Util.isEmpty(metaListDiv) &&
-                !Util.isEmpty(metaListSpaceDiv)) {
+        if (Util.notEmpty(groupParent) &&
+                Util.notEmpty(metaListTitle) &&
+                Util.notEmpty(metaListDiv) &&
+                Util.notEmpty(metaListSpaceDiv)) {
             height = groupParent.offsetHeight - metaListTitle.offsetHeight - metaListDiv.offsetHeight;
             metaListSpaceDiv.style.height = height + 'px';
         }
@@ -134,9 +134,9 @@ var UIListController = (function () {
     }
 
 
-    function makeAllTasksItem(metaTypeName) {
+    function makeMetaTypeDefaultList(metaTypeName) {
         var item = document.createElement('div'),
-            title = 'All tasks assigned ' + metaTypeName;
+            title = 'All ' + metaTypeName + 's';
         item.setAttribute('data-bb-type', 'item');
         item.setAttribute('data-bb-style', 'stretch');
         item.setAttribute('title', title);
@@ -152,7 +152,7 @@ var UIListController = (function () {
         var placeholder = 'Create new task',
             ctf = document.getElementById('ctsi');
         if (undefined !== ctf) {
-            if (!Util.isEmpty(metaName) &&
+            if (Util.notEmpty(metaName) &&
                     Sql.FilterAllMeta !== metaName &&
                     SeedData.DueMetaTypeName !== metaTypeName) {
                 if (SeedData.GtdMetaTypeName === metaTypeName) {
@@ -167,9 +167,27 @@ var UIListController = (function () {
         }
     }
 
+    function getMetaListElement(pageType) {
+        var metaList;
+        if (UIConfig.taskByPagePrefix === pageType) {
+            metaList = document.getElementById('group-list');
+            if (Util.isEmpty(metaList)) {
+                console.error("Meta List(id: [%s]) is empty or null[%s]", 'group-list', metaList);
+            }
+        } else if (UIConfig.metaByPagePrefix === pageType) {
+            metaList = document.getElementById('detail-list');
+            if (Util.isEmpty(metaList)) {
+                console.error("Meta List(id: [%s]) is empty or null[%s]", 'detail-list', metaList);
+            }
+        }
+        return metaList;
+    }
+
     return {
         fillTasksToGroupByMetaInfo : function (metaTypeName, metaName) {
-            var id, name, taskList = document.getElementById(UIConfig.detailListElementId);
+            var id, name, title = UIConfig.emptyString,
+                detailListTitle  = document.getElementById('detail-title-text'),
+                taskList = document.getElementById(UIConfig.detailListElementId);
             if (SeedData.DueMetaTypeName === metaTypeName) {
                 DataAccess.task.getByDueMeta(metaName, function (tx, result, arrays) {
                     tasksFromDbToUI(arrays, taskList);
@@ -186,10 +204,17 @@ var UIListController = (function () {
                 }
             }
             setCreateTaskInputPlaceHolder(metaName, metaTypeName);
+            if (Util.notEmpty(detailListTitle)) {
+                if (Util.notEmpty(metaName) && Sql.FilterAllMeta !== metaName) {
+                    detailListTitle.innerText = metaName;
+                } else if (Util.notEmpty(metaTypeName)) {
+                    detailListTitle.innerText = 'Tasks with ' + metaTypeName;
+                }
+            }
             if (Sql.FilterAllMeta !== metaName) {
                 setMetaFields(metaName);
             } else {
-                console.debug("Meta Name is empty, will not set v_meta_name and v_meta_id");
+                console.debug("For default due list page, meta name is empty, will not set v_meta_name and v_meta_id");
             }
             if (UIConfig.emptyString !== metaTypeName) {
                 setMetaTypeFields(metaTypeName);
@@ -212,9 +237,9 @@ var UIListController = (function () {
 
         fillMetaTypeToPanel : function () {
             var item, name,
-                metaTypeListTitle  = document.getElementById('group-title'),
+                metaTypeListTitle  = document.getElementById('group-title-text'),
                 metaTypeList       = document.getElementById('group-list');
-            if (!Util.isEmpty(metaTypeListTitle)) {
+            if (Util.notEmpty(metaTypeListTitle)) {
                 metaTypeListTitle.innerText = 'Fields';
             }
             DataAccess.metaType.getAll(function (tx, result, arrays) {
@@ -267,28 +292,33 @@ var UIListController = (function () {
         },
 
         fillMetaListToPanel : function (metaTypeId, pageType) {
-            var metaTypeName, metaList,
-                addNewLink      = document.getElementById('add-new-link'),
-                metaListTitle   = document.getElementById('group-title');
-            if (UIConfig.taskByPagePrefix === pageType) {
-                metaList = document.getElementById('group-list');
-            } else if (UIConfig.metaByPagePrefix === pageType) {
-                metaList = document.getElementById('detail-list');
-            }
+            var metaTypeName, metaList, metaTypeInternal,
+                detailAddNewLink = document.getElementById('detail-add-new-link'),
+                groupAddNewLink  = document.getElementById('group-title-add-new-link'),
+                metaListTitle    = document.getElementById('group-title-text');
+            metaList = getMetaListElement(pageType);
             metaList.clear();
             DataAccess.metaType.getById(metaTypeId, function (tx, result, objs) {
-                if (objs !== null && objs !== undefined && objs[0] !== undefined) {
-                    metaTypeName = objs[0][Sql.MetaType.Cols.Name];
-                    if ((null !== addNewLink && undefined !== addNewLink) && (UIConfig.metaByPagePrefix === pageType)) {
-                        addNewLink.innerText = 'Add New ' + metaTypeName;
-                        addNewLink.style.display = 'block';
+                if (Util.notEmpty(objs) && Util.notEmpty(objs[0])) {
+                    metaTypeName     = objs[0][Sql.MetaType.Cols.Name];
+                    metaTypeInternal = objs[0][Sql.MetaType.Cols.Internal];
+                    if (UIConfig.metaByPagePrefix === pageType) {
+                        detailAddNewLink.innerText = 'Add New ' + metaTypeName;
+                    } else if (UIConfig.taskByPagePrefix === pageType && 0 === metaTypeInternal) {
+                        groupAddNewLink.innerText = '+';
+                    } else if (UIConfig.taskByPagePrefix === pageType && 1 === metaTypeInternal) {
+                        groupAddNewLink.innerText = '+';
+                        groupAddNewLink.style.backgroundColor = '#EEE';
+                        groupAddNewLink.style.color = '#EEE';
+                        groupAddNewLink.onclick = function () {
+                        };
                     }
-                    if (null !== metaListTitle && undefined !== metaListTitle && (UIConfig.taskByPagePrefix === pageType)) {
+                    if (Util.notEmpty(metaListTitle)) {
                         metaListTitle.innerText = metaTypeName;
+                    } else {
+                        console.warn("Element with id[%s] is null, failed to set innerText to [%s]", 'group-title-text', metaTypeName);
                     }
-                    if (UIConfig.taskByPagePrefix === pageType) {
-                        metaList.appendItem(makeAllTasksItem(metaTypeName));
-                    }
+                    metaList.appendItem(makeMetaTypeDefaultList(metaTypeName));
                     Util.setValue('v_meta_type_id', metaTypeId);
                     Util.setValue('v_meta_type_name', metaTypeName);
                 }

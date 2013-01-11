@@ -1,7 +1,7 @@
-<project default="qa.test.unit" basedir=".">
+<project default="ws" basedir=".">
     <target name="help">
-        <echo>Run [ant deploy-ws] to deploy to remote server</echo>
-        <echo>Run [ant deploy-bb] to deploy to blackberry 10 simulator</echo>
+        <echo>Run [ant ws] to deploy to remote server</echo>
+        <echo>Run [ant bb] to deploy to blackberry 10 simulator</echo>
         <echo>Run [ant run-unit-test] to run unit tests for javascript</echo>
         <echo>Run [ant clean] to clean target directory</echo>
     </target>
@@ -103,13 +103,13 @@
         </exec> 
     </target>
 
-    <target name="deploy-ws" depends="pre.process.copy">
+    <target name="ws" depends="pre.process.copy">
         <scp todir="root:password@${build.remote.ip}:/var/www/gtd">
             <fileset dir="${build.target.code}" excludes="**/*.swp,.git,**/*.bak,.DS_Store"/>
         </scp>                 
     </target>
 
-    <target name="deploy-bb" depends="pre.process.copy">
+    <target name="bb" depends="pre.process.copy">
         <exec executable="/bin/sh" dir="${build.target}">
             <arg line='-c "bb_launch.sh code"'/>
         </exec>

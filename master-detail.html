@@ -1,16 +1,21 @@
 <div data-bb-type="screen" style="height:1280px;">
     <div id="group">
-        <div style="margin-left:15px;font-size:40px;" id="group-title"
+        <div id="group-title"
             onclick="Util.switchPanelWidth(UIConfig.rightPanelWidth, UIConfig.leftPanelWidth, UIConfig.rightPanelLargerLeftMargin);">
+            <span id='group-title-text'></span>
+            <span id='group-title-add-new-link' onclick="bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix + Util.valueOf('v_meta_type_id'))"></span>
         </div>
-        <div data-bb-type="scroll-panel" style="height:980px;">
+        <div data-bb-type="scroll-panel" id='group-list-panel'>
             <div id="group-list" data-bb-type="image-list" data-bb-images="none" ></div>
             <div id='group-space' onclick="Util.switchPanelWidth(UIConfig.rightPanelWidth, UIConfig.leftPanelWidth, UIConfig.rightPanelLargerLeftMargin);"></div>
         </div>
     </div>
-    <div id="detail-list-panel" onclick="Util.switchPanelWidth(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">
-        <div id='add-new-link' onclick="bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix + Util.valueOf('v_meta_type_id'))" style='display:none'></div>
-        <div data-bb-type="scroll-panel" style="height:1000px;">
+    <div id="detail" onclick="Util.switchPanelWidth(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">
+        <div id='detail-title'>
+            <span id='detail-title-text'></span>
+            <span id='detail-add-new-link' onclick="bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix + Util.valueOf('v_meta_type_id'))"></span>
+        </div>
+        <div data-bb-type="scroll-panel" id='detail-list-panel'>
             <div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">
             </div>
         </div>

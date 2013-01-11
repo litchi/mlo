@@ -77,28 +77,89 @@
     -webkit-border-bottom-left-radius: 0px;
     -webkit-border-bottom-right-radius: 50px;
     /*float:left;*/
-    width:22%;
+    width:32%;
     height:1000px;
     margin:25px 0 15px 0;
 }
-#detail-list-panel {
+#group-title {
+    padding: 20px 0 20px 20px;
+    background-color: #EEE;
+    -webkit-border-top-left-radius: 0px;
+    -webkit-border-top-right-radius: 50px;
+    -webkit-border-bottom-left-radius: 0px;
+    -webkit-border-bottom-right-radius: 0px;
+    border-bottom: solid 1px #BBB;
+}
+
+#group-title-text {
+    font-size:36px;
+}
+
+#group-title-add-new-link {
+    -webkit-border-radius:10px;
+    background-color:#CCC;
+    margin:0 0 0 20px;
+    padding:0px 20px 6px 20px;
+    border-radius:10px;
+    color:#FFF;
+    display:-moz-inline-box; 
+    display:inline-block; 
+    font-size: 36px;
+    font-weight:bolder;
+}
+
+.group-title-add-new-link-h {
+    -webkit-border-radius:10px;
+    background-color:#EEE;
+    margin:0 0 0 20px;
+    padding:0px 20px 6px 20px;
+    border-radius:10px;
+    color:#EEE;
+    display:-moz-inline-box; 
+    display:inline-block; 
+    font-size: 36px;
+    font-weight:bolder;
+}
+
+#group-list-panel {
+    height: 980px;
+}
+
+#detail {
     border: 4px solid #379082; 
     -webkit-border-top-left-radius: 40px;
     -webkit-border-top-right-radius: 0px;
     -webkit-border-bottom-left-radius: 40px;
     -webkit-border-bottom-right-radius: 0px;
     /*float:right;*/
-    width:78%;
+    width:68%;
     background-color:#FFF;
     height:1015px;
     margin:10px 0 15px 0;
     position:absolute;
     top:0px;
-    left:168px;
+    left:245px;
 }
-#add-new-link {
+
+#detail-title {
+    padding: 42px 0 20px 20px;
+    background-color: #EEE;
+    -webkit-border-top-left-radius: 50px;
+    -webkit-border-top-right-radius: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    -webkit-border-bottom-right-radius: 0px;
+    border-bottom: solid 1px #BBB;
+    white-space: nowrap;
+    overflow:hidden;
+}
+
+#detail-add-new-link {
     text-align: center;
     margin-top: 10px;
+}
+
+#detail-list-panel {
+    height:870px;
 }
 
 #meta_name::-webkit-input-placeholder, 

@@ -2,17 +2,17 @@
 var UIConfig = (function () {
     "use strict";
     return {
-        leftPanelWidth              : '22%',
-        rightPanelWidth             : '78%',
-        rightPanelSmallerLeftMargin : '168',
-        rightPanelLargerLeftMargin  : '592',
+        leftPanelWidth              : '32%',
+        rightPanelWidth             : '68%',
+        rightPanelSmallerLeftMargin : '245',
+        rightPanelLargerLeftMargin  : '515',
         editTaskPagePrefix          : 'edit-task-',
         metaByPagePrefix            : 'meta-by-',
         taskByPagePrefix            : 'task-by-',
         editMetaPagePrefix          : 'edit-meta-',
         createMetaPagePrefix        : 'create-meta-',
         detailListElementId         : 'detail-list',
-        detailListPanelElementId    : 'detail-list-panel',
+        detailListPanelElementId    : 'detail',
         msgForNoTask                : '<div style="text-align: center; margin: 50px 20px 0 20px">Wow, great, all tasks are done, go and stay with your family or friends.</div>',
         emptyString                 : ''
     };

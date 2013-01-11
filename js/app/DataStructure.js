@@ -85,14 +85,15 @@ Sql = {
         Cols : {
             Id          : CommonSql.IdCol,
             Name        : 'name',
-            Description : 'description'
+            Description : 'description',
+            Internal    : 'internal'
         },
         CreateTable    : 'create table if not exists meta_type (id integer primary key autoincrement, name text, description text, internal integer default 0)',
         InsertByName   : 'insert into meta_type (name, description) values (?, ?)',
         InsertByIdName : 'insert into meta_type (id, name, description) values (?, ?, ?)',
-        SelectAll      : 'select id, name, description from meta_type',
-        SelectById     : 'select id, name, description from meta_type where id = ?',
-        SelectByName   : 'select id, name, description from meta_type where name = ?',
+        SelectAll      : 'select id, name, description, internal from meta_type',
+        SelectById     : 'select id, name, description, internal from meta_type where id = ?',
+        SelectByName   : 'select id, name, description, internal from meta_type where name = ?',
         SelectByIdName : 'select id, name, description from meta_type where id = ? and name = ?',
         UpdateById     : 'update meta_type set name = ? , description = ? where id = ?',
         DeleteById     : 'delete from meta_type where id = ?',
