@@ -1,19 +1,19 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, seedData, bb, log, console, UIConfig, UIEditFormController*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController*/
 var UIEditFormController = (function () {
     "use strict";
     var selectedContextIds = {};
 
     function prepareProjectData() {
         var projectSelect = document.createElement('select'), i, max, obj;
-        projectSelect.setAttribute('id', seedData.projectMetaTypeName);
+        projectSelect.setAttribute('id', SeedData.ProjectMetaTypeName);
         projectSelect.setAttribute('data-bb-label', '');
         Util.appendOption(projectSelect, 0, 'No Project');
         DataAccess.appDb.transaction(function (tx) {
             DataAccess.runSqlDirectly(
                 tx,
                 "select meta_id, meta_name from meta_view where meta_type_name = ?",
-                [seedData.projectMetaTypeName],
+                [SeedData.ProjectMetaTypeName],
                 function (tx, result) {
                     if (undefined !== projectSelect && null !== result.rows && result.rows.length > 0) {
                         for (i = 0, max = result.rows.length; i < max; i += 1) {
@@ -45,12 +45,12 @@ var UIEditFormController = (function () {
             DataAccess.runSqlDirectly(
                 tx,
                 "select distinct meta_name from task_view where task_id = ? and meta_type_name = ?",
-                [taskId, seedData.projectMetaTypeName],
+                [taskId, SeedData.ProjectMetaTypeName],
                 function (tx, result) {
                     if (null !== result && null !== result.rows && result.rows.length > 0 &&
                             null !== result.rows && null !== result.rows.item && null !== result.rows.item(0) &&
                             null !== result.rows.item(0).meta_name) {
-                        document.getElementById(seedData.projectMetaTypeName).setSelectedText(result.rows.item(0).meta_name);
+                        document.getElementById(SeedData.ProjectMetaTypeName).setSelectedText(result.rows.item(0).meta_name);
                     }
                 }
             );
@@ -92,7 +92,7 @@ var UIEditFormController = (function () {
             DataAccess.runSqlDirectly(
                 tx,
                 'select meta_id, meta_name from meta_view where meta_type_name = ?',
-                [seedData.contextMetaTypeName],
+                [SeedData.ContextMetaTypeName],
                 function (tx, result) {
                     if (null !== result && null !== result.rows && null !== result.rows.item) {
                         for (i = 0, max = result.rows.length; i < max; i += 1) {
@@ -123,7 +123,7 @@ var UIEditFormController = (function () {
         DataAccess.appDb.transaction(function (tx1) {
             DataAccess.runSqlDirectly(tx1,
                 Sql.TaskMeta.DeleteByMetaTypeName,
-                [taskId, seedData.contextMetaTypeName],
+                [taskId, SeedData.ContextMetaTypeName],
                 function (tx, result) {
                     saveContextToDb(taskId);
                     bb.popScreen();
@@ -159,11 +159,11 @@ var UIEditFormController = (function () {
         DataAccess.appDb.transaction(function (tx1) {
             DataAccess.runSqlDirectly(tx1,
                 Sql.TaskMeta.DeleteByMetaTypeName,
-                [taskId, seedData.projectMetaTypeName],
+                [taskId, SeedData.ProjectMetaTypeName],
                 function (tx, result) {
                     DataAccess.appDb.transaction(function (tx2) {
                         DataAccess.runSqlDirectly(tx2, Sql.TaskMeta.Insert, [taskId, projectId]);
-                        DataAccess.runSqlDirectly(tx2, Sql.TaskMeta.DeleteTaskFromList, [taskId, seedData.inBasketMetaName, seedData.gtdMetaTypeName]);
+                        DataAccess.runSqlDirectly(tx2, Sql.TaskMeta.DeleteTaskFromList, [taskId, SeedData.BasketMetaName, SeedData.GtdMetaTypeName]);
                     });
                 });
         });

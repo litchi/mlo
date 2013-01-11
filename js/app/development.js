@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global Util, DataAccess, Sql, seedData, bb, log, console, UIConfig, openDatabase, AppSql*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql*/
 var DevToolkit = (function () {
     "use strict";
 

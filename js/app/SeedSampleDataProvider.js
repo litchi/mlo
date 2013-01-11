@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global u, DataAccess, SQL, seedData, bb, log, console, uiConfig, openDatabase, APP_SQL*/
+/*global u, DataAccess, SQL, SeedData, bb, log, console, uiConfig, openDatabase, APP_SQL*/
 var SeedSampleDataProvider = (function () {
     "use strict";
 

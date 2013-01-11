@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global blackberry, DataAccess, Sql, seedData, bb, log, console, UIConfig, openDatabase, AppSql*/
+/*global blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql*/
 var Util = (function () {
     "use strict";
     return {

@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, seedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController*/
 
 var UIContextMenuController = (function () {
     "use strict";
@@ -32,7 +32,7 @@ var UIContextMenuController = (function () {
                 DataAccess.taskMeta.moveTaskToGtdList(selectedId, metaName,
                     function (tx3, result3, rows3) {
                         var metaTypeName = Util.valueOf('v_meta_type_name');
-                        if (metaTypeName !== seedData.projectMetaTypeName && metaTypeName !== seedData.contextMetaTypeName) {
+                        if (metaTypeName !== SeedData.ProjectMetaTypeName && metaTypeName !== SeedData.ContextMetaTypeName) {
                             document.getElementById('task-' + selectedId).remove();
                         }
                     },
@@ -55,9 +55,9 @@ var UIContextMenuController = (function () {
                         metaTypeName = Util.valueOf('v_meta_type_name');
                         metaName = Util.valueOf('v_meta_name');
                         if (Util.isEmpty(metaName)) {
-                            if (metaTypeName === seedData.projectMetaTypeName) {
+                            if (metaTypeName === SeedData.ProjectMetaTypeName) {
                                 project = metaName;
-                            } else if (metaTypeName === seedData.contextMetaTypeName) {
+                            } else if (metaTypeName === SeedData.ContextMetaTypeName) {
                                 context = [metaName];
                             }
                         }
@@ -81,12 +81,12 @@ var UIContextMenuController = (function () {
                 DataAccess.appDb.transaction(function (tx) {
                     DataAccess.runSqlDirectly(tx,
                         'select id from meta where name = ?',
-                        [seedData.inBasketMetaName],
+                        [SeedData.BasketMetaName],
                         function (tx, result) {
                             if (1 === result.rows.length) {
                                 createTaskInternal(name, result.rows.item(0).id);
                             } else {
-                                console.warn("Meta with name[%s] was not found when trying to insert task to it", seedData.inBasketMetaName);
+                                console.warn("Meta with name[%s] was not found when trying to insert task to it", SeedData.BasketMetaName);
                             }
                         });
                 });
@@ -151,9 +151,9 @@ var UIContextMenuController = (function () {
         saveMeta : function (id, name, meta_type_id, description) {
             var placeholder, metaTypeName = Util.valueOf('meta_type_name');
             if (UIConfig.emptyString === name) {
-                if (seedData.projectMetaTypeName === Util.valueOf('meta_type_name')) {
+                if (SeedData.ProjectMetaTypeName === Util.valueOf('meta_type_name')) {
                     placeholder = 'Please fill in project name';
-                } else if (seedData.contextMetaTypeName === Util.valueOf('meta_type_name')) {
+                } else if (SeedData.ContextMetaTypeName === Util.valueOf('meta_type_name')) {
                     placeholder = 'Please fill in context name';
                 }
                 document.getElementById('meta_name').setAttribute('placeholder', placeholder);
@@ -203,10 +203,10 @@ var UIContextMenuController = (function () {
             }
         },
 
-        markTaskAsDone       : function () { updateTaskStatus(seedData.taskDoneStatus, 'line-through'); },
-        markTaskAsNew        : function () { updateTaskStatus(seedData.taskNewStatus, 'none'); },
-        moveTaskToNextAction : function () { moveTaskToGtdList(seedData.nextActionMetaName); },
-        moveTaskToSomeday    : function () { moveTaskToGtdList(seedData.somedayMetaName); },
-        moveTaskToInBasket   : function () { moveTaskToGtdList(seedData.inBasketMetaName); }
+        markTaskAsDone       : function () { updateTaskStatus(SeedData.TaskDoneStatus, 'line-through'); },
+        markTaskAsNew        : function () { updateTaskStatus(SeedData.TaskNewStatus, 'none'); },
+        moveTaskToNextAction : function () { moveTaskToGtdList(SeedData.NextActionMetaName); },
+        moveTaskToSomeday    : function () { moveTaskToGtdList(SeedData.SomedayMetaName); },
+        moveTaskToInBasket   : function () { moveTaskToGtdList(SeedData.BasketMetaName); }
     };
 }());

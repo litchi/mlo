@@ -1,5 +1,5 @@
 ﻿/*jslint browser: true*/
-/*global Util, DataAccess, Sql, seedData, bb, log, console, uiConfig, openDatabase, AppSql, SeedSampleDataProvider*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, uiConfig, openDatabase, AppSql, SeedSampleDataProvider*/
 var DataAccess = (function () {
     "use strict";
     var appInfoDb, db_schema_version = '';
@@ -184,13 +184,13 @@ var DataAccess = (function () {
                 runSQL(Sql.Task.UpdateStatusById, [statusKey, id], successCallback, failureCallback);
             },
             getByMeta: function (metaTypeName, metaName, successCallback, failureCallback) {
-                runSQL(Sql.Task.SelectByMetaName, [metaName, metaTypeName, seedData.taskDoneStatus], successCallback, failureCallback);
+                runSQL(Sql.Task.SelectByMetaName, [metaName, metaTypeName, SeedData.TaskDoneStatus], successCallback, failureCallback);
             },
             getByMetaType: function (metaTypeName, successCallback, failureCallback) {
-                runSQL(Sql.Task.SelectByMetaType, [metaTypeName, seedData.taskDoneStatus], successCallback, failureCallback);
+                runSQL(Sql.Task.SelectByMetaType, [metaTypeName, SeedData.TaskDoneStatus], successCallback, failureCallback);
             },
             getAll: function (successCallback, failureCallback) {
-                runSQL(Sql.Task.FilterByStatus, [seedData.taskDoneStatus], successCallback, failureCallback);
+                runSQL(Sql.Task.FilterByStatus, [SeedData.TaskDoneStatus], successCallback, failureCallback);
             },
             getById: function (id, successCallback, failureCallback) {
                 runSQL(Sql.Task.SelectById, [id], successCallback, failureCallback);
@@ -254,13 +254,13 @@ var DataAccess = (function () {
                 runSQL(Sql.Meta.SelectByName, [name], successCallback, failureCallback);
             },
             getInBasketMeta: function (successCallback, failureCallback) {
-                DataAccess.meta.getByName(seedData.inBasketMetaName, successCallback, failureCallback);
+                DataAccess.meta.getByName(SeedData.BasketMetaName, successCallback, failureCallback);
             },
             getNextActionMeta: function (successCallback, failureCallback) {
-                DataAccess.meta.getByName(seedData.nextActionMetaName, successCallback, failureCallback);
+                DataAccess.meta.getByName(SeedData.NextActionMetaName, successCallback, failureCallback);
             },
             getSomedayMeta: function (successCallback, failureCallback) {
-                DataAccess.meta.getByName(seedData.somedayMetaName, successCallback, failureCallback);
+                DataAccess.meta.getByName(SeedData.SomedayMetaName, successCallback, failureCallback);
             },
             getByTypeId : function (metaTypeId, successCallback, failureCallback) {
                 runSQL(Sql.Meta.SelectByTypeId, [metaTypeId], successCallback, failureCallback);
@@ -299,8 +299,8 @@ var DataAccess = (function () {
                 runSQL(Sql.TaskMeta.ThrowTaskToList, [taskId, metaName, metaTypeName], successCallback, failureCallback);
             },
             moveTaskToGtdList : function (taskId, metaName, successCallback, failureCallback) {
-                runSQL(Sql.TaskMeta.DeleteByMetaTypeName, [taskId, seedData.gtdMetaTypeName], function (tx, result, objs) {
-                    runSQL(Sql.TaskMeta.ThrowTaskToList, [taskId, metaName, seedData.gtdMetaTypeName], successCallback, failureCallback);
+                runSQL(Sql.TaskMeta.DeleteByMetaTypeName, [taskId, SeedData.GtdMetaTypeName], function (tx, result, objs) {
+                    runSQL(Sql.TaskMeta.ThrowTaskToList, [taskId, metaName, SeedData.GtdMetaTypeName], successCallback, failureCallback);
                 }, failureCallback);
             }
         }

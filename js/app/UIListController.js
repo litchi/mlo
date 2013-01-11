@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global DataAccess, Sql, seedData, bb, log, console, UIConfig, Util*/
+/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, Util*/
 var UIListController = (function () {
     "use strict";
 
@@ -69,9 +69,9 @@ var UIListController = (function () {
                                         for (i = 0, max = result.rows.length; i < max; i += 1) {
                                             obj = result.rows.item(i);
                                             mt = obj.meta_type_name;
-                                            if (seedData.contextMetaTypeName === mt) {
+                                            if (SeedData.ContextMetaTypeName === mt) {
                                                 context.push(obj.meta_name);
-                                            } else if (seedData.projectMetaTypeName === mt) {
+                                            } else if (SeedData.ProjectMetaTypeName === mt) {
                                                 project = obj.meta_name;
                                             }
                                             if (null === rt) {
@@ -154,8 +154,8 @@ var UIListController = (function () {
         if (undefined !== ctf) {
             if (!Util.isEmpty(metaName) &&
                     Sql.FilterAllMeta !== metaName &&
-                    seedData.dueMetaTypeName !== metaTypeName) {
-                if (seedData.gtdMetaTypeName === metaTypeName) {
+                    SeedData.DueMetaTypeName !== metaTypeName) {
+                if (SeedData.GtdMetaTypeName === metaTypeName) {
                     placeholder = placeholder + ' on ' + metaName;
                 } else {
                     placeholder = placeholder + ' on ' + metaTypeName + ' ' + metaName;
@@ -170,7 +170,7 @@ var UIListController = (function () {
     return {
         fillTasksToGroupByMetaInfo : function (metaTypeName, metaName) {
             var id, name, taskList = document.getElementById(UIConfig.detailListElementId);
-            if (seedData.dueMetaTypeName === metaTypeName) {
+            if (SeedData.DueMetaTypeName === metaTypeName) {
                 DataAccess.task.getByDueMeta(metaName, function (tx, result, arrays) {
                     tasksFromDbToUI(arrays, taskList);
                 });
@@ -227,7 +227,7 @@ var UIListController = (function () {
                         item = document.createElement('div');
                         item.setAttribute('data-bb-type', 'item');
                         item.setAttribute('data-bb-style', 'stretch');
-                        if (id !== null && name !== seedData.gtdMetaTypeName) {
+                        if (id !== null && name !== SeedData.GtdMetaTypeName) {
                             item.setAttribute('id', 'meta_type-' + id);
                             if (name !== null) {
                                 item.setAttribute('title', name);

@@ -1,5 +1,5 @@
 /*jslint browser: true, white: true */
-/*global CommonSql:true, seedData:true, Sql:true, AppSql:true */
+/*global CommonSql:true, SeedData:true, Sql:true, AppSql:true */
 
 /*
 * SQL for clean up testing
@@ -11,29 +11,29 @@
 * drop table __WebKitDatabaseInfoTable__;
 *
 */
-var CommonSql, Sql, seedData, Sql;
+var CommonSql, SeedData, Sql;
 
 CommonSql = {
     IdCol    : "id",
     GetMaxId : 'select max(id) from '
 };
 
-seedData = {
-    inBasketMetaName         : 'Basket',
-    nextActionMetaName       : 'Next Action',
-    somedayMetaName          : 'Someday',
-    gtdMetaTypeName          : 'GTD',
-    taskDoneStatus           : 'Done',
-    taskNewStatus            : 'New',
-    projectMetaTypeName      : 'Project',
-    contextMetaTypeName      : 'Context',
-    dueMetaTypeName          : 'Due',
-    todayMetaName            : 'Today',
-    tomorrowMetaName         : 'Tomorrow',
-    thisWeekMetaName         : 'This Week',
-    nextWeekMetaName         : 'Next Week',
-    yesterdayDoneMetaName    : 'Yesterday Done',
-    yesterdayOverDueMetaName : 'Yesterday Overdue'
+SeedData = {
+    BasketMetaName         : 'Basket',
+    NextActionMetaName       : 'Next Action',
+    SomedayMetaName          : 'Someday',
+    GtdMetaTypeName          : 'GTD',
+    TaskDoneStatus           : 'Done',
+    TaskNewStatus            : 'New',
+    ProjectMetaTypeName      : 'Project',
+    ContextMetaTypeName      : 'Context',
+    DueMetaTypeName          : 'Due',
+    TodayMetaName            : 'Today',
+    TomorrowMetaName         : 'Tomorrow',
+    ThisWeekMetaName         : 'This Week',
+    NextWeekMetaName         : 'Next Week',
+    YesterdayDoneMetaName    : 'Yesterday Done',
+    YesterdayOverDueMetaName : 'Yesterday Overdue'
 };
 
 Sql = {
@@ -131,13 +131,13 @@ Sql = {
         DueFilterBaseSql : 'select id, name, due_date from task where %DueFilter% order by due_date',
         DueFilterKey     : 'DueFilter',
         DueFilter : {
-            'All'               : "due_date is not null and status != '" + seedData.taskDoneStatus + "'",
-            'Today'             : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now') and status != '" + seedData.taskDoneStatus + "'",
-            'Tomorrow'          : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','+1 day') and status != '" + seedData.taskDoneStatus + "'",
-            'This Week'         : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now') and status != '" + seedData.taskDoneStatus + "'",
-            'Next Week'         : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now', '+7 days') and status != '" + seedData.taskDoneStatus + "'",
-            'Yesterday Done'    : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = '" + seedData.taskDoneStatus + "'",
-            'Yesterday Overdue' : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != '" + seedData.taskDoneStatus + "'"
+            'All'               : "due_date is not null and status != '" + SeedData.TaskDoneStatus + "'",
+            'Today'             : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now') and status != '" + SeedData.TaskDoneStatus + "'",
+            'Tomorrow'          : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','+1 day') and status != '" + SeedData.TaskDoneStatus + "'",
+            'This Week'         : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now') and status != '" + SeedData.TaskDoneStatus + "'",
+            'Next Week'         : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now', '+7 days') and status != '" + SeedData.TaskDoneStatus + "'",
+            'Yesterday Done'    : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = '" + SeedData.TaskDoneStatus + "'",
+            'Yesterday Overdue' : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != '" + SeedData.TaskDoneStatus + "'"
         }
     }
 };

@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, seedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController*/
 var EventCallback = (function () {
     "use strict";
     var webworksreadyFired = false;
@@ -28,8 +28,8 @@ var EventCallback = (function () {
         var taskId, metaTypeName, metaId, metaTypeId;
         if (id !== null) {
             setActionBarSelectStatus(id);
-            if (id === seedData.inBasketMetaName || id === seedData.nextActionMetaName || id === seedData.somedayMetaName) {
-                UIListController.fillTasksToGroupByMetaInfo(seedData.gtdMetaTypeName, id);
+            if (id === SeedData.BasketMetaName || id === SeedData.NextActionMetaName || id === SeedData.SomedayMetaName) {
+                UIListController.fillTasksToGroupByMetaInfo(SeedData.GtdMetaTypeName, id);
             } else if (Util.startsWith(id, UIConfig.editTaskPagePrefix)) {
                 taskId = id.substring(UIConfig.editTaskPagePrefix.length);
                 UIEditFormController.fillTaskToEditForm(taskId);
@@ -68,7 +68,7 @@ var EventCallback = (function () {
                 onscreenready: onScreenReadyCallback,
                 ondomready: onDomReadyCallback
             });
-            bb.pushScreen('task-list.html', seedData.inBasketMetaName);
+            bb.pushScreen('task-list.html', SeedData.BasketMetaName);
         },
 
         loadCallback : function () {
