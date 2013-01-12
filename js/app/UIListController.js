@@ -183,6 +183,14 @@ var UIListController = (function () {
         return metaList;
     }
 
+    function hidePlusShortcut(elem) {
+        elem.innerText = '+';
+        elem.style.backgroundColor = '#EEE';
+        elem.style.color = '#EEE';
+        elem.onclick = function () {
+        };
+    }
+
     return {
         fillTasksToGroupByMetaInfo : function (metaTypeName, metaName) {
             var id, name, title = UIConfig.emptyString,
@@ -237,22 +245,25 @@ var UIListController = (function () {
 
         fillMetaTypeToPanel : function () {
             var item, name,
+                groupAddNewLink    = document.getElementById('group-title-add-new-link'),
                 metaTypeListTitle  = document.getElementById('group-title-text'),
                 metaTypeList       = document.getElementById('group-list');
             if (Util.notEmpty(metaTypeListTitle)) {
                 metaTypeListTitle.innerText = 'Fields';
+                hidePlusShortcut(groupAddNewLink);
             }
             DataAccess.metaType.getAll(function (tx, result, arrays) {
-                var key, name, id, desc, item;
+                var key, name, id, desc, item, internal;
                 for (key in arrays) {
                     if (arrays.hasOwnProperty(key)) {
-                        name = arrays[key][Sql.MetaType.Cols.Name];
-                        id   = arrays[key][Sql.MetaType.Cols.Id];
-                        desc = arrays[key][Sql.MetaType.Cols.Description];
+                        name     = arrays[key][Sql.MetaType.Cols.Name];
+                        id       = arrays[key][Sql.MetaType.Cols.Id];
+                        desc     = arrays[key][Sql.MetaType.Cols.Description];
+                        internal = arrays[key][Sql.MetaType.Cols.Internal];
                         item = document.createElement('div');
                         item.setAttribute('data-bb-type', 'item');
                         item.setAttribute('data-bb-style', 'stretch');
-                        if (id !== null && name !== SeedData.GtdMetaTypeName) {
+                        if (id !== null && 1 !== internal) {
                             item.setAttribute('id', 'meta_type-' + id);
                             if (name !== null) {
                                 item.setAttribute('title', name);
@@ -304,21 +315,20 @@ var UIListController = (function () {
                     metaTypeInternal = objs[0][Sql.MetaType.Cols.Internal];
                     if (UIConfig.metaByPagePrefix === pageType) {
                         detailAddNewLink.innerText = 'Add New ' + metaTypeName;
-                    } else if (UIConfig.taskByPagePrefix === pageType && 0 === metaTypeInternal) {
-                        groupAddNewLink.innerText = '+';
-                    } else if (UIConfig.taskByPagePrefix === pageType && 1 === metaTypeInternal) {
-                        groupAddNewLink.innerText = '+';
-                        groupAddNewLink.style.backgroundColor = '#EEE';
-                        groupAddNewLink.style.color = '#EEE';
-                        groupAddNewLink.onclick = function () {
-                        };
+                        hidePlusShortcut(groupAddNewLink);
+                    } else if (UIConfig.taskByPagePrefix === pageType) {
+                        if (0 === metaTypeInternal) {
+                            groupAddNewLink.innerText = '+';
+                        } else if (1 === metaTypeInternal) {
+                            hidePlusShortcut(groupAddNewLink);
+                        }
+                        if (Util.notEmpty(metaListTitle)) {
+                            metaListTitle.innerText = metaTypeName;
+                        } else {
+                            console.warn("Element with id[%s] is null, failed to set innerText to [%s]", 'group-title-text', metaTypeName);
+                        }
+                        metaList.appendItem(makeMetaTypeDefaultList(metaTypeName));
                     }
-                    if (Util.notEmpty(metaListTitle)) {
-                        metaListTitle.innerText = metaTypeName;
-                    } else {
-                        console.warn("Element with id[%s] is null, failed to set innerText to [%s]", 'group-title-text', metaTypeName);
-                    }
-                    metaList.appendItem(makeMetaTypeDefaultList(metaTypeName));
                     Util.setValue('v_meta_type_id', metaTypeId);
                     Util.setValue('v_meta_type_name', metaTypeName);
                 }

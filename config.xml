@@ -6,7 +6,7 @@
     <name>Mind like Water</name>
     <description>A GTD Application aimed to help you mind like water, and would like you to stay longer with the most important person in your life.</description>
     <author href="http://larry.ixiezi.com">Liu Xiangqian</author>
-    <icon src="resources/icon.png" rim:hover="true" />
+    <icon src="resources/image/icon.png" rim:hover="true" />
     <content src="index.html" />
     <feature id="blackberry.identity" />
     <feature id="blackberry.app" />

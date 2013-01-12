@@ -4,17 +4,27 @@
     <script type="text/javascript" id='edit-task-js' src="js/app/UIEditFormController.js"></script>
     <div id="foo" data-bb-type="title" data-bb-caption="Edit Task" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
         onactionclick="UIEditFormController.updateTask(Util.valueOf('task-id'), Util.valueOf('task-name'), Util.valueOf(SeedData.ProjectMetaTypeName))"></div>
-    <div data-bb-type="round-panel">
-        <div data-bb-type="panel-header">
-            Basic Information
-        </div>
+    <div data-bb-type="round-panel" id='edit-page-sub-panel-01'>
+        <div data-bb-type="panel-header">Title</div>
         <div data-bb-type="label-control-container">
             <table>
                 <tr>
-                    <td colspan="3" style="font-size:40px;vertical-align:top;">
-                        <input type="text" value="" id="task-name">
+                    <td colspan="3" style="vertical-align:top;">
+                        <textarea id="task-name"
+                            onkeyup="Util.resizeTextarea(this)" 
+                            onmouseup="Util.resizeTextarea(this)">
+                        </textarea>
                     </td>
                 </tr>
+            </table>
+        </div>
+    </div>
+    <div data-bb-type="round-panel" id='edit-page-sub-panel-02'>
+        <div data-bb-type="panel-header">
+            Project/Due Date
+        </div>
+        <div data-bb-type="label-control-container">
+            <table>
                 <tr>
                     <td class="td-label" style="padding-top:50px;font-size:40px;vertical-align:top;">Project</td>
                     <td colspan="2">
@@ -33,14 +43,14 @@
             </table>
         </div>
     </div>
-    <div data-bb-type="round-panel">
+    <div data-bb-type="round-panel" id='edit-page-sub-panel-03'>
         <div data-bb-type="panel-header">
-            Context Information
+            Context
         </div>
         <div data-bb-type="label-control-container">
             <table>
                 <tr>
-                    <td style="padding:20px" id='contextContainer'>
+                    <td id='contextContainer'>
                     </td>
                 </tr>
             </table>

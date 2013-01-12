@@ -65,7 +65,7 @@ var UIEditFormController = (function () {
         var icon = document.createElement('img');
         icon.setAttribute('id', genContextDeleteIconId(metaId));
         icon.setAttribute('class', 'deleteIcon');
-        icon.setAttribute('src', './resources/remove-context.png');
+        icon.setAttribute('src', './resources/image/remove-context.png');
         return icon;
     }
 
@@ -184,6 +184,19 @@ var UIEditFormController = (function () {
         });
     }
 
+    function setTaskNameTextarea(id, taskName) {
+        var elem;
+        if (Util.notEmpty(taskName)) {
+            elem = document.getElementById('task-name');
+            elem.setAttribute('cols', '28');
+            elem.innerHTML = taskName;
+            Util.resizeTextarea(elem);
+            elem.focus();
+            Util.moveCaretToEnd(elem);
+        } else {
+            console.warn('Task Name for [%s] is [%s](empty ?)', id, taskName);
+        }
+    }
 
     return {
 
@@ -231,7 +244,8 @@ var UIEditFormController = (function () {
         fillTaskToEditForm : function (id) {
             var obj, option, reminderOn, due;
             DataAccess.task.getById(id, function (tx, result, arrays) {
-                Util.setValue('task-name', arrays[0][Sql.Task.Cols.Name]);
+                var taskName = arrays[0][Sql.Task.Cols.Name];
+                setTaskNameTextarea(id, taskName);
                 prepareProjectData();
                 setDefaultProjectForTask(id);
                 reminderOn = arrays[0][Sql.Task.Cols.ReminderOn];

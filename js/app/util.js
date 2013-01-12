@@ -130,6 +130,34 @@ var Util = (function () {
                 result = baseSql.replace('%' + filterName + '%', filterStatement);
             }
             return result;
+        },
+
+        resizeTextarea : function (elem) {
+            var contents = elem.value.split('\n'), newRows = 0, currentLine, currentRows = elem.rows, longLines = 0;
+            if (!elem.initialRows) {
+                elem.initialRows = 1;
+            }
+            for (currentLine = 0; currentLine < contents.length; currentLine += 1) {
+                if (contents[currentLine].length > elem.cols) {
+                    newRows += Math.floor(contents[currentLine].length / elem.cols);
+                    longLines += 1;
+                }
+            }
+            newRows = newRows + contents.length;
+            if (newRows !== currentRows) {
+                elem.rows = (newRows < elem.initialRows ? elem.initialRows : newRows);
+            }
+        },
+
+        moveCaretToEnd : function (el) {
+            if (typeof el.selectionStart === "number") {
+                el.selectionStart = el.selectionEnd = el.value.length;
+            } else if (typeof el.createTextRange !== "undefined") {
+                el.focus();
+                var range = el.createTextRange();
+                range.collapse(false);
+                range.select();
+            }
         }
     };
 
