@@ -5,8 +5,7 @@ var UIListController = (function () {
 
     function createItemElement(id, name, project, contexts, dueDate) {
         var innerContent = UIConfig.emptyString, item = document.createElement('div'),
-            contextCount, i, tzo = new Date().getTimezoneOffset(),
-            dueClass, actualMs, ld;
+            contextCount, i, dueClass, localDueDate;
         item.setAttribute('data-bb-type', 'item');
         item.setAttribute('data-bb-style', 'stretch');
         if (id !== null) {
@@ -27,10 +26,10 @@ var UIListController = (function () {
                 }
             }
             if (dueDate !== null) {
-                actualMs = (dueDate + tzo * 60) * 1000;
-                ld = new Date(actualMs);
-                dueClass = (actualMs > new Date().getTime()) ? 'list-due' : 'list-overdue';
-                innerContent = innerContent + "\n<span class='" + dueClass + "'>" + Util.getPrettyDateStr(ld) + "</span>";
+                //localDueDate = Util.timeToDateWithZone(dueDate);
+                localDueDate = new Date(dueDate * 1000);
+                dueClass = (localDueDate.getTime() > new Date().getTime()) ? 'list-due' : 'list-overdue';
+                innerContent = innerContent + "\n<span class='" + dueClass + "'>" + Util.getPrettyDateStr(localDueDate) + "</span>";
             }
             item.innerHTML = innerContent;
             item.onclick = function () {
@@ -149,7 +148,7 @@ var UIListController = (function () {
     }
 
     function setCreateTaskInputPlaceHolder(metaName, metaTypeName) {
-        var placeholder = 'Create new task',
+        var placeholder = 'New task',
             ctf = document.getElementById('ctsi');
         if (undefined !== ctf) {
             if (Util.notEmpty(metaName) &&
@@ -221,8 +220,6 @@ var UIListController = (function () {
             }
             if (Sql.FilterAllMeta !== metaName) {
                 setMetaFields(metaName);
-            } else {
-                console.debug("For default due list page, meta name is empty, will not set v_meta_name and v_meta_id");
             }
             if (UIConfig.emptyString !== metaTypeName) {
                 setMetaTypeFields(metaTypeName);

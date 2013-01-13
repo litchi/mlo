@@ -31,12 +31,13 @@ var UIEditFormController = (function () {
     }
 
     function prepareDueData(reminderOn, due) {
-        var reminderOnInput = document.getElementById('is-reminder-on');
+        var dateStr, reminderOnInput = document.getElementById('is-reminder-on');
         if (undefined !== reminderOnInput) {
             reminderOnInput.setChecked((1 === reminderOn));
         }
         if (null !== due) {
-            Util.setValue('due-date', due);
+            dateStr = Util.getFullDateTimeStr(new Date(due * 1000));
+            Util.setValue('due-date', dateStr);
         }
     }
 
@@ -158,7 +159,7 @@ var UIEditFormController = (function () {
         var reminderOn = document.getElementById('is-reminder-on').getChecked(),
             dueDate = Util.valueOf('due-date'),
             reminderOnInt = (reminderOn === true) ? 1 : 0,
-            myDate = new Date(dueDate);
+            myDate = Util.timeToDateWithZone(new Date(dueDate).getTime() / 1000);
         DataAccess.appDb.transaction(function (tx) {
             DataAccess.runSqlDirectly(tx,
                 "update task set due_date = ?, reminder_on = ? where id = ?", [myDate.getTime() / 1000, reminderOnInt, taskId],

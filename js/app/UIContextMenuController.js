@@ -4,6 +4,91 @@
 var UIContextMenuController = (function () {
     "use strict";
 
+    function refreshCurrentPage() {
+        //TODO Upon bbui 0.9.7, this should work.
+        //bb.reloadScreen();
+        var metaTypeId = Util.valueOf('v_meta_type_id'),
+            metaTypeName = Util.valueOf('v_meta_type_name'),
+            metaId = Util.valueOf('v_meta_id'),
+            metaName = Util.valueOf('v_meta_name');
+        console.debug('[%s], [%s], [%s], [%s]', metaTypeId, metaTypeName, metaId, metaName);
+        if (metaName === SeedData.NextActionMetaName ||
+                metaName === SeedData.BasketMetaName ||
+                metaName === SeedData.SomedayMetaName) {
+            bb.pushScreen('task-list.html', metaName);
+        } else {
+            if (Util.notEmpty(metaName)) {
+                bb.pushScreen('master-detail.html',
+                            UIConfig.taskByPagePrefix + metaTypeName,
+                            {'metaName' : metaName});
+            } else {
+                bb.pushScreen('master-detail.html',
+                    UIConfig.taskByPagePrefix + metaTypeName);
+            }
+        }
+    }
+
+    function postponeToNextDay(oldDueDate) {
+        var newDate = oldDueDate;
+        newDate.setDate(oldDueDate.getDate() + 1);
+        return newDate;
+    }
+
+    function postponeToTomorrow(currentDate, oldDueDate) {
+        var newDate = currentDate;
+        newDate.setDate(currentDate.getDate() + 1);
+        newDate.setHours(oldDueDate.getHours());
+        newDate.setMinutes(oldDueDate.getMinutes());
+        newDate.setSeconds(oldDueDate.getSeconds());
+        return newDate;
+    }
+
+    function postponeToTomorrowDefaultTime(currentDate) {
+        var newDueDate = currentDate;
+        newDueDate.setDate(currentDate.getDate() + 1);
+        newDueDate.setHours(10);
+        newDueDate.setMinutes(0);
+        newDueDate.setSeconds(0);
+        return newDueDate;
+    }
+
+    function postponeTaskInternal() {
+        var selectedItem, selectedId, currDueDateTimestamp, newDueDate,
+            currentDate = new Date(),
+            context = document.getElementById('task-operation-context-menu');
+        selectedItem  = context.menu.selected;
+        if (selectedItem) {
+            selectedId = selectedItem.selected;
+            if (selectedId !== null) {
+                DataAccess.task.getDueDate(selectedId, function (tx, result, rows) {
+                    if (Util.notEmpty(rows)) {
+                        currDueDateTimestamp = rows[0][Sql.Task.Cols.DueDate];
+                        if (Util.notEmpty(currDueDateTimestamp)) {
+                            var localDueDate = new Date(currDueDateTimestamp * 1000);
+                            if (localDueDate.getTime() > currentDate.getTime()) {
+                                newDueDate = postponeToNextDay(localDueDate);
+                            } else {
+                                newDueDate = postponeToTomorrow(currentDate, localDueDate);
+                            }
+                        } else {
+                            newDueDate = postponeToTomorrowDefaultTime(currentDate);
+                        }
+                        DataAccess.appDb.transaction(function (tx) {
+                            DataAccess.runSqlDirectly(tx, "update task set due_date = ? where id = ?", [newDueDate.getTime() / 1000, selectedId],
+                                function (tx, result) {
+                                    refreshCurrentPage();
+                                });
+                        });
+                    } else {
+                        console.error('Task with id[%s] not found', selectedId);
+                    }
+                }, function (tx, error) {
+                    log.logSqlError("Failed to postpone task[" + selectedId + "] to the next day", error);
+                });
+            }
+        }
+    }
+
     function updateTaskStatus(statusKey, textDecoration) {
         var selectedItem, selectedId,
             context = document.getElementById('task-operation-context-menu');
@@ -203,6 +288,7 @@ var UIContextMenuController = (function () {
             }
         },
 
+        postponeTask         : function () { postponeTaskInternal(); },
         markTaskAsDone       : function () { updateTaskStatus(SeedData.TaskDoneStatus, 'line-through'); },
         markTaskAsNew        : function () { updateTaskStatus(SeedData.TaskNewStatus, 'none'); },
         moveTaskToNextAction : function () { moveTaskToGtdList(SeedData.NextActionMetaName); },

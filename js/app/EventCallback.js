@@ -24,8 +24,8 @@ var EventCallback = (function () {
         }
     }
 
-    function onDomReadyCallback(element, id) {
-        var taskId, metaTypeName, metaId, metaTypeId;
+    function onDomReadyCallback(element, id, params) {
+        var taskId, metaTypeName, metaId, metaTypeId, defaultMetaName = Sql.FilterAllMeta;
         if (id !== null) {
             setActionBarSelectStatus(id);
             if (id === SeedData.BasketMetaName || id === SeedData.NextActionMetaName || id === SeedData.SomedayMetaName) {
@@ -36,7 +36,10 @@ var EventCallback = (function () {
             } else if (Util.startsWith(id, UIConfig.taskByPagePrefix)) {
                 metaTypeName = id.substring(UIConfig.taskByPagePrefix.length);
                 UIListController.fillMetaListToPanelByTypeName(metaTypeName, UIConfig.taskByPagePrefix);
-                UIListController.fillTasksToGroupByMetaInfo(metaTypeName, Sql.FilterAllMeta);
+                if (Util.notEmpty(params) && Util.notEmpty(params.metaName)) {
+                    defaultMetaName = params.metaName;
+                }
+                UIListController.fillTasksToGroupByMetaInfo(metaTypeName, defaultMetaName);
             } else if (id === 'fields') {
                 UIListController.fillMetaTypeToPanel();
             } else if (Util.startsWith(id, UIConfig.editMetaPagePrefix)) {

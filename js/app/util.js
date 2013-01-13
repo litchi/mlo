@@ -72,7 +72,7 @@ var Util = (function () {
             var resultStr = myDate.getFullYear() + '-'
                     + ('0' + (myDate.getMonth() + 1)).slice(-2) + '-'
                     + ('0' + myDate.getDate()).slice(-2) + 'T'
-                    + ('0' + myDate.getHours()).slice(-2) + '-'
+                    + ('0' + myDate.getHours()).slice(-2) + ':'
                     + ('0' + myDate.getMinutes()).slice(-2);
             return resultStr;
         },
@@ -158,6 +158,17 @@ var Util = (function () {
                 range.collapse(false);
                 range.select();
             }
+        },
+
+        timeToDateWithZone : function (second) {
+            var localMs, result = null, tzo = new Date().getTimezoneOffset();
+            if (Util.notEmpty(second)) {
+                localMs = (second + tzo * 60) * 1000;
+                result = new Date(localMs);
+            } else {
+                console.error("Time stamp[%s] passed to dbTimeStampToDate is empty", second);
+            }
+            return result;
         }
     };
 

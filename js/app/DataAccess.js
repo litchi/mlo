@@ -195,6 +195,9 @@ var DataAccess = (function () {
             getById: function (id, successCallback, failureCallback) {
                 runSQL(Sql.Task.SelectById, [id], successCallback, failureCallback);
             },
+            getDueDate : function (id, successCallback, failureCallback) {
+                runSQL(Sql.Task.SelectDueDate, [id], successCallback, failureCallback);
+            },
             getByName: function (name, successCallback, failureCallback) {
                 runSQL(Sql.Task.SelectByName, [name], successCallback, failureCallback);
             },
