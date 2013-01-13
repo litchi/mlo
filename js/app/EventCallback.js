@@ -43,6 +43,7 @@ var EventCallback = (function () {
                 UIListController.fillTasksToGroupByMetaInfo(metaTypeName, defaultMetaName);
             } else if (id === 'fields') {
                 UIListController.fillMetaTypeToPanel();
+                UIListController.fillAllMetaToPanel(UIConfig.metaByPagePrefix);
             } else if (Util.startsWith(id, UIConfig.editMetaPagePrefix)) {
                 metaId = id.substring(UIConfig.editMetaPagePrefix.length);
                 UIEditFormController.fillMetaToEditForm(metaId);
