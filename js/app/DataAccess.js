@@ -57,8 +57,8 @@ var DataAccess = (function () {
         logInfo        : true,
         logError       : true,
         logDebug       : true,
-        logQueryResult : false,
-        logQuerySql    : false,
+        logQueryResult : true,
+        logQuerySql    : true,
         appDb          : null,
         dropAllTables : function (tx) {
             DataAccess.runSqlDirectly(tx, 'drop table task');
@@ -66,6 +66,8 @@ var DataAccess = (function () {
             DataAccess.runSqlDirectly(tx, 'drop table meta_type');
             DataAccess.runSqlDirectly(tx, 'drop table meta');
             DataAccess.runSqlDirectly(tx, 'drop table task_note');
+            DataAccess.runSqlDirectly(tx, 'drop view  task_view');
+            DataAccess.runSqlDirectly(tx, 'drop view  meta_view');
         },
 
         createTables : function (tx) {

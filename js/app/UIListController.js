@@ -63,7 +63,7 @@ var UIListController = (function () {
                                     tx,
                                     'select meta_name, meta_type_name, task_due_date from task_view where task_id = ?',
                                     [id],
-                                    function (tx, result) {
+                                    function (tx, result, objs) {
                                         var context = [], project = null, mt = null, rt = null, obj;
                                         for (i = 0, max = result.rows.length; i < max; i += 1) {
                                             obj = result.rows.item(i);

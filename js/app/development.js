@@ -16,10 +16,9 @@ var DevToolkit = (function () {
                 DataAccess.runSqlDirectly(tx, 'CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta.description as meta_description, meta.ui_rank as meta_ui_rank, meta_type.id as meta_type_id, meta_type.name as meta_type_name, meta_type.description as meta_type_description, meta_type.internal as meta_type_internal from meta join meta_type on meta_type.id = meta.meta_type_id');
                 SeedSampleDataProvider.loadSeedAndSampleData();
             }, function (error) {
-                console.error("Error to drop all tables, error code " + error.code + ", error msg: " + error.message);
+                log.logSqlError("Error when reCreateDatabase", error);
             }, function () {
-                DataAccess.initAppDb(DataAccess.appDb);
-                console.debug("Successfully drop and recreate all tables and import seed data");
+                console.info("Successfully drop and recreate all tables and import seed/sample data");
             });
         },
 

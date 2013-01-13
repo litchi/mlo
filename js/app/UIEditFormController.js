@@ -14,7 +14,7 @@ var UIEditFormController = (function () {
                 tx,
                 "select meta_id, meta_name from meta_view where meta_type_name = ?",
                 [SeedData.ProjectMetaTypeName],
-                function (tx, result) {
+                function (tx, result, objs) {
                     if (undefined !== projectSelect && null !== result.rows && result.rows.length > 0) {
                         for (i = 0, max = result.rows.length; i < max; i += 1) {
                             obj = result.rows.item(i);
@@ -47,7 +47,7 @@ var UIEditFormController = (function () {
                 tx,
                 "select distinct meta_name from task_view where task_id = ? and meta_type_name = ?",
                 [taskId, SeedData.ProjectMetaTypeName],
-                function (tx, result) {
+                function (tx, result, objs) {
                     if (null !== result && null !== result.rows && result.rows.length > 0 &&
                             null !== result.rows && null !== result.rows.item && null !== result.rows.item(0) &&
                             null !== result.rows.item(0).meta_name) {
@@ -77,7 +77,7 @@ var UIEditFormController = (function () {
                 tx,
                 'select count(*) as c from task_view where task_id = ? and meta_id = ?',
                 [taskId, metaId],
-                function (tx, result) {
+                function (tx, result, objs) {
                     if (null !== result && null !== result.rows && null !== result.rows.item) {
                         span = document.createElement('span');
                         span.setAttribute('id', metaId);
@@ -109,7 +109,7 @@ var UIEditFormController = (function () {
                 tx,
                 'select meta_id, meta_name from meta_view where meta_type_name = ?',
                 [SeedData.ContextMetaTypeName],
-                function (tx, result) {
+                function (tx, result, obj) {
                     if (null !== result && null !== result.rows && null !== result.rows.item) {
                         for (i = 0, max = result.rows.length; i < max; i += 1) {
                             createContextSpan(contextContainer, taskId, result.rows.item(i).meta_id, result.rows.item(i).meta_name);
@@ -153,7 +153,7 @@ var UIEditFormController = (function () {
             myDate = Util.timeToDateWithZone(new Date(dueDate).getTime() / 1000);
         DataAccess.runSqlDirectly(tx,
             "update task set due_date = ?, reminder_on = ? where id = ?", [myDate.getTime() / 1000, reminderOnInt, taskId],
-            function (tx, result) {
+            function (tx, result, objs) {
                 if (reminderOn) {
                     setReminder(taskId, dueDate);
                 }

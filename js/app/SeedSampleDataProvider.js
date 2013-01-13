@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global u, DataAccess, SQL, SeedData, bb, log, console, uiConfig, openDatabase, APP_SQL*/
+/*global Util, DataAccess, SQL, SeedData, bb, log, console, uiConfig, openDatabase, APP_SQL*/
 var SeedSampleDataProvider = (function () {
     "use strict";
 
@@ -30,52 +30,45 @@ var SeedSampleDataProvider = (function () {
 
 
     function insertSampleProjects(tx) {
-        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'App Usage' , 'Introduction of Mind like Water App features' from meta_type where name = 'Project'");
+        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'App Use' , 'Introduction of Mind like Water App features' from meta_type where name = 'Project'");
     }
 
     function insertSampleContexts(tx) {
-        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'online'   , 'Internet context' from meta_type where name = 'Context'");
-        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'bank'     , 'Actions related to bank' from meta_type where name = 'Context'");
-        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'errands'  , 'Waiting for others' from meta_type where name = 'Context'");
-        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'call'     , 'Call others' from meta_type where name = 'Context'");
-        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'home'     , 'At home' from meta_type where name = 'Context'");
-        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'office'   , 'In the Office' from meta_type where name = 'Context'");
-        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'subway'   , 'When taking subway' from meta_type where name = 'Context'");
+        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'online'     , 'Internet context' from meta_type where name = 'Context'");
+        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'blackberry' , 'Actions related to bank' from meta_type where name = 'Context'");
+        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'errands'    , 'Waiting for others' from meta_type where name = 'Context'");
+        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'call'       , 'Call others' from meta_type where name = 'Context'");
+        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'home'       , 'At home' from meta_type where name = 'Context'");
+        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'office'     , 'In the Office' from meta_type where name = 'Context'");
+        DataAccess.runSqlDirectly(tx, "insert into meta (meta_type_id , name , description) select id , 'subway'     , 'When taking subway' from meta_type where name = 'Context'");
     }
 
-    function insertSampleTask(tx, taskName, metaName1, metaName2, metaName3) {
-        DataAccess.runSqlDirectly(tx, "insert into task (name) values (?)", [taskName], function (tx, result) {
-            DataAccess.appDb.transaction(function (tx1) {
-                if (null !== metaName1) {
-                    DataAccess.runSqlDirectly(tx1,
-                        "insert into task_meta (task_id, meta_id) values (?, (select id from meta where name = ?))",
-                        [result.insertId, metaName1]);
+    function insertSampleTask(tx, taskName, metas, dueDate) {
+        DataAccess.runSqlDirectly(tx, "insert into task (name) values (?)", [taskName], function (tx, result, objs) {
+            var i, id = result.insertId;
+            if (Util.notEmpty(metas)) {
+                for (i = 0; i < metas.length; i += 1) {
+                    DataAccess.runSqlDirectly(tx, "insert into task_meta (task_id, meta_id) values (?, (select id from meta where name = ?))", [id, metas[i]]);
                 }
-                if (null !== metaName2) {
-                    DataAccess.runSqlDirectly(tx1,
-                        "insert into task_meta (task_id, meta_id) values (?, (select id from meta where name = ?))",
-                        [result.insertId, metaName2]);
-                }
-                if (null !== metaName3) {
-                    DataAccess.runSqlDirectly(tx1,
-                        "insert into task_meta (task_id, meta_id) values (?, (select id from meta where name = ?))",
-                        [result.insertId, metaName3]);
-                }
-            });
+            }
+            if (Util.notEmpty(dueDate)) {
+                dueDate.setHours(10);
+                dueDate.setMinutes(0);
+                DataAccess.runSqlDirectly(tx, 'update task set due_date = ? where id = ?', [dueDate.getTime() / 1000, id]);
+            }
         });
     }
 
     function insertSampleTasks(tx) {
-        insertSampleTask(tx, 'Click task list to show pop up menu', 'App Usage', 'Next Action', 'office');
-        insertSampleTask(tx, 'Click "Basket" icon below to display tasks in inbox', 'App Usage', 'Next Action');
-        insertSampleTask(tx, 'Click "Next Action" icon below to display next actions', 'App Usage', 'Next Action');
-        insertSampleTask(tx, 'Click "Project" icon below to group tasks by project', 'App Usage', 'Next Action');
-        insertSampleTask(tx, 'Click "Context" icon below to group tasks by context', 'App Usage', 'Next Action');
-        insertSampleTask(tx, 'Show overflow menu and click "Someday/Maybe" to display Someday/Maybe list', 'App Usage', 'Next Action');
-        insertSampleTask(tx, 'Show overflow menu and click "Dimensions" to manage Project/Context', 'App Usage', 'Next Action');
-        insertSampleTask(tx, 'Sample: Call Jenny and say happy birthday to her', 'call', 'Basket', 'errands');
-        insertSampleTask(tx, 'Sample: Read the book "Getting things Done"', 'subway', 'Basket', 'home');
-        insertSampleTask(tx, 'Sample: Travel to Tibet with Honny, next spring', 'Someday', 'bank', 'online');
+        insertSampleTask(tx, 'Use the create task input below to add task', ['App Use', 'Next Action', 'blackberry']);
+        insertSampleTask(tx, 'Tap this item to show task operate menu', ['App Use', 'Next Action', 'office', 'blackberry']);
+        insertSampleTask(tx, 'Swipe task operate menu left to show description', ['App Use', 'Next Action', 'blackberry']);
+        insertSampleTask(tx, 'Tap leftmost actionbar item to show all available lists', ['App Use', 'Next Action', 'blackberry']);
+        insertSampleTask(tx, 'Create project and context on Fields list page', ['App Use', 'Next Action', 'office']);
+        insertSampleTask(tx, 'Tap a context to assign it to task on editing task page', ['App Use', 'Next Action', 'blackberry']);
+        insertSampleTask(tx, 'Sample: Call my friend and say happy birthday', ['call', 'Basket'], new Date());
+        insertSampleTask(tx, 'Sample: Read the book "Getting things Done"', ['subway', 'Basket', 'home'], new Date());
+        insertSampleTask(tx, 'Sample: Travel to Tibet with Honny, next spring', ['Someday', 'online']);
     }
 
     function insertSampleData(tx) {

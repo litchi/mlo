@@ -51,7 +51,7 @@ var UIContextMenuController = (function () {
                         }
                         DataAccess.appDb.transaction(function (tx) {
                             DataAccess.runSqlDirectly(tx, "update task set due_date = ? where id = ?", [newDueDate.getTime() / 1000, selectedId],
-                                function (tx, result) {
+                                function (tx, result, objs) {
                                     Util.refreshCurrentPage();
                                 });
                         });
@@ -108,10 +108,10 @@ var UIContextMenuController = (function () {
         var taskId, metaTypeName, metaName, project = null, context = null;
         DataAccess.appDb.transaction(function (tx) {
             DataAccess.runSqlDirectly(tx, Sql.Task.InsertByName, [name],
-                function (tx, result) {
+                function (tx, result, objs) {
                     taskId = result.insertId;
                     DataAccess.runSqlDirectly(tx, Sql.TaskMeta.Insert, [taskId, metaId],
-                        function (tx, r2) {
+                        function (tx, r2, objs2) {
                             metaTypeName = Util.valueOf('v_meta_type_name');
                             metaName = Util.valueOf('v_meta_name');
                             if (Util.isEmpty(metaName)) {
@@ -138,7 +138,7 @@ var UIContextMenuController = (function () {
                     DataAccess.runSqlDirectly(tx,
                         'select id from meta where name = ?',
                         [SeedData.BasketMetaName],
-                        function (tx, result) {
+                        function (tx, result, objs) {
                             if (1 === result.rows.length) {
                                 createTaskInternal(name, result.rows.item(0).id);
                             } else {
@@ -225,7 +225,7 @@ var UIContextMenuController = (function () {
                     DataAccess.runSqlDirectly(tx,
                         Sql.Meta.SelectByNameTypeId,
                         [meta_type_id, name],
-                        function (tx, result) {
+                        function (tx, result, objs) {
                             if ((1 === result.rows.length) && (result.rows.item(0).id.toString() !== id)) {
                                 document.getElementById('error-msg').innerText = metaTypeName + ' name "' + name + '" has already been taken, please use another name';
                                 document.getElementById('error-panel').style.display = 'block';
