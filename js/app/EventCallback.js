@@ -1,8 +1,8 @@
 /*jslint browser: true */
 /*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController*/
+var webworksreadyFired = false;
 var EventCallback = (function () {
     "use strict";
-    var webworksreadyFired = false;
 
     function onScreenReadyCallback(element, id) {
         if (null === DataAccess.appDb) {
@@ -59,7 +59,6 @@ var EventCallback = (function () {
     return {
         webworksReadyCallback : function (e) {
             //Init on bbUI should before any other code loads.  
-            //Pass no parameters.. [bb.init()] to do the default init;
             if (webworksreadyFired) {
                 return;
             }

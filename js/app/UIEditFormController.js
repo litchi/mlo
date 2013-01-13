@@ -120,31 +120,22 @@ var UIEditFormController = (function () {
         });
     }
 
-
-    function saveContextToDb(taskId) {
+    function saveContextToDb(tx, taskId) {
         var id, val, data;
-        DataAccess.appDb.transaction(function (tx2) {
-            for (id in selectedContextIds) {
-                if (selectedContextIds.hasOwnProperty(id)) {
-                    val = selectedContextIds[id];
-                    data = [taskId, id];
-                    log.logSqlStatement(Sql.TaskMeta.Insert, data, DataAccess.logQuerySql);
-                    DataAccess.runSqlDirectly(tx2, Sql.TaskMeta.Insert, data);
-                }
+        for (id in selectedContextIds) {
+            if (selectedContextIds.hasOwnProperty(id)) {
+                val = selectedContextIds[id];
+                data = [taskId, id];
+                log.logSqlStatement(Sql.TaskMeta.Insert, data, DataAccess.logQuerySql);
+                DataAccess.runSqlDirectly(tx, Sql.TaskMeta.Insert, data);
             }
-        });
+        }
     }
 
-    function saveContextPopScreen(taskId) {
-        DataAccess.appDb.transaction(function (tx1) {
-            DataAccess.runSqlDirectly(tx1,
-                Sql.TaskMeta.DeleteByMetaTypeName,
-                [taskId, SeedData.ContextMetaTypeName],
-                function (tx, result) {
-                    saveContextToDb(taskId);
-                    Util.refreshCurrentPage();
-                });
-        });
+    function saveContextPopScreen(tx, taskId) {
+        DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteByMetaTypeName, [taskId, SeedData.ContextMetaTypeName]);
+        saveContextToDb(tx, taskId);
+        Util.refreshCurrentPage();
     }
 
     function setReminder(taskId, reminderTime) {
@@ -155,34 +146,24 @@ var UIEditFormController = (function () {
         }
     }
 
-    function saveDueInfo(taskId) {
+    function saveDueInfo(tx, taskId) {
         var reminderOn = document.getElementById('is-reminder-on').getChecked(),
             dueDate = Util.valueOf('due-date'),
             reminderOnInt = (reminderOn === true) ? 1 : 0,
             myDate = Util.timeToDateWithZone(new Date(dueDate).getTime() / 1000);
-        DataAccess.appDb.transaction(function (tx) {
-            DataAccess.runSqlDirectly(tx,
-                "update task set due_date = ?, reminder_on = ? where id = ?", [myDate.getTime() / 1000, reminderOnInt, taskId],
-                function (tx, result) {
-                    if (reminderOn) {
-                        setReminder(taskId, dueDate);
-                    }
-                });
-        });
+        DataAccess.runSqlDirectly(tx,
+            "update task set due_date = ?, reminder_on = ? where id = ?", [myDate.getTime() / 1000, reminderOnInt, taskId],
+            function (tx, result) {
+                if (reminderOn) {
+                    setReminder(taskId, dueDate);
+                }
+            });
     }
 
-    function saveProjectInfo(taskId, projectId) {
-        DataAccess.appDb.transaction(function (tx1) {
-            DataAccess.runSqlDirectly(tx1,
-                Sql.TaskMeta.DeleteByMetaTypeName,
-                [taskId, SeedData.ProjectMetaTypeName],
-                function (tx, result) {
-                    DataAccess.appDb.transaction(function (tx2) {
-                        DataAccess.runSqlDirectly(tx2, Sql.TaskMeta.Insert, [taskId, projectId]);
-                        DataAccess.runSqlDirectly(tx2, Sql.TaskMeta.DeleteTaskFromList, [taskId, SeedData.BasketMetaName, SeedData.GtdMetaTypeName]);
-                    });
-                });
-        });
+    function saveProjectInfo(tx, taskId, projectId) {
+        DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteByMetaTypeName, [taskId, SeedData.ProjectMetaTypeName]);
+        DataAccess.runSqlDirectly(tx, Sql.TaskMeta.Insert, [taskId, projectId]);
+        DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteTaskFromList, [taskId, SeedData.BasketMetaName, SeedData.GtdMetaTypeName]);
     }
 
     function setTaskNameTextarea(id, taskName) {
@@ -206,14 +187,15 @@ var UIEditFormController = (function () {
                 document.getElementById('task-name').setAttribute('placeholder', 'Please fill in task name');
                 return;
             }
-            DataAccess.task.update(id, name, function (tx, result, rows) {
-                saveDueInfo(id);
-                if (projectId !== 0) {
-                    saveProjectInfo(id, projectId);
+            DataAccess.appDb.transaction(function (tx) {
+                DataAccess.runSqlDirectly(tx, Sql.Task.UpdateById, [name, id]);
+                saveDueInfo(tx, id);
+                if (projectId !== '0') {
+                    saveProjectInfo(tx, id, projectId);
                 }
-                saveContextPopScreen(id);
-            }, function (tx, error) {
-                log.logSqlError("Failed to update task[" + id + "][" + name + "]", error);
+                saveContextPopScreen(tx, id);
+            }, function (error) {
+                log.logSqlError("Failed to update task[" + id + "][Name: " + name + "][projectId: " + projectId + "]", error);
             });
         },
 

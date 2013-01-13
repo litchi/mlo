@@ -2,7 +2,7 @@
 /*global Util, DataAccess, Sql, SeedData, bb, log, console, uiConfig, openDatabase, AppSql, SeedSampleDataProvider*/
 var DataAccess = (function () {
     "use strict";
-    var appInfoDb, db_schema_version = '';
+    var appInfoDb, db_schema_version = '', dbOpenCheckCount = 0, dbOpenCheckInterval = 10, dbOpenCheckMaxCount = 100, dbOpenRequestSend = 0;
 
     function sqlMatch(pattern, sql) { return (new RegExp(pattern, 'i')).test(sql); }
     function isSelect(sql) { return sqlMatch('^select\\s', sql); }
@@ -10,44 +10,38 @@ var DataAccess = (function () {
     function isUpdate(sql) { return sqlMatch('^update\\s', sql); }
     function isDelete(sql) { return sqlMatch('^delete\\s', sql); }
 
-    function sqlProcessor(transaction, sql, data, finalSuccessCallback, finalFailureCallback) {
-        var successCallback, failureCallback;
-        log.logSqlStatement(sql, data, DataAccess.logQuerySql);
-        finalSuccessCallback = (finalSuccessCallback === void 0) ? function () {} : finalSuccessCallback;
-        finalFailureCallback = (finalFailureCallback === void 0) ? function () {} : finalFailureCallback;
-        successCallback = function (transaction, sqlResultSet) {
-            var resultObjs = [];
-            if (isSelect(sql)) {
-                resultObjs = DataAccess.sqlResultSetToArray(sqlResultSet);
-            } else if (isInsert(sql)) {
-                resultObjs[0] = sqlResultSet.insertId;
-            }
-            log.logObjectData("Result Array", resultObjs, DataAccess.logQueryResult);
-            finalSuccessCallback(transaction, sqlResultSet, resultObjs);
-        };
-        failureCallback = function (transaction, error) {
-            log.logSqlError("Error run SQL: [" + sql + "], data[" + data + "]", error, DataAccess.logError);
-            finalFailureCallback(transaction, error);
-        };
-        transaction.executeSql(sql, data, successCallback, failureCallback);
+    function shouldRollback(sql) {
+        return false === isSelect(sql);
+    }
+
+    function openDatabaseIfNecessary() {
+        if (0 === dbOpenRequestSend) {
+            DataAccess.createDatabaseConnection();
+            dbOpenRequestSend = 1;
+        }
     }
 
     function runSQL(sql, data, successCallback, failureCallback) {
-        if (null === DataAccess.appDb) {
-            DataAccess.createDatabaseConnection();
-            setTimeout(function () {
-                DataAccess.appDb.transaction(function (tx) {
-                    sqlProcessor(tx, sql, data, successCallback, failureCallback);
-                }, function (error) {
-                    log.logSqlError("Failed to run SQL[" + sql + "] with data[" + data + "]", error);
-                }, function () {});
-            }, 1000);
-        } else {
+        if (Util.notEmpty(DataAccess.appDb)) {
             DataAccess.appDb.transaction(function (tx) {
-                sqlProcessor(tx, sql, data, successCallback, failureCallback);
-            }, function (error) {
-                log.logSqlError("Failed to run SQL[" + sql + "] with data[" + data + "]", error);
-            }, function () {});
+                DataAccess.runSqlDirectly(tx, sql, data, successCallback, failureCallback);
+            });
+        } else {
+            openDatabaseIfNecessary();
+            if (dbOpenCheckCount < dbOpenCheckMaxCount) {
+                if (Util.notEmpty(DataAccess.appDb)) {
+                    dbOpenCheckCount = 0;
+                    DataAccess.appDb.transaction(function (tx) {
+                        DataAccess.runSqlDirectly(tx, sql, data, successCallback, failureCallback);
+                    });
+                } else {
+                    window.setTimeout(runSQL, dbOpenCheckInterval);
+                    dbOpenCheckCount += 1;
+                    console.info("Checked [%d]times, [%d] ms for app db open, still not ready", dbOpenCheckCount, dbOpenCheckCount * dbOpenCheckInterval);
+                }
+            } else {
+                console.error("Waited %d ms but db still haven't been ready", dbOpenCheckCount * dbOpenCheckInterval);
+            }
         }
     }
 
@@ -59,18 +53,10 @@ var DataAccess = (function () {
         }
     }
 
-    function createTables(tx) {
-        DataAccess.runSqlDirectly(tx, Sql.Task.CreateTable);
-        DataAccess.runSqlDirectly(tx, Sql.MetaType.CreateTable);
-        DataAccess.runSqlDirectly(tx, Sql.Meta.CreateTable);
-        DataAccess.runSqlDirectly(tx, Sql.TaskMeta.CreateTable);
-        DataAccess.runSqlDirectly(tx, Sql.TaskNote.CreateTable);
-    }
-
     return {
         logInfo        : true,
         logError       : true,
-        logDebug       : false,
+        logDebug       : true,
         logQueryResult : false,
         logQuerySql    : false,
         appDb          : null,
@@ -82,9 +68,18 @@ var DataAccess = (function () {
             DataAccess.runSqlDirectly(tx, 'drop table task_note');
         },
 
+        createTables : function (tx) {
+            DataAccess.runSqlDirectly(tx, Sql.Task.CreateTable);
+            DataAccess.runSqlDirectly(tx, Sql.MetaType.CreateTable);
+            DataAccess.runSqlDirectly(tx, Sql.Meta.CreateTable);
+            DataAccess.runSqlDirectly(tx, Sql.TaskMeta.CreateTable);
+            DataAccess.runSqlDirectly(tx, Sql.TaskNote.CreateTable);
+        },
+
+
         initAppDb : function (db) {
             db.transaction(function (tx) {
-                createTables(tx);
+                DataAccess.createTables(tx);
                 DataAccess.runSqlDirectly(tx, 'alter table task add column reminder_on integer');
                 DataAccess.runSqlDirectly(tx, 'alter table task add column due_date integer');
                 DataAccess.runSqlDirectly(tx, 'alter table meta add column ui_rank integer default 0');
@@ -108,18 +103,29 @@ var DataAccess = (function () {
             });
         },
 
-        runSqlDirectly : function (tx, sql, data, callback) {
+        runSqlDirectly : function (tx, sql, data, finalSuccessCallback, finalFailureCallback) {
+            var successCallback, failureCallback, rollback;
+            log.logSqlStatement(sql, data, DataAccess.logQuerySql);
             if ((null === data) || (undefined === data)) {
                 data = [];
             }
-            tx.executeSql(sql, data, function (tx, result) {
-                log.logSqlStatement(sql, data, DataAccess.logQuerySql);
-                if (Util.isFunction(callback)) {
-                    callback(tx, result);
+            finalSuccessCallback = (!Util.isFunction(finalSuccessCallback)) ? function () {} : finalSuccessCallback;
+            finalFailureCallback = (!Util.isFunction(finalFailureCallback)) ? function () {} : finalFailureCallback;
+            successCallback = function (tx, sqlResultSet) {
+                var resultObjs = [];
+                if (isSelect(sql)) {
+                    resultObjs = DataAccess.sqlResultSetToArray(sqlResultSet);
+                } else if (isInsert(sql)) {
+                    resultObjs[0] = sqlResultSet.insertId;
                 }
-            }, function (tx, error) {
-                log.logSqlError("SQL failed: [" + sql + "], data: [" + data + "]", error);
-            });
+                log.logObjectData("Result Array", resultObjs, DataAccess.logQueryResult);
+                finalSuccessCallback(tx, sqlResultSet, resultObjs);
+            };
+            failureCallback = function (tx, error) {
+                rollback = shouldRollback(sql) || finalFailureCallback(tx, error);
+                log.logSqlError("Error run SQL: [" + sql + "], data[" + data + "], Rollback?[" + rollback + "]", error, DataAccess.logError);
+            };
+            tx.executeSql(sql, data, successCallback, failureCallback);
         },
 
         sqlResultSetToArray : function (sqlResultSet) {
@@ -137,7 +143,7 @@ var DataAccess = (function () {
                 setTimeout(function () {
                     appInfoDb.transaction(function (tx) {
                         DataAccess.runSqlDirectly(tx, "select db_schema_version from app_info where app_id = ?", ['BB10GTD'],
-                            function (tx, result) {
+                            function (tx, result, objs) {
                                 if ((result !== null)
                                         && (result.rows !== null)
                                         && (1 === result.rows.length)
@@ -220,7 +226,6 @@ var DataAccess = (function () {
             update : function (id, name, description, successCallback, failureCallback) {
                 runSQL(Sql.MetaType.UpdateById, [name, description, id], successCallback, failureCallback);
             },
-            //Write Test case for this method.
             getAll : function (successCallback, failureCallback) {
                 runSQL(Sql.MetaType.SelectAll, [], successCallback, failureCallback);
             },
@@ -243,7 +248,7 @@ var DataAccess = (function () {
                 runSQL(Sql.Meta.DeleteById, [id], successCallback, failureCallback);
             },
             update : function (id, name, description, successCallback, failureCallback) {
-                if (null === description) {
+                if (Util.isEmpty(description)) {
                     runSQL(Sql.Meta.UpdateNameById, [name, id], successCallback, failureCallback);
                 } else {
                     runSQL(Sql.Meta.UpdateById, [name, description, id], successCallback, failureCallback);
@@ -252,7 +257,6 @@ var DataAccess = (function () {
             getById : function (id, successCallback, failureCallback) {
                 runSQL(Sql.Meta.SelectById, [id], successCallback, failureCallback);
             },
-            //TODO Possible bug: if user creates a meta has the same name with Pre-defined, then there will be issue
             getByName : function (name, successCallback, failureCallback) {
                 runSQL(Sql.Meta.SelectByName, [name], successCallback, failureCallback);
             },
@@ -269,22 +273,7 @@ var DataAccess = (function () {
                 runSQL(Sql.Meta.SelectByTypeId, [metaTypeId], successCallback, failureCallback);
             },
             getByTypeName : function (metaTypeName, successCallback, failureCallback) {
-                DataAccess.metaType.getByName(metaTypeName, function (tx, results, arrays) {
-                    var metaTypeId;
-                    if (arrays !== null &&
-                            arrays !== undefined &&
-                            arrays.length >= 0 &&
-                            arrays[0] !== undefined &&
-                            arrays[0] !== null
-                            ) {
-                        metaTypeId = arrays[0][Sql.MetaType.Cols.Id];
-                        DataAccess.meta.getByTypeId(metaTypeId, successCallback, failureCallback);
-                    } else {
-                        console.error("Meta Type with name [" + metaTypeName + "] not exists");
-                    }
-                }, function (tx, error) {
-                    console.error("Error to get Meta of Type [" + metaTypeName + "]");
-                });
+                runSQL(Sql.Meta.SelectByTypeName, [metaTypeName], successCallback, failureCallback);
             }
         },
 
@@ -302,9 +291,10 @@ var DataAccess = (function () {
                 runSQL(Sql.TaskMeta.ThrowTaskToList, [taskId, metaName, metaTypeName], successCallback, failureCallback);
             },
             moveTaskToGtdList : function (taskId, metaName, successCallback, failureCallback) {
-                runSQL(Sql.TaskMeta.DeleteByMetaTypeName, [taskId, SeedData.GtdMetaTypeName], function (tx, result, objs) {
-                    runSQL(Sql.TaskMeta.ThrowTaskToList, [taskId, metaName, SeedData.GtdMetaTypeName], successCallback, failureCallback);
-                }, failureCallback);
+                DataAccess.appDb.transaction(function (tx) {
+                    DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteByMetaTypeName, [SeedData.GtdMetaTypeName]);
+                    DataAccess.runSqlDirectly(tx, Sql.TaskMeta.ThrowTaskToList, [taskId, metaName, SeedData.GtdMetaTypeName], successCallback, failureCallback);
+                });
             }
         }
     };

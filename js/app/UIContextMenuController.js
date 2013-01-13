@@ -106,30 +106,25 @@ var UIContextMenuController = (function () {
 
     function createTaskInternal(name, metaId) {
         var taskId, metaTypeName, metaName, project = null, context = null;
-        DataAccess.task.create(name, function (tx, result, rows) {
-            taskId = result.insertId;
-            DataAccess.appDb.transaction(function (transaction) {
-                transaction.executeSql(
-                    "insert into task_meta (id, task_id, meta_id) values (null, ?, ?)",
-                    [taskId, metaId],
-                    function (tx1, r2) {
-                        metaTypeName = Util.valueOf('v_meta_type_name');
-                        metaName = Util.valueOf('v_meta_name');
-                        if (Util.isEmpty(metaName)) {
-                            if (metaTypeName === SeedData.ProjectMetaTypeName) {
-                                project = metaName;
-                            } else if (metaTypeName === SeedData.ContextMetaTypeName) {
-                                context = [metaName];
+        DataAccess.appDb.transaction(function (tx) {
+            DataAccess.runSqlDirectly(tx, Sql.Task.InsertByName, [name],
+                function (tx, result) {
+                    taskId = result.insertId;
+                    DataAccess.runSqlDirectly(tx, Sql.TaskMeta.Insert, [taskId, metaId],
+                        function (tx, r2) {
+                            metaTypeName = Util.valueOf('v_meta_type_name');
+                            metaName = Util.valueOf('v_meta_name');
+                            if (Util.isEmpty(metaName)) {
+                                if (metaTypeName === SeedData.ProjectMetaTypeName) {
+                                    project = metaName;
+                                } else if (metaTypeName === SeedData.ContextMetaTypeName) {
+                                    context = [metaName];
+                                }
                             }
-                        }
-                        UIListController.addTaskToList(taskId, name, project, context, null);
-                        Util.setValue('ctsi', UIConfig.emptyString);
-                    },
-                    function (tx1, e) {
-                        log.logSqlError("Failed to add task[" + taskId + "] to in basket", e);
-                    }
-                );
-            });
+                            UIListController.addTaskToList(taskId, name, project, context, null);
+                            Util.setValue('ctsi', UIConfig.emptyString);
+                        });
+                });
         }, function (tx, e1) {
             log.logSqlError("Failed creating task[" + name + "]", e1);
         });

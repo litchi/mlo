@@ -73,6 +73,7 @@ Sql = {
         SelectByName       : 'select id, meta_type_id, name, description from meta where name = ?',
         SelectByIdName     : 'select id, meta_type_id, name, description from meta where id = ? and name = ?',
         SelectByTypeId     : 'select id, meta_type_id, name, description from meta where meta_type_id = ? order by ui_rank desc',
+        SelectByTypeName   : 'select id, meta_type_id, name, description from meta where meta_type_name = ? order by ui_rank desc',
         SelectByNameTypeId : 'select id from meta where meta_type_id = ? and name = ?',
         UpdateNameById     : 'update meta set name = ? where id = ?',
         UpdateById         : 'update meta set name = ? ,description = ? where id = ?',
