@@ -13,8 +13,7 @@ var EventCallback = (function () {
     function setActionBarSelectStatus(screenId) {
         var tab = document.getElementById(screenId),
             devTab = document.getElementById('development');
-        if (null !== tab &&
-                undefined !== tab) {
+        if (Util.notEmpty(tab)) {
             bb.actionBar.highlightAction(tab);
         }
         if (true !== AppConfig.debugMode) {
@@ -26,13 +25,15 @@ var EventCallback = (function () {
 
     function onDomReadyCallback(element, id, params) {
         var taskId, metaTypeName, metaId, metaTypeId, defaultMetaName = Sql.FilterAllMeta;
+        console.debug("Element: [%s], ID: [%s]", element, id);
+        log.logObjectData("Parameters:", params);
         if (id !== null) {
             setActionBarSelectStatus(id);
             if (id === SeedData.BasketMetaName || id === SeedData.NextActionMetaName || id === SeedData.SomedayMetaName) {
                 UIListController.fillTasksToGroupByMetaInfo(SeedData.GtdMetaTypeName, id);
             } else if (Util.startsWith(id, UIConfig.editTaskPagePrefix)) {
                 taskId = id.substring(UIConfig.editTaskPagePrefix.length);
-                UIEditFormController.fillTaskToEditForm(taskId);
+                UIEditFormController.fillTaskToEditForm(taskId, params);
             } else if (Util.startsWith(id, UIConfig.taskByPagePrefix)) {
                 metaTypeName = id.substring(UIConfig.taskByPagePrefix.length);
                 UIListController.fillMetaListToPanelByTypeName(metaTypeName, UIConfig.taskByPagePrefix);

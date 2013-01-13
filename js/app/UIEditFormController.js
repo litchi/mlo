@@ -142,7 +142,7 @@ var UIEditFormController = (function () {
                 [taskId, SeedData.ContextMetaTypeName],
                 function (tx, result) {
                     saveContextToDb(taskId);
-                    bb.popScreen();
+                    Util.refreshCurrentPage();
                 });
         });
     }
@@ -242,7 +242,7 @@ var UIEditFormController = (function () {
             span.setAttribute('onclick', 'UIEditFormController.selectContext("' + metaId + '", "' + metaName + '")');
         },
 
-        fillTaskToEditForm : function (id) {
+        fillTaskToEditForm : function (id, params) {
             var obj, option, reminderOn, due;
             DataAccess.task.getById(id, function (tx, result, arrays) {
                 var taskName = arrays[0][Sql.Task.Cols.Name];
@@ -253,6 +253,7 @@ var UIEditFormController = (function () {
                 due = arrays[0][Sql.Task.Cols.DueDate];
                 prepareDueData(reminderOn, due);
                 prepareContextData(id);
+                Util.setCommonMetaFieldsOnPage(params);
                 Util.setValue('task-id', id);
                 bb.refresh();
             }, function (tx, error) {

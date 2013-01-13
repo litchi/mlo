@@ -160,6 +160,41 @@ var Util = (function () {
             }
         },
 
+        refreshCurrentPage : function () {
+            //TODO Upon bbui 0.9.7, this should work.
+            //bb.reloadScreen();
+            var metaTypeId = Util.valueOf('v_meta_type_id'),
+                metaTypeName = Util.valueOf('v_meta_type_name'),
+                metaId = Util.valueOf('v_meta_id'),
+                metaName = Util.valueOf('v_meta_name');
+            console.debug('[%s], [%s], [%s], [%s]', metaTypeId, metaTypeName, metaId, metaName);
+            if (metaName === SeedData.NextActionMetaName ||
+                    metaName === SeedData.BasketMetaName ||
+                    metaName === SeedData.SomedayMetaName) {
+                bb.pushScreen('task-list.html', metaName);
+            } else {
+                if (Util.notEmpty(metaName)) {
+                    bb.pushScreen('master-detail.html',
+                        UIConfig.taskByPagePrefix + metaTypeName,
+                        {'metaName' : metaName});
+                } else {
+                    bb.pushScreen('master-detail.html',
+                        UIConfig.taskByPagePrefix + metaTypeName);
+                }
+            }
+        },
+
+        setCommonMetaFieldsOnPage : function (params) {
+            if (Util.notEmpty(params)) {
+                Util.setValue('v_meta_type_name', params.metaTypeName);
+                Util.setValue('v_meta_type_id',   params.metaTypeId);
+                Util.setValue('v_meta_name',      params.metaName);
+                Util.setValue('v_meta_id',        params.metaId);
+            } else {
+                console.warn("Param is empty when prepareMetaData");
+            }
+        },
+
         timeToDateWithZone : function (second) {
             var localMs, result = null, tzo = new Date().getTimezoneOffset();
             if (Util.notEmpty(second)) {

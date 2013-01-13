@@ -4,30 +4,6 @@
 var UIContextMenuController = (function () {
     "use strict";
 
-    function refreshCurrentPage() {
-        //TODO Upon bbui 0.9.7, this should work.
-        //bb.reloadScreen();
-        var metaTypeId = Util.valueOf('v_meta_type_id'),
-            metaTypeName = Util.valueOf('v_meta_type_name'),
-            metaId = Util.valueOf('v_meta_id'),
-            metaName = Util.valueOf('v_meta_name');
-        console.debug('[%s], [%s], [%s], [%s]', metaTypeId, metaTypeName, metaId, metaName);
-        if (metaName === SeedData.NextActionMetaName ||
-                metaName === SeedData.BasketMetaName ||
-                metaName === SeedData.SomedayMetaName) {
-            bb.pushScreen('task-list.html', metaName);
-        } else {
-            if (Util.notEmpty(metaName)) {
-                bb.pushScreen('master-detail.html',
-                            UIConfig.taskByPagePrefix + metaTypeName,
-                            {'metaName' : metaName});
-            } else {
-                bb.pushScreen('master-detail.html',
-                    UIConfig.taskByPagePrefix + metaTypeName);
-            }
-        }
-    }
-
     function postponeToNextDay(oldDueDate) {
         var newDate = oldDueDate;
         newDate.setDate(oldDueDate.getDate() + 1);
@@ -76,7 +52,7 @@ var UIContextMenuController = (function () {
                         DataAccess.appDb.transaction(function (tx) {
                             DataAccess.runSqlDirectly(tx, "update task set due_date = ? where id = ?", [newDueDate.getTime() / 1000, selectedId],
                                 function (tx, result) {
-                                    refreshCurrentPage();
+                                    Util.refreshCurrentPage();
                                 });
                         });
                     } else {
@@ -216,7 +192,14 @@ var UIContextMenuController = (function () {
             if (selectedItem) {
                 selectedId = selectedItem.selected;
                 if (selectedId !== null) {
-                    bb.pushScreen('edit-task.html', UIConfig.editTaskPagePrefix + selectedId, {'taskId' : selectedId});
+                    bb.pushScreen('edit-task.html', UIConfig.editTaskPagePrefix + selectedId,
+                        {
+                            'taskId'       : selectedId,
+                            'metaTypeId'   : Util.valueOf('v_meta_type_id'),
+                            'metaTypeName' : Util.valueOf('v_meta_type_name'),
+                            'metaId'       : Util.valueOf('v_meta_id'),
+                            'metaName'     : Util.valueOf('v_meta_name')
+                        });
                 }
             }
         },
