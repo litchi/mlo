@@ -201,7 +201,7 @@ var UIContextMenuController = (function () {
 
         editMeta : function () {
             var selectedItem, selectedId,
-                context = document.getElementById('meta-operation-context-menu');
+                context = document.getElementById('task-operation-context-menu');
             selectedItem  = context.menu.selected;
             if (selectedItem) {
                 selectedId = selectedItem.selected;
@@ -252,7 +252,7 @@ var UIContextMenuController = (function () {
 
         deleteMeta : function () {
             var selectedItem, selectedId,
-                context = document.getElementById('meta-operation-context-menu');
+                context = document.getElementById('task-operation-context-menu');
             selectedItem  = context.menu.selected;
             if (selectedItem) {
                 selectedId = selectedItem.selected;

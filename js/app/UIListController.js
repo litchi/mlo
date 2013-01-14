@@ -190,11 +190,40 @@ var UIListController = (function () {
         };
     }
 
+    function filterContextMenu(items) {
+        var index, menuItems, menuItem,
+            contextMenu = document.getElementById('task-operation-context-menu');
+        if (Util.notEmpty(items)) {
+            if (Util.notEmpty(contextMenu)) {
+                menuItems = contextMenu.getElementsByTagName('div');
+                if (Util.notEmpty(menuItems)) {
+                    for (index = 0; index < menuItems.length; index += 1) {
+                        menuItem = menuItems[index];
+                        if (Util.notEmpty(menuItem) && Util.notEmpty(menuItem.getAttribute('id'))) {
+                            menuItem.style.display = 'none';
+                            menuItem.setAttribute('data-bb-pin', 'false');
+                        }
+                    }
+                    for (index = 0; index < items.length; index += 1) {
+                        document.getElementById(items[index]).style.display = 'block';
+                    }
+                } else {
+                    console.warn("There's no child element defined in div with id[%s]", 'task-operation-context-menu');
+                }
+            } else {
+                console.warn("Context menu with id[%s] in UI is undefined", 'task-operation-context-menu');
+            }
+        } else {
+            console.warn("Want to display no item in the context map?");
+        }
+    }
+
     return {
         fillTasksToGroupByMetaInfo : function (metaTypeName, metaName) {
             var id, name, title = UIConfig.emptyString,
                 detailListTitle  = document.getElementById('detail-title-text'),
                 taskList = document.getElementById(UIConfig.detailListElementId);
+            filterContextMenu(UIConfig.taskContextMenu);
             if (SeedData.DueMetaTypeName === metaTypeName) {
                 DataAccess.task.getByDueMeta(metaName, function (tx, result, arrays) {
                     tasksFromDbToUI(arrays, taskList);
@@ -249,6 +278,7 @@ var UIListController = (function () {
                 metaTypeListTitle.innerText = 'Fields';
                 hidePlusShortcut(groupAddNewLink);
             }
+            filterContextMenu(UIConfig.metaContextMenu);
             DataAccess.metaType.getAll(function (tx, result, arrays) {
                 var key, name, id, desc, item, internal;
                 for (key in arrays) {
@@ -329,13 +359,14 @@ var UIListController = (function () {
                                     if (Util.notEmpty(desc)) {item.innerHTML = desc; }
                                     item.setAttribute(
                                         'onclick',
-                                        "document.getElementById('meta-operation-context-menu').menu.peek({ title : '" + name + "', description : '" + metaTypeName + "', selected : '" + id + "'});"
+                                        "document.getElementById('task-operation-context-menu').menu.peek({ title : '" + name + "', description : '" + desc + "', selected : '" + id + "'});"
                                     );
                                     metaList.appendItem(item);
                                 }
                             }
                         }
                         detailAddNewLink.innerText = 'All Projects and Contexts';
+                        detailAddNewLink.onclick = function () {};
                         setGroupPanelEmptyHeight();
                     });
             }, function (tx, error) {
@@ -355,6 +386,9 @@ var UIListController = (function () {
                     metaTypeName     = objs[0][Sql.MetaType.Cols.Name];
                     metaTypeInternal = objs[0][Sql.MetaType.Cols.Internal];
                     if (UIConfig.metaByPagePrefix === pageType) {
+                        detailAddNewLink.onclick = function () {
+                            bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix + metaTypeId);
+                        };
                         detailAddNewLink.innerText = 'Add New ' + metaTypeName;
                         hidePlusShortcut(groupAddNewLink);
                     } else if (UIConfig.taskByPagePrefix === pageType) {
@@ -403,7 +437,7 @@ var UIListController = (function () {
                                 }
                                 item.setAttribute(
                                     'onclick',
-                                    "document.getElementById('meta-operation-context-menu').menu.peek({ title : '" + name + "', description : '" + metaTypeName + "', selected : '" + id + "'});"
+                                    "document.getElementById('task-operation-context-menu').menu.peek({ title : '" + name + "', description : '" + metaTypeName + "', selected : '" + id + "'});"
                                 );
                             }
                             metaList.appendItem(item);

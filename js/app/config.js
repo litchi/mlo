@@ -14,7 +14,21 @@ var UIConfig = (function () {
         detailListElementId         : 'detail-list',
         detailListPanelElementId    : 'detail',
         msgForNoTask                : '<div style="text-align: center; margin: 50px 20px 0 20px">Wow, great, all tasks are done, go and stay with your family or friends.</div>',
-        emptyString                 : ''
+        emptyString                 : '',
+        taskContextMenu : [
+            'mark_task_as_done',
+            'postpone_task',
+            'edit_task',
+            'move_task_to_next_action',
+            'move_task_to_basket',
+            'move_task_to_someday',
+            'mark_task_as_new',
+            'delete_task'
+        ],
+        metaContextMenu : [
+            'edit_meta',
+            'delete_meta'
+        ]
     };
 
 }());
