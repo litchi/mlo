@@ -91,6 +91,11 @@
     height:1000px;
     margin:25px 0 15px 0;
 }
+
+#selected-group-item {
+    background-color: #EEE;
+}
+
 #group-title {
     padding: 20px 0 20px 20px;
     background-color: #EEE;

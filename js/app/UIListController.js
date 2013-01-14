@@ -132,7 +132,6 @@ var UIListController = (function () {
         });
     }
 
-
     function makeMetaTypeDefaultList(metaTypeName) {
         var item = document.createElement('div'),
             title = 'All ' + metaTypeName + 's';
@@ -140,9 +139,10 @@ var UIListController = (function () {
         item.setAttribute('data-bb-style', 'stretch');
         item.setAttribute('title', title);
         item.setAttribute('data-bb-title', title);
+        item.setAttribute('id', metaTypeName);
         item.setAttribute(
             'onclick',
-            "UIListController.fillTasksToGroupByMetaInfo('" + metaTypeName + "', '" + Sql.FilterAllMeta + "');Util.switchPanelWidth('" + UIConfig.leftPanelWidth + "', '" + UIConfig.rightPanelWidth + "', '" + UIConfig.rightPanelSmallerLeftMargin + "');"
+            "UIListController.fillTaskAndMarkGroup('" + metaTypeName + "', '" + metaTypeName + "', '" + Sql.FilterAllMeta + "');"
         );
         return item;
     }
@@ -219,6 +219,27 @@ var UIListController = (function () {
     }
 
     return {
+
+        fillTaskAndMarkGroup : function (id, metaTypeName, filter) {
+            if (Util.notEmpty(document.getElementById('selected-group-item'))) {
+                document.getElementById('selected-group-item').setAttribute('id', Util.valueOf('v_curr_hl_item'));
+            }
+            document.getElementById(id).setAttribute('id', 'selected-group-item');
+            document.getElementById('v_curr_hl_item').value = id;
+            UIListController.fillTasksToGroupByMetaInfo(metaTypeName, filter);
+            Util.switchPanelWidth(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin);
+        },
+
+        fillMetaListMarkTypeAsSelected : function (id) {
+            if (Util.notEmpty(document.getElementById('selected-group-item'))) {
+                document.getElementById('selected-group-item').setAttribute('id', Util.valueOf('v_curr_hl_item'));
+            }
+            document.getElementById(id).setAttribute('id', 'selected-group-item');
+            document.getElementById('v_curr_hl_item').value = id;
+            UIListController.fillMetaListToPanel(id, UIConfig.metaByPagePrefix);
+            Util.switchPanelWidth(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin);
+        },
+
         fillTasksToGroupByMetaInfo : function (metaTypeName, metaName) {
             var id, name, title = UIConfig.emptyString,
                 detailListTitle  = document.getElementById('detail-title-text'),
@@ -280,7 +301,7 @@ var UIListController = (function () {
             }
             filterContextMenu(UIConfig.metaContextMenu);
             DataAccess.metaType.getAll(function (tx, result, arrays) {
-                var key, name, id, desc, item, internal;
+                var key, name, id, desc, item, internal, uiId;
                 for (key in arrays) {
                     if (arrays.hasOwnProperty(key)) {
                         name     = arrays[key][Sql.MetaType.Cols.Name];
@@ -291,14 +312,14 @@ var UIListController = (function () {
                         item.setAttribute('data-bb-type', 'item');
                         item.setAttribute('data-bb-style', 'stretch');
                         if (id !== null && 1 !== internal) {
-                            item.setAttribute('id', 'meta_type-' + id);
+                            item.setAttribute('id', id);
                             if (name !== null) {
                                 item.setAttribute('title', name);
                                 item.setAttribute('data-bb-title', name);
                             }
                             item.setAttribute(
                                 'onclick',
-                                "UIListController.fillMetaListToPanel('" + id + "', '" + UIConfig.metaByPagePrefix + "');Util.switchPanelWidth('" + UIConfig.leftPanelWidth + "', '" + UIConfig.rightPanelWidth + "', '" + UIConfig.rightPanelSmallerLeftMargin + "');"
+                                "UIListController.fillMetaListMarkTypeAsSelected('" + id + "');"
                             );
                             metaTypeList.appendItem(item);
                         }
@@ -411,7 +432,7 @@ var UIListController = (function () {
                 log.logSqlError("Error getting meta type[" + metaTypeId + "], pageType:[" + pageType + "]", error);
             });
             DataAccess.meta.getByTypeId(metaTypeId, function (tx, result, arrays) {
-                var key, name, id, desc, item;
+                var key, name, id, desc, item, uiId;
                 for (key in arrays) {
                     if (arrays.hasOwnProperty(key)) {
                         name = arrays[key][Sql.Meta.Cols.Name];
@@ -421,7 +442,8 @@ var UIListController = (function () {
                         item.setAttribute('data-bb-type', 'item');
                         item.setAttribute('data-bb-style', 'stretch');
                         if (id !== null) {
-                            item.setAttribute('id', 'meta-' + id);
+                            uiId = 'meta-' + id;
+                            item.setAttribute('id', uiId);
                             if (name !== null) {
                                 item.setAttribute('title', name);
                                 item.setAttribute('data-bb-title', name);
@@ -429,7 +451,7 @@ var UIListController = (function () {
                             if (UIConfig.taskByPagePrefix === pageType) {
                                 item.setAttribute(
                                     'onclick',
-                                    "UIListController.fillTasksToGroupByMetaInfo('" + metaTypeName + "', '" + name + "');Util.switchPanelWidth('" + UIConfig.leftPanelWidth + "', '" + UIConfig.rightPanelWidth + "', '" + UIConfig.rightPanelSmallerLeftMargin + "');"
+                                    "UIListController.fillTaskAndMarkGroup('" + uiId + "', '" + metaTypeName + "','" + name + "')"
                                 );
                             } else if (UIConfig.metaByPagePrefix === pageType) {
                                 if (desc !== null && desc !== undefined) {
