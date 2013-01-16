@@ -48,7 +48,7 @@ Sql = {
             TaskId : 'task_id',
             MetaId : 'meta_id'
         },
-        CreateTable          : 'CREATE TABLE IF NOT EXISTS task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_id int)',
+        FirstVersionTable          : 'CREATE TABLE IF NOT EXISTS task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_id int)',
         Insert               : 'INSERT INTO task_meta (id, task_id, meta_id) VALUES (null, ?, ?)',
         ThrowTaskToList      : 'INSERT INTO task_meta (id, task_id, meta_id) select null, ?, id from meta where name = ? and meta_type_id = (select id from meta_type where name = ?)',
         SelectByIds          : 'SELECT id, task_id, meta_id from task_meta where task_id = ? and meta_id = ?',
@@ -66,7 +66,7 @@ Sql = {
             MetaTypeId  : 'meta_type_id',
             Description : 'description'
         },
-        CreateTable        : 'create table if not exists meta (id integer primary key autoincrement, meta_type_id integer, name text, description text, unique(meta_type_id, name))',
+        FirstVersionTable  : 'create table if not exists meta (id integer primary key autoincrement, meta_type_id integer, name text, description text, unique(meta_type_id, name))',
         Insert             : 'insert into meta (id, name, meta_type_id, description) values (null, ?, ?, ?)',
         SelectAll          : 'select id, meta_type_id, name, description from meta',
         SelectById         : 'select id, meta_type_id, name, description from meta where id = ?',
@@ -89,7 +89,7 @@ Sql = {
             Description : 'description',
             Internal    : 'internal'
         },
-        CreateTable    : 'create table if not exists meta_type (id integer primary key autoincrement, name text, description text, internal integer default 0)',
+        FirstVersionTable    : 'create table if not exists meta_type (id integer primary key autoincrement, name text, description text, internal integer default 0)',
         InsertByName   : 'insert into meta_type (name, description) values (?, ?)',
         InsertByIdName : 'insert into meta_type (id, name, description) values (?, ?, ?)',
         SelectAll      : 'select id, name, description, internal from meta_type',
@@ -104,7 +104,7 @@ Sql = {
 
     TaskNote : {
         TableName   : 'task_note',
-        CreateTable : 'create table if not exists task_note (id integer primary key autoincrement, task_id int, content text, create_date integer)'
+        FirstVersionTable : 'create table if not exists task_note (id integer primary key autoincrement, task_id int, content text, create_date integer)'
     },
 
     Task : {
@@ -115,8 +115,7 @@ Sql = {
             ReminderOn : "reminder_on",
             DueDate    : 'due_date'
         },
-        //TODO Clean up/Remove these create tables sqls since they are not up to date.
-        CreateTable      : "create table if not exists task (id integer primary key autoincrement, name text, status text default 'New')",
+        FirstVersionTable: "create table if not exists task (id integer primary key autoincrement, name text, status text default 'New')",
         InsertByName     : 'insert into task (id, name) values (null, ?)',
         InsertByIdName   : 'insert into task(id, name) values (?, ?)',
         FilterByStatus   : 'select id, name from task where status != ?',
@@ -148,6 +147,6 @@ Sql = {
 
 AppSql = {
     AppInfo : {
-        CreateTable : 'create table if not exists app_info (id integer primary key autoincrement, app_id text, name text, version text, db_schema_version text, additional_info text, unique(app_id))'
+        FirstVersionTable : 'create table if not exists app_info (id integer primary key autoincrement, app_id text, name text, version text, db_schema_version text, additional_info text, unique(app_id))'
     }
 };

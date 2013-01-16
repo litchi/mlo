@@ -1,8 +1,10 @@
 ﻿/*jslint browser: true*/
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, uiConfig, openDatabase, AppSql, SeedSampleDataProvider*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, uiConfig, openDatabase, AppSql, SeedSampleDataProvider, Migrator*/
 var DataAccess = (function () {
     "use strict";
-    var appInfoDb, db_schema_version = '', dbOpenCheckCount = 0, dbOpenCheckInterval = 10, dbOpenCheckMaxCount = 100, dbOpenRequestSend = 0;
+    var appInfoDb, db_schema_version = '', dbOpenCheckCount = 0,
+        dbOpenCheckInterval = 10, dbOpenCheckMaxCount = 100,
+        dbOpenRequestSend = 0;
 
     function sqlMatch(pattern, sql) { return (new RegExp(pattern, 'i')).test(sql); }
     function isSelect(sql) { return sqlMatch('^select\\s', sql); }
@@ -50,44 +52,40 @@ var DataAccess = (function () {
         log.logDbInfo(Sql.DbName, Sql.DbDescription, db_schema_version, DataAccess.logInfo);
         if (null === DataAccess.appDb) {
             console.error("Failed to open application database");
+        } else {
+            DataAccess.migrateSchema();
         }
     }
 
     return {
-        logInfo        : true,
-        logError       : true,
-        logDebug       : true,
-        logQueryResult : true,
-        logQuerySql    : true,
-        appDb          : null,
+        logInfo           : true,
+        logError          : true,
+        logDebug          : true,
+        logQueryResult    : false,
+        logQuerySql       : false,
+        appDb             : null,
+        dbFirstTimeCreate : false,
         dropAllTables : function (tx) {
-            DataAccess.runSqlDirectly(tx, 'drop table task');
-            DataAccess.runSqlDirectly(tx, 'drop table task_meta');
-            DataAccess.runSqlDirectly(tx, 'drop table meta_type');
-            DataAccess.runSqlDirectly(tx, 'drop table meta');
-            DataAccess.runSqlDirectly(tx, 'drop table task_note');
-            DataAccess.runSqlDirectly(tx, 'drop view  task_view');
-            DataAccess.runSqlDirectly(tx, 'drop view  meta_view');
+            DataAccess.runSqlForMigrate(tx, 'drop table if exists task');
+            DataAccess.runSqlForMigrate(tx, 'drop table if exists task_meta');
+            DataAccess.runSqlForMigrate(tx, 'drop table if exists meta_type');
+            DataAccess.runSqlForMigrate(tx, 'drop table if exists meta');
+            DataAccess.runSqlForMigrate(tx, 'drop table if exists task_note');
+            DataAccess.runSqlForMigrate(tx, 'drop view if exists task_view');
+            DataAccess.runSqlForMigrate(tx, 'drop view if exists meta_view');
         },
 
         createTables : function (tx) {
-            DataAccess.runSqlDirectly(tx, Sql.Task.CreateTable);
-            DataAccess.runSqlDirectly(tx, Sql.MetaType.CreateTable);
-            DataAccess.runSqlDirectly(tx, Sql.Meta.CreateTable);
-            DataAccess.runSqlDirectly(tx, Sql.TaskMeta.CreateTable);
-            DataAccess.runSqlDirectly(tx, Sql.TaskNote.CreateTable);
+            DataAccess.runSqlForMigrate(tx, Sql.Task.FirstVersionTable);
+            DataAccess.runSqlForMigrate(tx, Sql.MetaType.FirstVersionTable);
+            DataAccess.runSqlForMigrate(tx, Sql.Meta.FirstVersionTable);
+            DataAccess.runSqlForMigrate(tx, Sql.TaskMeta.FirstVersionTable);
+            DataAccess.runSqlForMigrate(tx, Sql.TaskNote.FirstVersionTable);
         },
-
 
         initAppDb : function (db) {
             db.transaction(function (tx) {
                 DataAccess.createTables(tx);
-                DataAccess.runSqlDirectly(tx, 'alter table task add column reminder_on integer');
-                DataAccess.runSqlDirectly(tx, 'alter table task add column due_date integer');
-                DataAccess.runSqlDirectly(tx, 'alter table meta add column ui_rank integer default 0');
-                DataAccess.runSqlDirectly(tx, 'CREATE VIEW task_view AS select task.id as task_id, task.name as task_name, task.status as task_status, task.reminder_on as task_reminder_on, task.due_date as task_due_date, meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from task join task_meta on task_meta.task_id = task.id join meta on task_meta.meta_id = meta.id join meta_type on meta_type.id = meta.meta_type_id');
-                DataAccess.runSqlDirectly(tx, 'CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta.description as meta_description, meta.ui_rank as meta_ui_rank, meta_type.id as meta_type_id, meta_type.name as meta_type_name, meta_type.description as meta_type_description, meta_type.internal as meta_type_internal from meta join meta_type on meta_type.id = meta.meta_type_id');
-                SeedSampleDataProvider.loadSeedAndSampleData();
             }, function (error) {
                 log.logSqlError("Failed to create tables", error);
             }, function () {
@@ -97,11 +95,61 @@ var DataAccess = (function () {
 
         initAppInfoDb : function (db) {
             db.transaction(function (tx) {
-                DataAccess.runSqlDirectly(tx, AppSql.AppInfo.CreateTable);
+                DataAccess.runSqlDirectly(tx, AppSql.AppInfo.FirstVersionTable);
             }, function (error) {
                 log.logSqlError("Failed to create app info table", error);
             }, function () {
                 console.log("Successfully created app info table");
+            });
+        },
+
+        migrateSchema : function () {
+            var m = new Migrator(DataAccess.appDb);
+            m.setDebugLevel(Migrator.DEBUG_HIGH);
+            m.migration(1, function (t) {
+                SeedSampleDataProvider.loadSeedData(t);
+            });
+            m.migration(2, function (t) {
+                DataAccess.runSqlForMigrate(t, 'alter table task add column reminder_on integer');
+                DataAccess.runSqlForMigrate(t, 'alter table task add column due_date integer');
+            });
+            m.migration(3, function (t) {
+                DataAccess.runSqlForMigrate(t, 'alter table meta add column ui_rank integer default 0');
+                DataAccess.runSqlForMigrate(t, "update meta set ui_rank = 30 where name = 'Today'");
+                DataAccess.runSqlForMigrate(t, "update meta set ui_rank = 25 where name = 'Tomorrow'");
+                DataAccess.runSqlForMigrate(t, "update meta set ui_rank = 27 where name = 'Overdue'");
+                DataAccess.runSqlForMigrate(t, "update meta set ui_rank = 20 where name = 'Overdue Yesterday'");
+                DataAccess.runSqlForMigrate(t, "update meta set ui_rank = 15 where name = 'This Week'");
+                DataAccess.runSqlForMigrate(t, "update meta set ui_rank = 10 where name = 'Next Week'");
+                DataAccess.runSqlForMigrate(t, "update meta set ui_rank = 05 where name = 'Done Yesterday'");
+            });
+            m.migration(4, function (t) {
+                DataAccess.runSqlForMigrate(t, 'drop view if exists task_view');
+                DataAccess.runSqlForMigrate(t, 'drop view if exists meta_view');
+                DataAccess.runSqlForMigrate(t, 'CREATE VIEW task_view AS select task.id as task_id, task.name as task_name, task.status as task_status, task.reminder_on as task_reminder_on, task.due_date as task_due_date, meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from task join task_meta on task_meta.task_id = task.id join meta on task_meta.meta_id = meta.id join meta_type on meta_type.id = meta.meta_type_id');
+                DataAccess.runSqlForMigrate(t, 'CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta.description as meta_description, meta.ui_rank as meta_ui_rank, meta_type.id as meta_type_id, meta_type.name as meta_type_name, meta_type.description as meta_type_description, meta_type.internal as meta_type_internal from meta join meta_type on meta_type.id = meta.meta_type_id');
+            });
+            if (DataAccess.dbFirstTimeCreate === true) {
+                m.migration(5, function (t) {
+                    DataAccess.dbFirstTimeCreate = false;
+                    SeedSampleDataProvider.loadSampleData(t);
+                });
+            }
+            m.execute();
+        },
+
+        runSqlForMigrate : function (tx, sql, data, successCallback) {
+            if (Util.isEmpty(data)) {
+                data = [];
+            }
+            tx.executeSql(sql, data, function (tx, result) {
+                console.info("Successfully run migrating SQL[" + sql + "] with data[" + data + "]");
+                log.logObjectData(result);
+                if (Util.isFunction(successCallback)) {
+                    successCallback(tx, result);
+                }
+            }, function (tx, error) {
+                log.logSqlError("Error running migrating SQL[" + sql + "] with data[" + data + "]", error);
             });
         },
 
@@ -144,8 +192,8 @@ var DataAccess = (function () {
                 appInfoDb = openDatabase('xiangqian_liu_apps_info_db', '', 'App info for Liu Xiangqian\'s Applications', 1024, DataAccess.initAppInfoDb);
                 setTimeout(function () {
                     appInfoDb.transaction(function (tx) {
-                        DataAccess.runSqlDirectly(tx, "select db_schema_version from app_info where app_id = ?", ['BB10GTD'],
-                            function (tx, result, objs) {
+                        tx.executeSql("select db_schema_version from app_info where app_id = ?", ['BB10GTD'],
+                            function (tx, result) {
                                 if ((result !== null)
                                         && (result.rows !== null)
                                         && (1 === result.rows.length)
@@ -154,21 +202,22 @@ var DataAccess = (function () {
                                         && (result.rows.item(0).db_schema_version !== null)) {
                                     db_schema_version = result.rows.item(0).db_schema_version;
                                     console.info("DB Schema version for app[BB10GTD] is [" + db_schema_version + "]");
+                                    DataAccess.dbFirstTimeCreate = false;
                                     openAppDb();
                                 } else {
                                     console.info("DB Schema version for app[BB10GTD] not existing");
-                                    appInfoDb.transaction(function (tx1) {
-                                        DataAccess.runSqlDirectly(
-                                            tx1,
-                                            "insert into app_info(app_id, name, version, db_schema_version, additional_info) values (?, ?, ?, ?, ?)",
-                                            ['BB10GTD', 'Peaceful & Better Life App', '0.0.1', '', 'Peaceful & Better Life App']
-                                        );
-                                    }, function (error) {
-                                        log.logSqlError("Failed to insert app info for BB10GTD app", error);
-                                    }, function () {
-                                        console.log("Successfully insert app info for BB10GTD to app_info table");
-                                        openAppDb();
-                                    });
+                                    DataAccess.dbFirstTimeCreate = true;
+                                    tx.executeSql(
+                                        "insert into app_info(app_id, name, version, db_schema_version, additional_info) values (?, ?, ?, ?, ?)",
+                                        ['BB10GTD', 'Peaceful & Better Life App', '0.0.1', '', 'Peaceful & Better Life App'],
+                                        function (tx, result) {
+                                            console.log("Successfully insert app info for BB10GTD to app_info table");
+                                            openAppDb();
+                                        },
+                                        function (tx, error) {
+                                            log.logSqlError("Failed to insert app info for BB10GTD app", error);
+                                        }
+                                    );
                                 }
                             });
                     }, function (error) {
