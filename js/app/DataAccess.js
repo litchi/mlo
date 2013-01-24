@@ -62,7 +62,7 @@ var DataAccess = (function () {
         logError          : true,
         logDebug          : true,
         logQueryResult    : false,
-        logQuerySql       : false,
+        logQuerySql       : true,
         appDb             : null,
         dbFirstTimeCreate : false,
         dropAllTables : function (tx) {
