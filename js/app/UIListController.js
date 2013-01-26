@@ -408,7 +408,7 @@ var UIListController = (function () {
                     metaTypeInternal = objs[0][Sql.MetaType.Cols.Internal];
                     if (UIConfig.metaByPagePrefix === pageType) {
                         detailAddNewLink.onclick = function () {
-                            bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix + metaTypeId);
+                            bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix, {'metaTypeId' : metaTypeId});
                         };
                         detailAddNewLink.innerText = 'Add New ' + metaTypeName;
                         hidePlusShortcut(groupAddNewLink);

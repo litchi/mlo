@@ -138,8 +138,8 @@ Sql = {
             'Tomorrow'          : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','+1 day') and status != '" + SeedData.TaskDoneStatus + "'",
             'This Week'         : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now') and status != '" + SeedData.TaskDoneStatus + "'",
             'Next Week'         : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now', '+7 days') and status != '" + SeedData.TaskDoneStatus + "'",
-            'Yesterday Done'    : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = '" + SeedData.TaskDoneStatus + "'",
-            'Yesterday Overdue' : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != '" + SeedData.TaskDoneStatus + "'",
+            'Done Yesterday'    : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = '" + SeedData.TaskDoneStatus + "'",
+            'Overdue Yesterday' : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != '" + SeedData.TaskDoneStatus + "'",
             'Overdue'           : "strftime('%Y-%m-%d %H:%M:%S', due_date, 'unixepoch') < datetime('now') and status != '" + SeedData.TaskDoneStatus + "'"
         }
     }

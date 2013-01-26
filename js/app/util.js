@@ -174,12 +174,9 @@ var Util = (function () {
                 bb.pushScreen('task-list.html', metaName);
             } else {
                 if (Util.notEmpty(metaName)) {
-                    bb.pushScreen('master-detail.html',
-                        UIConfig.taskByPagePrefix + metaTypeName,
-                        {'metaName' : metaName});
+                    bb.pushScreen('master-detail.html', UIConfig.taskByPagePrefix, {'metaTypeName' : metaTypeName, 'metaName' : metaName});
                 } else {
-                    bb.pushScreen('master-detail.html',
-                        UIConfig.taskByPagePrefix + metaTypeName);
+                    bb.pushScreen('master-detail.html', UIConfig.taskByPagePrefix, {'metaTypeName' : metaTypeName});
                 }
             }
         },

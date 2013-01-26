@@ -24,35 +24,48 @@ var EventCallback = (function () {
     }
 
     function onDomReadyCallback(element, id, params) {
-        var taskId, metaTypeName, metaId, metaTypeId, defaultMetaName = Sql.FilterAllMeta;
+        var taskId, metaTypeName, metaId, metaTypeId, defaultMetaName;
         console.debug("Element: [%s], ID: [%s]", element, id);
-        log.logObjectData("Parameters:", params);
+        log.logObjectData("Parameters:", params, true);
+        if (Util.notEmpty(params)) {
+            if (Util.notEmpty(params[UIConfig.paramMetaTypeId])) {
+                metaTypeId = params[UIConfig.paramMetaTypeId];
+            }
+            if (Util.notEmpty(params[UIConfig.paramTaskId])) {
+                taskId = params[UIConfig.paramTaskId];
+            }
+            if (Util.notEmpty(params[UIConfig.paramMetaTypeName])) {
+                metaTypeName = params[UIConfig.paramMetaTypeName];
+            }
+            if (Util.notEmpty(params[UIConfig.paramMetaName])) {
+                defaultMetaName = params[UIConfig.paramMetaName];
+            } else {
+                defaultMetaName = Sql.FilterAllMeta;
+            }
+            if (Util.notEmpty(params[UIConfig.paramMetaId])) {
+                metaId = params[UIConfig.paramMetaId];
+            }
+        }
         if (id !== null) {
             setActionBarSelectStatus(id);
-            if (id === SeedData.BasketMetaName || id === SeedData.NextActionMetaName || id === SeedData.SomedayMetaName) {
+            if (id === SeedData.BasketMetaName
+                    || id === SeedData.NextActionMetaName
+                    || id === SeedData.SomedayMetaName) {
                 UIListController.fillTasksToGroupByMetaInfo(SeedData.GtdMetaTypeName, id);
-            } else if (Util.startsWith(id, UIConfig.editTaskPagePrefix)) {
-                taskId = id.substring(UIConfig.editTaskPagePrefix.length);
+            } else if (id === UIConfig.editTaskPagePrefix) {
                 UIEditFormController.fillTaskToEditForm(taskId, params);
-            } else if (Util.startsWith(id, UIConfig.taskByPagePrefix)) {
-                metaTypeName = id.substring(UIConfig.taskByPagePrefix.length);
+            } else if (id === UIConfig.taskByPagePrefix) {
                 UIListController.fillMetaListToPanelByTypeName(metaTypeName, UIConfig.taskByPagePrefix);
-                if (Util.notEmpty(params) && Util.notEmpty(params.metaName)) {
-                    defaultMetaName = params.metaName;
-                }
                 UIListController.fillTasksToGroupByMetaInfo(metaTypeName, defaultMetaName);
-            } else if (id === 'fields') {
+            } else if (id === UIConfig.screenIdField) {
                 UIListController.fillMetaTypeToPanel();
                 UIListController.fillAllMetaToPanel(UIConfig.metaByPagePrefix);
-            } else if (Util.startsWith(id, UIConfig.editMetaPagePrefix)) {
-                metaId = id.substring(UIConfig.editMetaPagePrefix.length);
+            } else if (id === UIConfig.editMetaPagePrefix) {
                 UIEditFormController.fillMetaToEditForm(metaId);
-            } else if (Util.startsWith(id, UIConfig.createMetaPagePrefix)) {
-                metaTypeId = id.substring(UIConfig.createMetaPagePrefix.length);
+            } else if (id === UIConfig.createMetaPagePrefix) {
                 UIListController.fillMetaToCreateForm(metaTypeId);
-            } else if (Util.startsWith(id, UIConfig.metaByPagePrefix)) {
+            } else if (id === UIConfig.metaByPagePrefix) {
                 UIListController.fillMetaTypeToPanel();
-                metaTypeId = id.substring(UIConfig.metaByPagePrefix.length);
                 UIListController.fillMetaListToPanel(metaTypeId, UIConfig.metaByPagePrefix);
             }
         }

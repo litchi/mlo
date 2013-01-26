@@ -187,7 +187,7 @@ var UIContextMenuController = (function () {
             if (selectedItem) {
                 selectedId = selectedItem.selected;
                 if (selectedId !== null) {
-                    bb.pushScreen('edit-task.html', UIConfig.editTaskPagePrefix + selectedId,
+                    bb.pushScreen('edit-task.html', UIConfig.editTaskPagePrefix,
                         {
                             'taskId'       : selectedId,
                             'metaTypeId'   : Util.valueOf('v_meta_type_id'),
@@ -206,7 +206,7 @@ var UIContextMenuController = (function () {
             if (selectedItem) {
                 selectedId = selectedItem.selected;
                 if (selectedId !== null) {
-                    bb.pushScreen('edit-meta.html', UIConfig.editMetaPagePrefix + selectedId, {'metaId' : selectedId});
+                    bb.pushScreen('edit-meta.html', UIConfig.editMetaPagePrefix, {'metaId' : selectedId});
                 }
             }
         },
@@ -233,13 +233,13 @@ var UIContextMenuController = (function () {
                             } else {
                                 if (id !== null && id !== undefined && id !== UIConfig.emptyString) {
                                     DataAccess.meta.update(id, name, description, function (tx, result, rows) {
-                                        bb.pushScreen('master-detail.html', UIConfig.metaByPagePrefix + meta_type_id);
+                                        bb.pushScreen('master-detail.html', UIConfig.metaByPagePrefix, { 'metaTypeId' : meta_type_id });
                                     }, function (tx, error) {
                                         log.logSqlError("Failed to update meta[" + id + "][" + name + "][" + meta_type_id + "][" + description + "]", error);
                                     });
                                 } else {
                                     DataAccess.meta.create(name, meta_type_id, description, function (tx, result, rows) {
-                                        bb.pushScreen('master-detail.html', UIConfig.metaByPagePrefix + meta_type_id);
+                                        bb.pushScreen('master-detail.html', UIConfig.metaByPagePrefix, { 'metaTypeId' : meta_type_id });
                                     }, function (tx, error) {
                                         log.logSqlError("Failed to create meta[" + id + "][" + name + "][" + meta_type_id + "][" + description + "]", error);
                                     });
