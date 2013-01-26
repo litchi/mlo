@@ -149,9 +149,9 @@
 
     <target name="qa.test.report.ci" depends="qa.init, pre.process.copy">
         <!-- Move the runJsTestDriver.sh.server config file to runJsTestDriver.sh-->
-        <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.sh.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
+        <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.sh.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.sh" verbose="true"/>
         <!-- Move the jsTestDriver.conf.server to jsTestDriver.conf-->
-        <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"  tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"/>
+        <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"  tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf.server" verbose="true"/>
         <antcall target='qa.test.report'/>
     </target>
 
