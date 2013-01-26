@@ -1,0 +1,35 @@
+﻿<div data-bb-type="screen" data-bb-effect="slide-left">
+    <div id="foo" data-bb-type="title" data-bb-caption="Edit" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
+        onactionclick="UIContextMenuController.saveMeta(Util.valueOf('id'), Util.valueOf('meta_name'), Util.valueOf('meta_type_id'), Util.valueOf('description'))">
+    </div>
+
+    <div data-bb-type="round-panel" id='error-panel' style='display:none'>
+        <div data-bb-type="panel-header" style='display:none'></div>
+        <div data-bb-type="row">
+            <div data-bb-type="label"></div>
+            <div id='error-msg'></div>
+        </div>
+    </div>
+
+    <input type="hidden" value="" id="id"/>
+    <input type="hidden" value="" id="meta_type_id"/>
+    <div data-bb-type="round-panel">
+        <div data-bb-type="panel-header">
+            Information
+        </div>
+        <div data-bb-type="label-control-container">
+            <div data-bb-type="row">
+                <div data-bb-type="label">Name</div>
+                <input type="text" value="" id="meta_name">
+            </div>
+            <div data-bb-type="row">
+                <div data-bb-type="label">Description</div>
+                <input type="text" value="" id="description"/>
+            </div>
+            <div data-bb-type="row">
+                <div data-bb-type="label">Type</div>
+                <input type="text" value="" id="meta_type_name" disabled='disabled'/>
+            </div>
+        </div>
+    </div>
+</div>

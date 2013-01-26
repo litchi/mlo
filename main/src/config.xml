@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget xmlns:rim="http://www.blackberry.com/ns/widgets" id="MindLikeWater" version="0.0.1" rim:header="RIM-Widget:rim/widget" xmlns="http://www.w3.org/ns/widgets">
+    <rim:navigation mode="focus" />
+    <rim:permit>post_notification</rim:permit> 
+    <rim:permit system = 'true'>_sys_use_consumer_push</rim:permit> 
+    <name>Mind like Water</name>
+    <description>A GTD Application aimed to help you mind like water, and would like you to stay longer with the most important person in your life.</description>
+    <author href="http://larry.ixiezi.com">Liu Xiangqian</author>
+    <icon src="resources/image/icon.png" rim:hover="true" />
+    <content src="index.html" />
+    <feature id="blackberry.identity" />
+    <feature id="blackberry.app" />
+    <feature id="blackberry.ui.dialog" /> 
+    <feature id="blackberry.ui.toast" />    
+    <feature id="blackberry.push" />    
+</widget>

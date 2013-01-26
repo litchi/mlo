@@ -1,30 +1,66 @@
 <project default="ws" basedir=".">
     <target name="help">
-        <echo>Run [ant ws] to deploy to remote server</echo>
-        <echo>Run [ant bb] to deploy to blackberry 10 simulator</echo>
-        <echo>Run [ant run-unit-test] to run unit tests for javascript</echo>
-        <echo>Run [ant clean] to clean target directory</echo>
+        <echo>ant ws                to deploy to remote server for ripple</echo>
+        <echo>ant package           to build bar package for simulator and device</echo>
+        <echo>ant bb                to deploy to blackberry 10 simulator</echo>
+        <echo>ant qa.jslint.run     to run jslint scan and generate report in xml format</echo>
+        <echo>ant qa.jslint.report  to run jslint scan and generate report in html format</echo>
+        <echo>ant qa.test.run       to run unit test and generate report in xml format</echo>
+        <echo>ant qa.test.report    to run unit test and generate report in html format</echo>
+        <echo>ant qa.clean          to clean qa target directory</echo>
+        <echo>ant clean             to clean target directory</echo>
     </target>
-    <taskdef name="jslint"
-        classname="com.googlecode.jslint4java.ant.JSLintTask"
-        classpath="/usr/share/ant/lib/jslint4java-2.0.3.jar" />
 
-    <property name = "build.src"           location = "."/>
-    <property name = "build.target"        location = "../target"/>
-    <property name = "build.target.code"   location = "../target/code"/>
-    <property name = "build.target.output" location = "../target/output"/>
-    <property name = "build.target.qa"     location = "../target/qa"/>
-    <property name = "build.remote.ip"     value    = "172.16.177.134"/>
+    <property name = "build.app.name"                       value = "BB10GTD"/>
+    <property name = "build.src"                         location = "./main/src"/>
+    <property name = "build.tools"                       location = "./tools"/>
+    <property name = "build.test"                        location = "./test"/>
+
+    <property name = "build.target"                      location = "../target"/>
+    <property name = "build.target.code"                 location = "${build.target}/src"/>
+    <property name = "build.target.output"               location = "${build.target}/output"/>
+    <property name = "build.target.output.src.zip"       location = "${build.target.output}/${build.app.name}.zip"/>
+
+    <property name = "build.target.output.device"        location = "${build.target}/output/device"/>
+    <property name = "build.target.output.device.bar"    location = "${build.target.output.device}/${build.app.name}.bar"/>
+
+    <property name = "build.target.output.simulator"     location = "${build.target}/output/simulator"/>
+    <property name = "build.target.output.simulator.bar" location = "${build.target.output.simulator}/${build.app.name}.bar"/>
+
+    <property name = "env.webworks.installation.dir"  location = "/Users/larry/bin/WebWorks_SDK"/>
+    <property name = "env.ripple.remote.ip"           value    = "172.16.177.134"/>
+    <property name = "env.ripple.remote.folder"       value    = "/var/www/gtd"/>
+    <property name = "env.bb10.simulator.ip"          value    = "172.16.177.137"/>
+ 
+    <!-- Tools -->
+    <property name = "tools.jslint.report.template"           value = "${build.tools}/jslint/checkstyle-noframes-severity-sorted.xsl"/>
+    <property name = "tools.JsTestDriver.installation"     location = "${build.tools}/JsTestDriver"/>
+    <property name = "tools.JsTestDriver.executeable"      location = "${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
 
     <!-- QA related settings-->
-    <property name = "qa.test.unit.runner.url"     value    = "${build.src}/js/spec/SpecRunner.html"/>
-    <property name = "qa.jslint.report.xml"        value    = "${build.target.qa}/jslint/xml"/>
-    <property name = "qa.jslint.report.html"       value    = "${build.target.qa}/jslint/html"/>
-    <property name = "qa.jslint.report.template"   value    = "../tools/checkstyle-noframes-severity-sorted.xsl"/>
+    <property name = "qa.build.target"                  location = "${build.target}/qa"/>
 
+    <property name = "qa.jslint"                           value = "${build.test}/jslint"/>
+    <property name = "qa.jslint.taskdef.classpath"         value = "${qa.jslint}/jslint4java-2.0.3.jar"/>
+
+    <property name = "qa.jslint.target"                    value = "${qa.build.target}/jslint"/>
+    <property name = "qa.jslint.target.report"             value = "${qa.jslint.target}/report"/>
+    <property name = "qa.jslint.target.report.xml"         value = "${qa.jslint.target.report}/xml"/>
+    <property name = "qa.jslint.target.report.html"        value = "${qa.jslint.target.report}/html"/>
+
+    <property name = "qa.JsTestDriver"                         location = "${build.test}/JsTestDriver"/>
+    <property name = "qa.JsTestDriver.testcase.src"            location = "${qa.JsTestDriver}/src"/>
+
+    <property name = "qa.JsTestDriver.target"                  location = "${qa.build.target}/JsTestDriver"/>
+    <property name = "qa.JsTestDriver.target.testcase.src"     location = "${qa.JsTestDriver.target}/src"/>
+    <property name = "qa.JsTestDriver.target.report"           location = "${qa.JsTestDriver.target}/report"/>
+    <property name = "qa.JsTestDriver.target.report.xml"       location = "${qa.JsTestDriver.target.report}/xml"/>
+    <property name = "qa.JsTestDriver.target.report.html"      location = "${qa.JsTestDriver.target.report}/html"/>
 
     <!-- Please notice that by using open we are using the default browser defined by current OS user-->
-    <property name = "env.browser.executable"      value    = "open"/>
+    <property name = "env.browser.executable"      value = "open"/>
+
+    <taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="${qa.jslint.taskdef.classpath}"/>
 
     <target name="init">
         <mkdir dir = "${build.target.code}"/>
@@ -32,8 +68,11 @@
     </target>
 
     <target name="qa.init">
-        <mkdir dir = "${qa.jslint.report.xml}"/>
-        <mkdir dir = "${qa.jslint.report.html}"/>
+        <mkdir dir = "${qa.jslint.target.report.xml}"/>
+        <mkdir dir = "${qa.jslint.target.report.html}"/>
+        <mkdir dir = "${qa.JsTestDriver.target.testcase.src}"/>
+        <mkdir dir = "${qa.JsTestDriver.target.report.xml}"/>
+        <mkdir dir = "${qa.JsTestDriver.target.report.html}"/>
     </target>
 
     <target name="pre.process.copy" depends="init">
@@ -50,14 +89,7 @@
                 <exclude name = ".idea/**/*.*"/>
                 <exclude name = "**/*.html"/>
                 <exclude name = "elements"/>
-
-                <!--Exclude jasmine libs for unit testing-->
-                <exclude name = "js/libs/jasmine-1.3.1"/>
-                <exclude name = "js/libs/jasmine-1.3.1/*.*"/>
-
-                <!--Exclude testing specs-->
-                <exclude name = "js/spec"/>
-                <exclude name = "js/spec/*.*"/>
+                <exclude name = "sonar-project.properties"/>
             </fileset>
         </copy>
 
@@ -78,9 +110,9 @@
         </copy>
     </target>
 
-    <target name="qa.jslint.check" depends="qa.init, pre.process.copy">
+    <target name="qa.jslint.run" depends="qa.init, pre.process.copy">
         <jslint failureProperty="false" haltOnFailure="false">
-            <formatter type="checkstyle" destfile="${qa.jslint.report.xml}/result.xml"/>
+            <formatter type="checkstyle" destfile="${qa.jslint.target.report.xml}/result.xml"/>
             <fileset dir="${build.target.code}">
                 <include name="**/*.js"/>
                 <exclude name="js/lib/**/*.*"/>
@@ -88,28 +120,62 @@
         </jslint>
     </target>       
 
-    <target name="qa.jslint.report" depends="qa.jslint.check">    
-        <xslt in="${qa.jslint.report.xml}/result.xml" out="${qa.jslint.report.html}/jslint.html" style="${qa.jslint.report.template}"/>    
+    <target name="qa.jslint.report" depends="qa.jslint.run">    
+        <xslt in="${qa.jslint.target.report.xml}/result.xml" out="${qa.jslint.target.report.html}/report.html" style="${tools.jslint.report.template}"/>    
         <exec executable="${env.browser.executable}" spawn="yes"> 
-            <arg value="${qa.jslint.report.html}/jslint.html"/> 
+            <arg value="${qa.jslint.target.report.html}/report.html"/> 
         </exec> 
     </target>  
 
-    <target name="qa.test.unit" depends="pre.process.copy">
-        <exec executable="${env.browser.executable}" spawn="yes"> 
-            <arg value="${qa.test.unit.runner.url}"/> 
-        </exec> 
+    <target name="qa.test.run" depends="qa.init, pre.process.copy">
+        <!-- 1. Copy test cases to the target folder-->
+        <copy todir="${qa.JsTestDriver.target.testcase.src}" encoding="UTF-8" outputencoding="UTF-8" verbose="true">
+            <fileset dir="${qa.JsTestDriver.testcase.src}">
+                <include name = "**/*.js"/>
+            </fileset>
+        </copy>
+        <!-- 2. Run the test cases -->
+        <exec executable="/bin/bash" dir="${tools.JsTestDriver.installation}" osfamily="unix">
+            <arg value="${tools.JsTestDriver.executeable}" />
+        </exec>
+
+    </target>
+
+    <target name="qa.test.report" depends="qa.test.run">
+        <junitreport todir="${qa.JsTestDriver.target.report.html}">
+            <fileset dir="${qa.JsTestDriver.target.report.xml}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${qa.JsTestDriver.target.report.html}"/>
+        </junitreport>
     </target>
 
     <target name="ws" depends="pre.process.copy">
-        <scp todir="root:password@${build.remote.ip}:/var/www/gtd">
+        <echo>Remote: ${env.ripple.remote.ip}, Source: ${build.target.code}, Remote folder: ${env.ripple.remote.folder}</echo>
+        <scp todir="root:password@${env.ripple.remote.ip}:${env.ripple.remote.folder}">
             <fileset dir="${build.target.code}" excludes="**/*.swp,.git,**/*.bak,.DS_Store"/>
         </scp>                 
     </target>
 
-    <target name="bb" depends="pre.process.copy">
-        <exec executable="/bin/sh" dir="${build.target}">
-            <arg line='-c "bb_launch.sh code"'/>
+    <target name="package" depends="pre.process.copy">
+        <!-- Create zip file -->
+        <zip destfile="${build.target.output.src.zip}">
+            <fileset dir="${build.target.code}">
+                <exclude name = ".DS_Store"/>
+                <exclude name = ".git"/>
+            </fileset>
+        </zip>
+
+        <!-- Create package -->
+        <exec executable="${env.webworks.installation.dir}/bbwp" dir="${build.target}">
+            <arg line='${build.target.output.src.zip} -d -o ${build.target.output}'/>
+        </exec>
+    </target>
+
+    <target name="bb" depends="package">
+        <!-- Deploy to simulator-->
+        <exec executable="${env.webworks.installation.dir}/dependencies/tools/bin/blackberry-deploy" dir="${build.target}">
+            <arg line='-installApp -launchApp -device ${env.bb10.simulator.ip} "${build.target.output.simulator.bar}"'/>
         </exec>
     </target>
 
@@ -118,7 +184,7 @@
     </target>
 
     <target name="qa.clean">
-        <delete dir="${build.target}"/>
+        <delete dir="${qa.build.target}"/>
     </target>
 
 </project>
