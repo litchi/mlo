@@ -41,7 +41,7 @@
     <property name = "qa.build.target"                  location = "${build.target}/qa"/>
 
     <property name = "qa.jslint"                           value = "${build.test}/jslint"/>
-    <property name = "qa.jslint.taskdef.classpath"         value = "${qa.jslint}/jslint4java-2.0.3.jar"/>
+    <property name = "qa.jslint.taskdef.classpath"         value = "${qa.jslint}/jslint4java.jar"/>
 
     <property name = "qa.jslint.target"                    value = "${qa.build.target}/jslint"/>
     <property name = "qa.jslint.target.report"             value = "${qa.jslint.target}/report"/>
