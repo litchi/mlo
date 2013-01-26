@@ -151,7 +151,7 @@
         <!-- Move the runJsTestDriver.sh.server config file to runJsTestDriver.sh-->
         <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.sh.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.sh" verbose="true"/>
         <!-- Move the jsTestDriver.conf.server to jsTestDriver.conf-->
-        <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"  tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf.server" verbose="true"/>
+        <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"  tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf" verbose="true"/>
         <antcall target='qa.test.report'/>
     </target>
 
