@@ -5,3 +5,5 @@
 *.bak
 *.vim
 atlassian-ide-plugin.xml
+jsTestDriver.conf
+runJsTestDriver.sh
