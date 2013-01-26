@@ -21,4 +21,4 @@ plugin:
    jar: "./lib/jstestdriver/coverage.jar"
    module: "com.google.jstestdriver.coverage.CoverageModule"
 
-timeout: 300
+timeout: 20
