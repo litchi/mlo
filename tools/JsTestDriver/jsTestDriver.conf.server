@@ -1,4 +1,4 @@
-server: http://localhost:4224
+server: http://sonar-server:4224
 
 load:
   - ../../code/js/lib/*.js
@@ -21,4 +21,4 @@ plugin:
    jar: "./lib/jstestdriver/coverage.jar"
    module: "com.google.jstestdriver.coverage.CoverageModule"
 
-timeout: 90
+timeout: 300

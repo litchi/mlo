@@ -5,8 +5,8 @@
         <echo>ant bb                to deploy to blackberry 10 simulator</echo>
         <echo>ant qa.jslint.run     to run jslint scan and generate report in xml format</echo>
         <echo>ant qa.jslint.report  to run jslint scan and generate report in html format</echo>
-        <echo>ant qa.test.run       to run unit test and generate report in xml format</echo>
         <echo>ant qa.test.report    to run unit test and generate report in html format</echo>
+        <echo>ant qa.test.report.ci to run unit test and generate report in html format on CI server</echo>
         <echo>ant qa.clean          to clean qa target directory</echo>
         <echo>ant clean             to clean target directory</echo>
     </target>
@@ -128,7 +128,7 @@
         </exec> 
     </target>  
 
-    <target name="qa.test.run" depends="qa.init, pre.process.copy">
+    <target name="qa.test.report" depends="qa.init, pre.process.copy">
         <!-- 1. Copy test cases to the target folder-->
         <copy todir="${qa.JsTestDriver.target.testcase.src}" encoding="UTF-8" outputencoding="UTF-8" verbose="true">
             <fileset dir="${qa.JsTestDriver.testcase.src}">
@@ -139,16 +139,20 @@
         <exec executable="/bin/bash" dir="${tools.JsTestDriver.installation}" osfamily="unix">
             <arg value="${tools.JsTestDriver.executeable}" />
         </exec>
-
-    </target>
-
-    <target name="qa.test.report" depends="qa.test.run">
         <junitreport todir="${qa.JsTestDriver.target.report.html}">
             <fileset dir="${qa.JsTestDriver.target.report.xml}">
                 <include name="TEST-*.xml"/>
             </fileset>
             <report format="frames" todir="${qa.JsTestDriver.target.report.html}"/>
         </junitreport>
+    </target>
+
+    <target name="qa.test.report.ci" depends="qa.init, pre.process.copy">
+        <!-- Move the runJsTestDriver.sh.server config file to runJsTestDriver.sh-->
+        <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.sh.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
+        <!-- Move the jsTestDriver.conf.server to jsTestDriver.conf-->
+        <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"  tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"/>
+        <antcall target='qa.test.report'/>
     </target>
 
     <target name="ws" depends="pre.process.copy">
