@@ -33,34 +33,35 @@
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.137"/>
  
     <!-- Tools -->
-    <property name = "tools.jslint.report.template"           value = "${build.tools}/jslint/checkstyle-noframes-severity-sorted.xsl"/>
+    <property name = "tools.jslint.installation"           location = "${build.tools}/jslint"/>
+    <property name = "tools.jslint.report.template"        location = "${tools.jslint.installation}/checkstyle-noframes-severity-sorted.xsl"/>
+    <property name = "tools.jslint.taskdef.classpath"      location = "${tools.jslint.installation}/jslint4java.jar"/>
+
     <property name = "tools.JsTestDriver.installation"     location = "${build.tools}/JsTestDriver"/>
     <property name = "tools.JsTestDriver.executeable"      location = "${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
 
     <!-- QA related settings-->
-    <property name = "qa.build.target"                  location = "${build.target}/qa"/>
+    <property name = "qa.build.target"                     location = "${build.target}/qa"/>
 
-    <property name = "qa.jslint"                           value = "${build.test}/jslint"/>
-    <property name = "qa.jslint.taskdef.classpath"         value = "${qa.jslint}/jslint4java.jar"/>
+    <property name = "qa.jslint"                           location = "${build.test}/jslint"/>
+    <property name = "qa.jslint.target"                    location = "${qa.build.target}/jslint"/>
+    <property name = "qa.jslint.target.report"             location = "${qa.jslint.target}/report"/>
+    <property name = "qa.jslint.target.report.xml"         location = "${qa.jslint.target.report}/xml"/>
+    <property name = "qa.jslint.target.report.html"        location = "${qa.jslint.target.report}/html"/>
 
-    <property name = "qa.jslint.target"                    value = "${qa.build.target}/jslint"/>
-    <property name = "qa.jslint.target.report"             value = "${qa.jslint.target}/report"/>
-    <property name = "qa.jslint.target.report.xml"         value = "${qa.jslint.target.report}/xml"/>
-    <property name = "qa.jslint.target.report.html"        value = "${qa.jslint.target.report}/html"/>
+    <property name = "qa.JsTestDriver"                     location = "${build.test}/JsTestDriver"/>
+    <property name = "qa.JsTestDriver.testcase.src"        location = "${qa.JsTestDriver}/src"/>
 
-    <property name = "qa.JsTestDriver"                         location = "${build.test}/JsTestDriver"/>
-    <property name = "qa.JsTestDriver.testcase.src"            location = "${qa.JsTestDriver}/src"/>
-
-    <property name = "qa.JsTestDriver.target"                  location = "${qa.build.target}/JsTestDriver"/>
-    <property name = "qa.JsTestDriver.target.testcase.src"     location = "${qa.JsTestDriver.target}/src"/>
-    <property name = "qa.JsTestDriver.target.report"           location = "${qa.JsTestDriver.target}/report"/>
-    <property name = "qa.JsTestDriver.target.report.xml"       location = "${qa.JsTestDriver.target.report}/xml"/>
-    <property name = "qa.JsTestDriver.target.report.html"      location = "${qa.JsTestDriver.target.report}/html"/>
+    <property name = "qa.JsTestDriver.target"              location = "${qa.build.target}/JsTestDriver"/>
+    <property name = "qa.JsTestDriver.target.testcase.src" location = "${qa.JsTestDriver.target}/src"/>
+    <property name = "qa.JsTestDriver.target.report"       location = "${qa.JsTestDriver.target}/report"/>
+    <property name = "qa.JsTestDriver.target.report.xml"   location = "${qa.JsTestDriver.target.report}/xml"/>
+    <property name = "qa.JsTestDriver.target.report.html"  location = "${qa.JsTestDriver.target.report}/html"/>
 
     <!-- Please notice that by using open we are using the default browser defined by current OS user-->
     <property name = "env.browser.executable"      value = "open"/>
 
-    <taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="${qa.jslint.taskdef.classpath}"/>
+    <taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="${tools.jslint.taskdef.classpath}"/>
 
     <target name="init">
         <mkdir dir = "${build.target.code}"/>
