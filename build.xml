@@ -16,7 +16,7 @@
     <property name = "build.tools"                       location = "./tools"/>
     <property name = "build.test"                        location = "./test"/>
 
-    <property name = "build.target"                      location = "../target"/>
+    <property name = "build.target"                      location = "./target"/>
     <property name = "build.target.code"                 location = "${build.target}/src"/>
     <property name = "build.target.output"               location = "${build.target}/output"/>
     <property name = "build.target.output.src.zip"       location = "${build.target.output}/${build.app.name}.zip"/>
