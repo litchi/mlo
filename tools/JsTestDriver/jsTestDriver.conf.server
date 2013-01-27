@@ -1,12 +1,12 @@
 server: http://0.0.0.0:4224
 
 load:
-  - ../../../target/src/js/lib/*.js
-  - ../../../target/src/js/lib/JS-Migrator-master/*.js
-  - ../../../target/src/js/app/*.js
+  - ../../target/src/js/lib/*.js
+  - ../../target/src/js/lib/JS-Migrator-master/*.js
+  - ../../target/src/js/app/*.js
 
 test:
-  - ../../../target/qa/JsTestDriver/src/*.js
+  - ../../target/qa/JsTestDriver/src/*.js
 
 # exclude:
 #  - uselessfile.js

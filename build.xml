@@ -40,6 +40,11 @@
     <property name = "tools.JsTestDriver.installation"     location = "${build.tools}/JsTestDriver"/>
     <property name = "tools.JsTestDriver.executeable"      location = "${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
 
+    <!--jgenhtml is used to generate local unit test code coverage report-->
+    <!--For Bamboo in the CI server, Sonar is used-->
+    <property name = "tools.jgenhtml.installation"         location = "${build.tools}/jgenhtml"/>
+    <property name = "tools.jgenhtml.taskdef.classpath"    location = "${tools.jgenhtml.installation}/jgenhtml.jar"/>
+
     <!-- QA related settings-->
     <property name = "qa.build.target"                     location = "${build.target}/qa"/>
 
@@ -58,10 +63,16 @@
     <property name = "qa.JsTestDriver.target.report.xml"   location = "${qa.JsTestDriver.target.report}/xml"/>
     <property name = "qa.JsTestDriver.target.report.html"  location = "${qa.JsTestDriver.target.report}/html"/>
 
+    <property name = "qa.coverage.target"                  location = "${qa.build.target}/coverage"/>
+    <property name = "qa.coverage.target.report"           location = "${qa.coverage.target}/report"/>
+    <property name = "qa.coverage.target.report.dat"       location = "${qa.coverage.target.report}/dat"/>
+    <property name = "qa.coverage.target.report.html"      location = "${qa.coverage.target.report}/html"/>
+
     <!-- Please notice that by using open we are using the default browser defined by current OS user-->
     <property name = "env.browser.executable"      value = "open"/>
 
     <taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="${tools.jslint.taskdef.classpath}"/>
+    <taskdef name="jgenhtml" classname="com.googlecode.jgenhtml.ant.JGenHtmlTask" classpath="${tools.jgenhtml.taskdef.classpath}"/>
 
     <target name="init">
         <mkdir dir = "${build.target.code}"/>
@@ -74,6 +85,8 @@
         <mkdir dir = "${qa.JsTestDriver.target.testcase.src}"/>
         <mkdir dir = "${qa.JsTestDriver.target.report.xml}"/>
         <mkdir dir = "${qa.JsTestDriver.target.report.html}"/>
+        <mkdir dir = "${qa.coverage.target.report.dat}"/>
+        <mkdir dir = "${qa.coverage.target.report.html}"/>
     </target>
 
     <target name="pre.process.copy" depends="init">
@@ -145,12 +158,24 @@
             </fileset>
             <report format="frames" todir="${qa.JsTestDriver.target.report.html}"/>
         </junitreport>
+        <exec executable="${env.browser.executable}" spawn="yes"> 
+            <arg value="${qa.JsTestDriver.target.report.html}/index.html"/> 
+        </exec> 
+    </target>
+
+    <target name="qa.test.coverage.report" depends="qa.test.report">
+        <!-- 1. Copy the coverage result from ${qa.JsTestDriver.target.report.xml} to ${qa.coverage.target.report.dat} -->
+        <copy todir="${qa.coverage.target.report.dat}" verbose="true">
+            <fileset dir="${qa.JsTestDriver.target.report.xml}">
+                <include name = "*.dat"/>
+            </fileset>
+        </copy> 
+        <!-- 2. Generate html report using jgenhtml to ${qa.coverage.target.report.html} -->
+        <jgenhtml in="${qa.JsTestDriver.target.report.xml}/jsTestDriver.conf-coverage.dat" outdir="${qa.coverage.target.report.html}"/>
     </target>
 
     <target name="qa.test.report.ci" depends="qa.init, pre.process.copy">
-        <!-- Move the runJsTestDriver.sh.server config file to runJsTestDriver.sh-->
         <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.sh.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.sh" verbose="true"/>
-        <!-- Move the jsTestDriver.conf.server to jsTestDriver.conf-->
         <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"  tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf" verbose="true"/>
         <antcall target='qa.test.report'/>
     </target>

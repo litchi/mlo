@@ -18,9 +18,10 @@ var Util = (function () {
 
         startsWith : function (str, prefix) {
             var result;
-            if (str === null && prefix === null) {
+            if ((str === null && prefix === null) || (str === '' && prefix === '')) {
                 result = true;
-            } else if ((str === null && prefix !== null) || (str !== null && prefix === null)) {
+            } else if (((str === null && prefix !== null) || (str === '' && prefix !== ''))
+                        || ((str !== null && prefix === null) || (str !== '' && prefix === ''))) {
                 result = false;
             } else {
                 result = str.slice(0, prefix.length) === prefix;
