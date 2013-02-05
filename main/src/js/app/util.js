@@ -126,7 +126,8 @@ var Util = (function () {
         applySqlFilter : function (baseSql, filterName, filterStatement) {
             var result = baseSql;
             if (null === baseSql || undefined === baseSql || '' === baseSql) {
-                console.warn("Base Sql is [%s] when apply filter[%s], statement[%s]", baseSql, filterName, filterStatement);
+                console.warn("Base Sql is [%s] when apply filter[%s], statement[%s]",
+                    baseSql, filterName, filterStatement);
             } else {
                 result = baseSql.replace('%' + filterName + '%', filterStatement);
             }
@@ -134,7 +135,8 @@ var Util = (function () {
         },
 
         resizeTextarea : function (elem) {
-            var contents = elem.value.split('\n'), newRows = 0, currentLine, currentRows = elem.rows, longLines = 0;
+            var contents = elem.value.split('\n'), newRows = 0, currentLine,
+                currentRows = elem.rows, longLines = 0;
             if (!elem.initialRows) {
                 elem.initialRows = 1;
             }
