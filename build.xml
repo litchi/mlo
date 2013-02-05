@@ -1,14 +1,15 @@
 <project default="ws" basedir=".">
     <target name="help">
-        <echo>ant ws                to deploy to remote server for ripple</echo>
-        <echo>ant package           to build bar package for simulator and device</echo>
-        <echo>ant bb                to deploy to blackberry 10 simulator</echo>
-        <echo>ant qa.jslint.run     to run jslint scan and generate report in xml format</echo>
-        <echo>ant qa.jslint.report  to run jslint scan and generate report in html format</echo>
-        <echo>ant qa.test.report    to run unit test and generate report in html format</echo>
-        <echo>ant qa.test.report.ci to run unit test and generate report in html format on CI server</echo>
-        <echo>ant qa.clean          to clean qa target directory</echo>
-        <echo>ant clean             to clean target directory</echo>
+        <echo>ant ws                             to deploy to remote server for ripple</echo>
+        <echo>ant package                        to build bar package for simulator and device</echo>
+        <echo>ant bb                             to deploy to blackberry 10 simulator</echo>
+        <echo>ant qa.jslint.run                  to run jslint scan and generate report in xml format</echo>
+        <echo>ant qa.jslint.report               to run jslint scan and generate report in html format</echo>
+        <echo>ant qa.test.coverage.report.dev    to run unit test and generate report in html format</echo>
+        <echo>ant qa.test.report                 to run unit test and generate report in html format</echo>
+        <echo>ant qa.test.report.ci              to run unit test and generate report in html format on CI server</echo>
+        <echo>ant qa.clean                       to clean qa target directory</echo>
+        <echo>ant clean                          to clean target directory</echo>
     </target>
 
     <property name = "build.app.name"                       value = "BB10GTD"/>
@@ -163,7 +164,7 @@
         </exec> 
     </target>
 
-    <target name="qa.test.coverage.report" depends="qa.test.report">
+    <target name="qa.test.coverage.report.dev" depends="qa.test.report">
         <!-- 1. Copy the coverage result from ${qa.JsTestDriver.target.report.xml} to ${qa.coverage.target.report.dat} -->
         <copy todir="${qa.coverage.target.report.dat}" verbose="true">
             <fileset dir="${qa.JsTestDriver.target.report.xml}">
