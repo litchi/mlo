@@ -193,28 +193,28 @@ var UIListController = (function () {
     function filterContextMenu(items) {
         var index, menuItems, menuItem,
             contextMenu = document.getElementById('task-operation-context-menu');
-        if (Util.notEmpty(items)) {
-            if (Util.notEmpty(contextMenu)) {
-                menuItems = contextMenu.getElementsByTagName('div');
-                if (Util.notEmpty(menuItems)) {
-                    for (index = 0; index < menuItems.length; index += 1) {
-                        menuItem = menuItems[index];
-                        if (Util.notEmpty(menuItem) && Util.notEmpty(menuItem.getAttribute('id'))) {
-                            menuItem.style.display = 'none';
-                            menuItem.setAttribute('data-bb-pin', 'false');
-                        }
-                    }
-                    for (index = 0; index < items.length; index += 1) {
-                        document.getElementById(items[index]).style.display = 'block';
-                    }
-                } else {
-                    console.warn("There's no child element defined in div with id[%s]", 'task-operation-context-menu');
-                }
-            } else {
-                console.warn("Context menu with id[%s] in UI is undefined", 'task-operation-context-menu');
-            }
-        } else {
+        if (Util.isEmpty(items)) {
             console.warn("Want to display no item in the context map?");
+            return;
+        }
+        if (Util.isEmpty(contextMenu)) {
+            console.warn("Context menu with id[%s] in UI is undefined", 'task-operation-context-menu');
+            return;
+        }
+        menuItems = contextMenu.getElementsByTagName('div');
+        if (Util.isEmpty(menuItems)) {
+            console.warn("There's no child element defined in div with id[%s]", 'task-operation-context-menu');
+            return;
+        }
+        for (index = 0; index < menuItems.length; index += 1) {
+            menuItem = menuItems[index];
+            if (Util.notEmpty(menuItem) && Util.notEmpty(menuItem.getAttribute('id'))) {
+                menuItem.style.display = 'none';
+                menuItem.setAttribute('data-bb-pin', 'false');
+            }
+        }
+        for (index = 0; index < items.length; index += 1) {
+            document.getElementById(items[index]).style.display = 'block';
         }
     }
 
@@ -379,7 +379,9 @@ var UIListController = (function () {
                                         item.setAttribute('title', type + ": " + name);
                                         item.setAttribute('data-bb-title', type + ": " + name);
                                     }
-                                    if (Util.notEmpty(desc)) {item.innerHTML = desc; }
+                                    if (Util.notEmpty(desc)) {
+                                        item.innerHTML = desc;
+                                    }
                                     item.setAttribute(
                                         'onclick',
                                         "document.getElementById('task-operation-context-menu').menu.peek({ title : '" + name + "', description : '" + desc + "', selected : '" + id + "'});"

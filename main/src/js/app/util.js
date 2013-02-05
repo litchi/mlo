@@ -3,7 +3,6 @@
 var Util = (function () {
     "use strict";
     return {
-        
         isEmpty : function (str) {
             return (null === str || undefined === str || '' === str);
         },

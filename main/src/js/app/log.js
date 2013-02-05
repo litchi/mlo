@@ -36,7 +36,9 @@ var log = (function () {
                             } else {
                                 console.debug(name + " : [" + key + "][" + value + "]");
                             }
-                        } catch (e) {}
+                        } catch (e) {
+                            console.error("Error[%s] trying to log object[%s], key[%s], name[%s]", e, obj, key, name);
+                        }
                     }
                 }
             }

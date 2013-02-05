@@ -33,36 +33,40 @@ var UIContextMenuController = (function () {
             currentDate = new Date(),
             context = document.getElementById('task-operation-context-menu');
         selectedItem  = context.menu.selected;
-        if (selectedItem) {
-            selectedId = selectedItem.selected;
-            if (selectedId !== null) {
-                DataAccess.task.getDueDate(selectedId, function (tx, result, rows) {
-                    if (Util.notEmpty(rows)) {
-                        currDueDateTimestamp = rows[0][Sql.Task.Cols.DueDate];
-                        if (Util.notEmpty(currDueDateTimestamp)) {
-                            var localDueDate = new Date(currDueDateTimestamp * 1000);
-                            if (localDueDate.getTime() > currentDate.getTime()) {
-                                newDueDate = postponeToNextDay(localDueDate);
-                            } else {
-                                newDueDate = postponeToTomorrow(currentDate, localDueDate);
-                            }
-                        } else {
-                            newDueDate = postponeToTomorrowDefaultTime(currentDate);
-                        }
-                        DataAccess.appDb.transaction(function (tx) {
-                            DataAccess.runSqlDirectly(tx, "update task set due_date = ? where id = ?", [newDueDate.getTime() / 1000, selectedId],
-                                function (tx, result, objs) {
-                                    Util.refreshCurrentPage();
-                                });
-                        });
-                    } else {
-                        console.error('Task with id[%s] not found', selectedId);
-                    }
-                }, function (tx, error) {
-                    log.logSqlError("Failed to postpone task[" + selectedId + "] to the next day", error);
-                });
-            }
+        if (!selectedItem) {
+            console.warn("Selected Item is null");
+            return;
         }
+        selectedId = selectedItem.selected;
+        if (null === selectedId) {
+            console.warn("Selected Id is null");
+            return;
+        }
+        DataAccess.task.getDueDate(selectedId, function (tx, result, rows) {
+            if (Util.isEmpty(rows)) {
+                console.error('Task with id[%s] not found', selectedId);
+                return;
+            }
+            currDueDateTimestamp = rows[0][Sql.Task.Cols.DueDate];
+            if (Util.notEmpty(currDueDateTimestamp)) {
+                var localDueDate = new Date(currDueDateTimestamp * 1000);
+                if (localDueDate.getTime() > currentDate.getTime()) {
+                    newDueDate = postponeToNextDay(localDueDate);
+                } else {
+                    newDueDate = postponeToTomorrow(currentDate, localDueDate);
+                }
+            } else {
+                newDueDate = postponeToTomorrowDefaultTime(currentDate);
+            }
+            DataAccess.appDb.transaction(function (tx) {
+                DataAccess.runSqlDirectly(tx, "update task set due_date = ? where id = ?", [newDueDate.getTime() / 1000, selectedId],
+                    function (tx, result, objs) {
+                        Util.refreshCurrentPage();
+                    });
+            });
+        }, function (tx, error) {
+            log.logSqlError("Failed to postpone task[" + selectedId + "] to the next day", error);
+        });
     }
 
     function updateTaskStatus(statusKey, textDecoration) {
