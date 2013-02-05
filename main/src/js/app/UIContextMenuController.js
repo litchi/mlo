@@ -227,7 +227,7 @@ var UIContextMenuController = (function () {
                         [meta_type_id, name],
                         function (tx, result, objs) {
                             if ((1 === result.rows.length) && (result.rows.item(0).id.toString() !== id)) {
-                                document.getElementById('error-msg').innerText = metaTypeName + ' name "' + name + '" has already been taken, please use another name';
+                                document.getElementById('error-msg').innerText = metaTypeName + ' name "' + name + '" has already been taken, please use another one';
                                 document.getElementById('error-panel').style.display = 'block';
                                 //Util.showErrorToast(metaTypeName + " name " + name + " already used, pls use another one", 'OK');
                             } else {
