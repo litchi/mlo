@@ -232,7 +232,10 @@ var DataAccess = (function () {
                 runSQL(Sql.Task.InsertByName, [name], successCallback, failureCallback);
             },
             deleteById: function (id, successCallback, failureCallback) {
-                runSQL(Sql.Task.DeleteById, [id], successCallback, failureCallback);
+                DataAccess.appDb.transaction(function (tx) {
+                    DataAccess.runSqlDirectly(tx, Sql.Task.DeleteById, [id]);
+                    DataAccess.runSqlDirectly(tx, 'delete from task_meta where task_id = ?', [id], successCallback, failureCallback);
+                });
             },
             update: function (id, name, successCallback, failureCallback) {
                 runSQL(Sql.Task.UpdateById, [name, id], successCallback, failureCallback);
