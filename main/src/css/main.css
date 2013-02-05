@@ -226,3 +226,9 @@
     margin-top: 20px;
     margin-bottom:15px;
 }
+
+.msg-for-no-task{
+    text-align: center; 
+    margin: 50px 20px 0 20px;
+    min-width: 450px;
+}

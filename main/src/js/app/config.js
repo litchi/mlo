@@ -14,7 +14,7 @@ var UIConfig = (function () {
         createMetaPagePrefix        : 'create-meta',
         detailListElementId         : 'detail-list',
         detailListPanelElementId    : 'detail',
-        msgForNoTask                : '<div style="text-align: center; margin: 50px 20px 0 20px">Wow, great, all tasks are done, go and stay with your family or friends.</div>',
+        msgForNoTask                : '<div class="msg-for-no-task">Wow, great, all tasks are done, go and stay with your family or friends.</div>',
         paramMetaTypeName           : 'metaTypeName',
         paramMetaTypeId             : 'metaTypeId',
         paramMetaName               : 'metaName',
