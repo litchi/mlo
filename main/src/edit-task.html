@@ -9,7 +9,7 @@
         <div data-bb-type="label-control-container">
             <table>
                 <tr>
-                    <td colspan="3" style="vertical-align:top;">
+                    <td colspan="3" class='edit-page-sub-panel-01-td'>
                         <textarea id="task-name"
                             onkeyup="Util.resizeTextarea(this)" 
                             onmouseup="Util.resizeTextarea(this)">
@@ -26,7 +26,7 @@
         <div data-bb-type="label-control-container">
             <table>
                 <tr>
-                    <td class="td-label" style="padding-top:50px;font-size:40px;vertical-align:top;">Project</td>
+                    <td class="td-label edit-page-sub-panel-02-td-label">Project</td>
                     <td colspan="2">
                         <div id='projectContainer'>
                         </div>
@@ -34,9 +34,9 @@
                 </tr>
                 <tr>
                     <td class="td-label">Due</td>
-                    <td style="padding-left:23px;" colspan=2><input type="datetime-local" value="" id="due-date"/></td>
+                    <td class="edit-page-sub-panel-02-td" colspan=2><input type="datetime-local" value="" id="due-date"/></td>
                 </tr>
-                <tr style="display:none"> 
+                <tr id="edit-page-sub-panel-02-reminder-tr"> 
                     <td class="td-label">Reminder?</td>
                     <td colspan=2><div data-bb-type="toggle" data-bb-on="Yes" data-bb-off="No" id="is-reminder-on"></div> </td>
                 </tr>

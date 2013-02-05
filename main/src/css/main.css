@@ -80,6 +80,8 @@
     /*padding-top: 5px;*/
 }
 
+#group-detail-container {height:1280px;}
+
 #group {
     border: 1px solid #949089; 
     -webkit-border-top-left-radius: 0px;
@@ -176,6 +178,8 @@
     margin-top: 10px;
 }
 
+#task-list-container{height:1048px;}
+
 #detail-list{
     height:1000px;
 }
@@ -232,3 +236,14 @@
     margin: 50px 20px 0 20px;
     min-width: 450px;
 }
+
+#error-panel, #error-panel-header, #edit-page-sub-panel-02-reminder-tr {display:none;}
+.edit-page-sub-panel-01-td {vertical-align:top;}
+.edit-page-sub-panel-02-td {padding-left:23px;}
+.edit-page-sub-panel-02-td-label {
+    padding-top:50px;
+    font-size:40px;
+    vertical-align:top;
+}
+
+#create-task-input-container {}
