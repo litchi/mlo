@@ -202,6 +202,10 @@ var Util = (function () {
                 console.error("Time stamp[%s] passed to dbTimeStampToDate is empty", second);
             }
             return result;
+        },
+
+        setMetaDetailPageCaption : function (caption) {
+            document.getElementById('edit-meta-title').setCaption(caption);
         }
     };
 

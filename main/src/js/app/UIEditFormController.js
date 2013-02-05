@@ -251,8 +251,10 @@ var UIEditFormController = (function () {
                     Util.setValue('meta_name', arrays[0][Sql.Meta.Cols.Name]);
                     Util.setValue(Sql.Meta.Cols.Description, arrays[0][Sql.Meta.Cols.Description]);
                     DataAccess.metaType.getById(arrays[0][Sql.Meta.Cols.MetaTypeId], function (tx, result, objs) {
-                        Util.setValue('meta_type_id', objs[0][Sql.MetaType.Cols.Id]);
-                        Util.setValue('meta_type_name', objs[0][Sql.MetaType.Cols.Name]);
+                        var metaTypeName = objs[0][Sql.MetaType.Cols.Name], metaTypeId = objs[0][Sql.MetaType.Cols.Id];
+                        Util.setMetaDetailPageCaption('Edit ' + metaTypeName);
+                        Util.setValue('meta_type_id', metaTypeId);
+                        Util.setValue('meta_type_name', metaTypeName);
                     });
                 }, function (tx, error) {
                     log.logSqlError("Error getting meta with id[" + id + "]", error);

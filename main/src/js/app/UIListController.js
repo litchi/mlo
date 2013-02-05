@@ -334,8 +334,10 @@ var UIListController = (function () {
 
         fillMetaToCreateForm : function (meta_type_id) {
             DataAccess.metaType.getById(meta_type_id, function (tx, result, objs) {
-                Util.setValue('meta_type_id', objs[0][Sql.MetaType.Cols.Id]);
-                Util.setValue('meta_type_name', objs[0][Sql.MetaType.Cols.Name]);
+                var metaTypeName = objs[0][Sql.MetaType.Cols.Name], metaTypeId = objs[0][Sql.MetaType.Cols.Id];
+                Util.setMetaDetailPageCaption('New ' + metaTypeName);
+                Util.setValue('meta_type_id', metaTypeId);
+                Util.setValue('meta_type_name', metaTypeName);
             });
         },
 
