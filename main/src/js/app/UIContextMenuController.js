@@ -179,8 +179,7 @@ var UIContextMenuController = (function () {
                     DataAccess.task.updateStatus(selectedId, SeedData.TaskDeletedStatus,
                         function (tx, result, rows) {
                             UIListController.removeTaskFromList(selectedId);
-                            Util.showToast("Task deleted", 'Undo Task Deletion',
-                                UIConfig.nothing,
+                            Util.showToast(UIConfig.msgForTaskMoveToTrash, UIConfig.msgUndo, UIConfig.nothing,
                                 function () {
                                 });
                         }, function (tx, error) {
