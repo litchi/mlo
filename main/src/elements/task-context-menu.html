@@ -6,7 +6,11 @@
     <div data-bb-type="action" data-bb-img="resources/image/basket_add.png"    id='move_task_to_basket'      onclick ="UIContextMenuController.moveTaskToInBasket()">in Basket</div>
     <div data-bb-type="action" data-bb-img="resources/image/someday.png"       id='move_task_to_someday'     onclick ="UIContextMenuController.moveTaskToSomeday()">Someday/Maybe</div>
     <div data-bb-type="action" data-bb-img="resources/image/mark-as-new.png"   id='mark_task_as_new'         onclick ="UIContextMenuController.markTaskAsNew()">Haven't Done :(</div>
-    <div data-bb-type="action" data-bb-img="resources/image/delete-task.png"   id='delete_task'              onclick ="UIContextMenuController.deleteTask()" data-bb-pin="true">Delete</div>
+    <div data-bb-type="action" data-bb-img="resources/image/trash-add.png"     id='move_task_to_trash'       onclick ="UIContextMenuController.moveTaskToTrash()" data-bb-pin="true">Move To Trash</div>
+
     <div data-bb-type="action" data-bb-img="resources/image/edit-task.png"     id='edit_meta'                onclick ="UIContextMenuController.editMeta()">Edit</div>
     <div data-bb-type="action" data-bb-img="resources/image/delete-task.png"   id='delete_meta'              onclick ="UIContextMenuController.deleteMeta()" data-bb-pin="true">Delete</div>
+
+    <div data-bb-type="action" data-bb-img="resources/image/trash-restore.png" id='restore_task'             onclick ="UIContextMenuController.restoreTaskFromTrash()">Restore Task from Trash</div>
+    <div data-bb-type="action" data-bb-img="resources/image/trash-empty.png"   id='empty_trash'              onclick ="UIContextMenuController.emptyTrash()" data-bb-pin="true">Empty Trash</div>
 </div>

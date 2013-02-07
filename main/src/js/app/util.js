@@ -98,20 +98,22 @@ var Util = (function () {
             return resultStr;
         },
 
-        showErrorToast : function (message, buttonText, onToastDismissed, onButtonSelected) {
+        showToast : function (message, buttonText, onToastDismissed, onButtonSelected) {
             var toastId, dismissed, selected, options;
             dismissed = Util.isFunction(onToastDismissed) ? onToastDismissed :  function () {
-                console.debug("show Error Toast[%s][%s][%s]", message, buttonText, onButtonSelected);
+                console.debug("show Toast[%s][%s][%s]", message, buttonText, onButtonSelected);
             };
             selected = Util.isFunction(onButtonSelected) ? onButtonSelected : function () {
-                console.debug("show Error Toast[%s][%s][%s]", message, buttonText, onToastDismissed);
+                console.debug("show Toast[%s][%s][%s]", message, buttonText, onToastDismissed);
             };
             options = {
                 buttonText : buttonText,
                 dismissCallback : dismissed,
                 buttonCallback : selected
             };
-            toastId = blackberry.ui.toast.show(message, options);
+            if (Util.notEmpty(blackberry.ui.toast)) {
+                toastId = blackberry.ui.toast.show(message, options);
+            }
         },
 
         switchPanelWidth : function (groupWidth, taskWidth, taskLeft) {
@@ -162,23 +164,30 @@ var Util = (function () {
             }
         },
 
-        refreshCurrentPage : function () {
+        refreshCurrentPage : function (toastMsg) {
             //TODO Upon bbui 0.9.7, this should work.
             //bb.reloadScreen();
-            var metaTypeId = Util.valueOf('v_meta_type_id'),
-                metaTypeName = Util.valueOf('v_meta_type_name'),
-                metaId = Util.valueOf('v_meta_id'),
-                metaName = Util.valueOf('v_meta_name');
+            var metaTypeId     = Util.valueOf('v_meta_type_id'),
+                metaTypeName   = Util.valueOf('v_meta_type_name'),
+                metaId         = Util.valueOf('v_meta_id'),
+                metaName       = Util.valueOf('v_meta_name'),
+                localToastMsg  = UIConfig.emptyString;
             console.debug('[%s], [%s], [%s], [%s]', metaTypeId, metaTypeName, metaId, metaName);
+            if (Util.notEmpty(toastMsg)) {
+                localToastMsg = toastMsg;
+            }
             if (metaName === SeedData.NextActionMetaName ||
                     metaName === SeedData.BasketMetaName ||
                     metaName === SeedData.SomedayMetaName) {
-                bb.pushScreen('task-list.html', metaName);
+                bb.pushScreen('task-list.html', metaName,
+                    {'toastMsg' : localToastMsg});
             } else {
                 if (Util.notEmpty(metaName)) {
-                    bb.pushScreen('master-detail.html', UIConfig.taskByPagePrefix, {'metaTypeName' : metaTypeName, 'metaName' : metaName});
+                    bb.pushScreen('master-detail.html', UIConfig.taskByPagePrefix,
+                        {'metaTypeName' : metaTypeName, 'metaName' : metaName, 'toastMsg' : localToastMsg});
                 } else {
-                    bb.pushScreen('master-detail.html', UIConfig.taskByPagePrefix, {'metaTypeName' : metaTypeName});
+                    bb.pushScreen('master-detail.html', UIConfig.taskByPagePrefix,
+                        {'metaTypeName' : metaTypeName, 'toastMsg' : localToastMsg});
                 }
             }
         },

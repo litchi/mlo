@@ -61,7 +61,7 @@ var UIContextMenuController = (function () {
             DataAccess.appDb.transaction(function (tx) {
                 DataAccess.runSqlDirectly(tx, "update task set due_date = ? where id = ?", [newDueDate.getTime() / 1000, selectedId],
                     function (tx, result, objs) {
-                        Util.refreshCurrentPage();
+                        Util.refreshCurrentPage("Task postponed to " + Util.getPrettyDateStr(newDueDate));
                     });
             });
         }, function (tx, error) {
@@ -69,7 +69,7 @@ var UIContextMenuController = (function () {
         });
     }
 
-    function updateTaskStatus(statusKey, textDecoration) {
+    function updateTaskStatus(statusKey, successCallback) {
         var selectedItem, selectedId,
             context = document.getElementById('task-operation-context-menu');
         selectedItem  = context.menu.selected;
@@ -77,11 +77,14 @@ var UIContextMenuController = (function () {
             selectedId = selectedItem.selected;
             if (selectedId !== null) {
                 //TODO Change to set style class 
-                DataAccess.task.updateStatus(selectedId, statusKey, function (tx, result, rows) {
-                    document.getElementById('task-' + selectedId).style.textDecoration = textDecoration;
-                }, function (tx, error) {
-                    log.logSqlError("Failed to update status to [" + statusKey + "] for task[" + selectedId + "]", error);
-                });
+                DataAccess.task.updateStatus(selectedId, statusKey,
+                    function (tx, result, rows) {
+                        if (Util.isFunction(successCallback)) {
+                            successCallback(selectedId);
+                        }
+                    }, function (tx, error) {
+                        log.logSqlError("Failed to update status to [" + statusKey + "] for task[" + selectedId + "]", error);
+                    });
             }
         }
     }
@@ -99,6 +102,7 @@ var UIContextMenuController = (function () {
                         var metaTypeName = Util.valueOf('v_meta_type_name');
                         if (metaTypeName !== SeedData.ProjectMetaTypeName && metaTypeName !== SeedData.ContextMetaTypeName) {
                             document.getElementById('task-' + selectedId).remove();
+                            Util.showToast(UIConfig.msgForTaskMovePref + metaName);
                         }
                     },
                     function (tx3, error3) {
@@ -127,6 +131,15 @@ var UIContextMenuController = (function () {
                             }
                             UIListController.addTaskToList(taskId, name, project, context, null);
                             Util.setValue('ctsi', UIConfig.emptyString);
+                            Util.showToast('Task created successfully', 'Undo Task Creation', null, function () {
+                                DataAccess.task.updateStatus(taskId, SeedData.TaskDeletedStatus,
+                                    function (tx, result, rows) {
+                                        UIListController.removeTaskFromList(taskId);
+                                        Util.showToast("Undo task creation successfully");
+                                    }, function (tx, error) {
+                                        log.logSqlError("Failed to delete task[" + taskId + "]", error);
+                                    });
+                            });
                         });
                 });
         }, function (tx, e1) {
@@ -156,34 +169,36 @@ var UIContextMenuController = (function () {
             return false;
         },
 
-        deleteTask : function () {
+        moveTaskToTrash : function () {
             var selectedItem, selectedId,
                 context = document.getElementById('task-operation-context-menu');
             selectedItem  = context.menu.selected;
             if (selectedItem) {
                 selectedId = selectedItem.selected;
                 if (selectedId !== null) {
-                    DataAccess.task.deleteById(selectedId, function (tx, result, rows) {
-                        document.getElementById('task-' + selectedId).remove();
-                        if (0 === document.getElementById(UIConfig.detailListElementId).getItems().length) {
-                            document.getElementById(UIConfig.detailListElementId).innerHTML = UIConfig.msgForNoTask;
-                        }
-                    }, function (tx, error) {
-                        log.logSqlError("Failed to delete task[" + selectedId + "]", error);
-                    });
+                    DataAccess.task.updateStatus(selectedId, SeedData.TaskDeletedStatus,
+                        function (tx, result, rows) {
+                            UIListController.removeTaskFromList(selectedId);
+                            Util.showToast("Task deleted", 'Undo Task Deletion',
+                                UIConfig.nothing,
+                                function () {
+                                });
+                        }, function (tx, error) {
+                            log.logSqlError("Failed to delete task[" + selectedId + "]", error);
+                        });
                 }
             }
         },
 
         deleteTaskById : function (id) {
-            DataAccess.task.deleteById(id, function (tx, result, rows) {
-                bb.popScreen();
-            }, function (tx, error) {
-                log.logSqlError("Failed to delete task[" + id + "]", error);
-            });
+            DataAccess.task.updateStatus(id, SeedData.TaskDeletedStatus,
+                function (tx, result, rows) {
+                    bb.popScreen();
+                }, function (tx, error) {
+                    log.logSqlError("Failed to delete task[" + id + "]", error);
+                });
         },
 
-        //TODO Optimize code and remove duplicates
         editTask : function () {
             var selectedItem, selectedId,
                 context = document.getElementById('task-operation-context-menu');
@@ -233,7 +248,7 @@ var UIContextMenuController = (function () {
                             if ((1 === result.rows.length) && (result.rows.item(0).id.toString() !== id)) {
                                 document.getElementById('error-msg').innerText = metaTypeName + ' name "' + name + '" has already been taken, please use another one';
                                 document.getElementById('error-panel').style.display = 'block';
-                                //Util.showErrorToast(metaTypeName + " name " + name + " already used, pls use another one", 'OK');
+                                //Util.showToast(metaTypeName + " name " + name + " already used, pls use another one", 'OK');
                             } else {
                                 if (id !== null && id !== undefined && id !== UIConfig.emptyString) {
                                     DataAccess.meta.update(id, name, description, function (tx, result, rows) {
@@ -270,9 +285,41 @@ var UIContextMenuController = (function () {
             }
         },
 
+        emptyTrash : function () {
+            DataAccess.appDb.transaction(function (tx) {
+                DataAccess.runSqlDirectly(tx, "select id from task where status = ?", [SeedData.TaskDeletedStatus],
+                    function (tx, result, objs) {
+                        var i = 0;
+                        for (i = 0; i < objs.length; i += 1) {
+                            DataAccess.runSqlDirectly(tx, "delete from task where id = ?", [objs[i].id]);
+                            DataAccess.runSqlDirectly(tx, "delete from task_meta where task_id = ?", [objs[i].id]);
+                        }
+                        document.getElementById(UIConfig.detailListElementId).clear();
+                        Util.showToast(UIConfig.msgForTrashBoxClean);
+                    });
+            });
+        },
+
+        restoreTaskFromTrash : function () {
+            updateTaskStatus(SeedData.TaskNewStatus, function (taskId) {
+                document.getElementById('task-' + taskId).remove();
+                Util.showToast(UIConfig.msgForTaskRestore);
+            });
+        },
+        markTaskAsDone : function () {
+            updateTaskStatus(SeedData.TaskDoneStatus, function (taskId) {
+                document.getElementById('task-' + taskId).style.textDecoration = 'line-through';
+                Util.showToast(UIConfig.msgForTaskStatusUpdatePref + SeedData.TaskDoneStatus);
+            });
+        },
+        markTaskAsNew : function () {
+            updateTaskStatus(SeedData.TaskNewStatus, function (taskId) {
+                document.getElementById('task-' + taskId).style.textDecoration = 'none';
+                Util.showToast(UIConfig.msgForTaskStatusUpdatePref + SeedData.TaskNewStatus);
+            });
+        },
+
         postponeTask         : function () { postponeTaskInternal(); },
-        markTaskAsDone       : function () { updateTaskStatus(SeedData.TaskDoneStatus, 'line-through'); },
-        markTaskAsNew        : function () { updateTaskStatus(SeedData.TaskNewStatus, 'none'); },
         moveTaskToNextAction : function () { moveTaskToGtdList(SeedData.NextActionMetaName); },
         moveTaskToSomeday    : function () { moveTaskToGtdList(SeedData.SomedayMetaName); },
         moveTaskToInBasket   : function () { moveTaskToGtdList(SeedData.BasketMetaName); }

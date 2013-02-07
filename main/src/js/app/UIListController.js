@@ -278,6 +278,14 @@ var UIListController = (function () {
             }
         },
 
+        fillTasksToGroupByStatusKey: function (taskStatus) {
+            var taskList = document.getElementById(UIConfig.detailListElementId);
+            filterContextMenu(UIConfig.trashBoxContextMenu);
+            DataAccess.task.getByStatus(taskStatus, function (tx, result, arrays) {
+                tasksFromDbToUI(arrays, taskList);
+            });
+        },
+
         fillMetaListToPanelByTypeName : function (metaTypeName, pageType) {
             DataAccess.metaType.getByName(metaTypeName, function (tx, result, objs) {
                 if (null !== objs && undefined !== objs && objs.length > 0 && null !== objs[0] && undefined !== objs[0]) {
@@ -350,6 +358,13 @@ var UIListController = (function () {
                 taskList.appendItem(item);
             } else if (items.length > 0) {
                 taskList.appendItem(item);
+            }
+        },
+
+        removeTaskFromList : function (taskId) {
+            document.getElementById('task-' + taskId).remove();
+            if (0 === document.getElementById(UIConfig.detailListElementId).getItems().length) {
+                document.getElementById(UIConfig.detailListElementId).innerHTML = UIConfig.msgForNoTask;
             }
         },
 

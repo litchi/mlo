@@ -244,13 +244,16 @@ var DataAccess = (function () {
                 runSQL(Sql.Task.UpdateStatusById, [statusKey, id], successCallback, failureCallback);
             },
             getByMeta: function (metaTypeName, metaName, successCallback, failureCallback) {
-                runSQL(Sql.Task.SelectByMetaName, [metaName, metaTypeName, SeedData.TaskDoneStatus], successCallback, failureCallback);
+                runSQL(Sql.Task.SelectByMetaName, [metaName, metaTypeName, SeedData.TaskDoneStatus, SeedData.TaskDeletedStatus], successCallback, failureCallback);
+            },
+            getByStatus: function (statusKey, successCallback, failureCallback) {
+                runSQL(Sql.Task.SelectByStatus, [statusKey], successCallback, failureCallback);
             },
             getByMetaType: function (metaTypeName, successCallback, failureCallback) {
-                runSQL(Sql.Task.SelectByMetaType, [metaTypeName, SeedData.TaskDoneStatus], successCallback, failureCallback);
+                runSQL(Sql.Task.SelectByMetaType, [metaTypeName, SeedData.TaskDoneStatus, SeedData.TaskDeletedStatus], successCallback, failureCallback);
             },
             getAll: function (successCallback, failureCallback) {
-                runSQL(Sql.Task.FilterByStatus, [SeedData.TaskDoneStatus], successCallback, failureCallback);
+                runSQL(Sql.Task.FilterByStatus, [SeedData.TaskDoneStatus, SeedData.TaskDeletedStatus], successCallback, failureCallback);
             },
             getById: function (id, successCallback, failureCallback) {
                 runSQL(Sql.Task.SelectById, [id], successCallback, failureCallback);

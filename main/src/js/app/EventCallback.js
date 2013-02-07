@@ -14,17 +14,16 @@ var EventCallback = (function () {
         var tab = document.getElementById(screenId),
             devTab = document.getElementById('development');
         if (Util.notEmpty(tab)) {
-            bb.actionBar.highlightAction(tab);
+            tab.setAttribute('data-bb-selected', 'true');
+            bb.refresh();
         }
-        if (true !== AppConfig.debugMode) {
-            if (undefined !== devTab) {
-                devTab.style.display = 'none';
-            }
+        if (!AppConfig.debugMode && undefined !== devTab) {
+            devTab.style.display = 'none';
         }
     }
 
     function onDomReadyCallback(element, id, params) {
-        var taskId, metaTypeName, metaId, metaTypeId, defaultMetaName;
+        var taskId, metaTypeName, metaId, metaTypeId, defaultMetaName, toastMsg;
         console.debug("Element: [%s], ID: [%s]", element, id);
         log.logObjectData("Parameters:", params, true);
         if (Util.notEmpty(params)) {
@@ -45,9 +44,11 @@ var EventCallback = (function () {
             if (Util.notEmpty(params[UIConfig.paramMetaId])) {
                 metaId = params[UIConfig.paramMetaId];
             }
+            if (Util.notEmpty(params[UIConfig.paramToastMsg])) {
+                toastMsg = params[UIConfig.paramToastMsg];
+            }
         }
         if (id !== null) {
-            setActionBarSelectStatus(id);
             if (id === SeedData.BasketMetaName
                     || id === SeedData.NextActionMetaName
                     || id === SeedData.SomedayMetaName) {
@@ -67,6 +68,12 @@ var EventCallback = (function () {
             } else if (id === UIConfig.metaByPagePrefix) {
                 UIListController.fillMetaTypeToPanel();
                 UIListController.fillMetaListToPanel(metaTypeId, UIConfig.metaByPagePrefix);
+            } else if (id === SeedData.TaskDeletedStatus) {
+                UIListController.fillTasksToGroupByStatusKey(id);
+            }
+            setActionBarSelectStatus(id);
+            if (Util.notEmpty(toastMsg)) {
+                Util.showToast(toastMsg);
             }
         }
     }

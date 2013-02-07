@@ -15,11 +15,17 @@ var UIConfig = (function () {
         detailListElementId         : 'detail-list',
         detailListPanelElementId    : 'detail',
         msgForNoTask                : '<div class="msg-for-no-task">Wow, great, all tasks are done, go and stay with your family or friends.</div>',
+        msgForSuccessfulTaskUpdate  : 'Task successfully updated',
+        msgForTaskStatusUpdatePref  : 'Task marked as ',
+        msgForTaskMovePref          : 'Task moved to list ',
+        msgForTrashBoxClean         : 'Trash Box Cleaned',
+        msgForTaskRestore           : 'Task Restored from Tash Box',
         paramMetaTypeName           : 'metaTypeName',
         paramMetaTypeId             : 'metaTypeId',
         paramMetaName               : 'metaName',
         paramMetaId                 : 'metaId',
         paramTaskId                 : 'taskId',
+        paramToastMsg               : 'toastMsg',
         screenIdField               : 'fields',
         taskContextMenu : [
             'mark_task_as_done',
@@ -29,12 +35,17 @@ var UIConfig = (function () {
             'move_task_to_basket',
             'move_task_to_someday',
             'mark_task_as_new',
-            'delete_task'
+            'move_task_to_trash'
         ],
         metaContextMenu : [
             'edit_meta',
             'delete_meta'
-        ]
+        ],
+        trashBoxContextMenu : [
+            'restore_task',
+            'empty_trash'
+        ],
+        nothing : function () {}
     };
 
 }());
