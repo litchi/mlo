@@ -290,8 +290,12 @@ var UIListController = (function () {
                     detailListTitle.innerText = 'Tasks with ' + metaTypeName;
                 }
             }
-            detailAddNewLink.style.display = 'none';
-            detailListTitle.style.display = 'inline';
+            if (Util.notEmpty(detailAddNewLink)) {
+                detailAddNewLink.style.display = 'none';
+            }
+            if (Util.notEmpty(detailListTitle)) {
+                detailListTitle.style.display = 'inline';
+            }
             if (Sql.FilterAllMeta !== metaName) {
                 setMetaFields(metaName);
             }
@@ -434,9 +438,13 @@ var UIListController = (function () {
                             }
                         }
                         detailAddNewLink.innerText     = 'All Projects and Contexts';
-                        detailListTitle.style.display  = 'none';
-                        detailAddNewLink.style.display = 'inline';
-                        detailAddNewLink.onclick       = function () {};
+                        if (Util.notEmpty(detailListTitle)) {
+                            detailListTitle.style.display  = 'none';
+                        }
+                        if (Util.notEmpty(detailAddNewLink)) {
+                            detailAddNewLink.style.display = 'inline';
+                            detailAddNewLink.onclick       = function () {};
+                        }
                         setGroupPanelEmptyHeight();
                     });
             }, function (tx, error) {

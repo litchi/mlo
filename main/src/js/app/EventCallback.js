@@ -6,11 +6,10 @@ var EventCallback = (function () {
 
     function hideDevTab() {
         var devTab = document.getElementById('development');
-        if (!AppConfig.debugMode && undefined !== devTab) {
-            devTab.hide();
+        if (!AppConfig.debugMode && Util.notEmpty(devTab)) {
+            devTab.style.display = 'none';
         }
     }
-
 
     function onScreenReadyCallback(element, id) {
         if (null === DataAccess.appDb) {
