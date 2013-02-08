@@ -1,29 +1,37 @@
 <div data-bb-type="action-bar" data-bb-back-caption="Back" id="action-bar">
     <div data-bb-type="action" data-bb-style="tab" id="Basket"
-        onclick="bb.pushScreen('task-list.html', SeedData.BasketMetaName)" 
-        data-bb-img="resources/image/inbox.png" data-bb-accent-text="Basket">Basket</div>
+        onclick="UIActionBarController.openTaskByMetaPage(SeedData.BasketMetaName)" 
+        data-bb-img="resources/image/inbox.png" data-bb-accent-text="Basket" data-bb-selected="true">Basket</div>
+
     <div data-bb-type="action" data-bb-style="tab" id="Next Action"
-        onclick="bb.pushScreen('task-list.html',SeedData.NextActionMetaName);"
+        onclick="UIActionBarController.openTaskByMetaPage(SeedData.NextActionMetaName);" 
         data-bb-img="resources/image/next-action.png" data-bb-accent-text="Next Action">Next Action</div>
+    
     <div data-bb-type="action" data-bb-style="tab" id="task-by-Due"
-        onclick="bb.pushScreen('master-detail.html', UIConfig.taskByPagePrefix, {'metaTypeName' : SeedData.DueMetaTypeName} );"
+        onclick="UIActionBarController.openTaskGroupByMetaPage(SeedData.DueMetaTypeName)"
         data-bb-img="resources/image/due.png"  data-bb-accent-text="Due">Due</div>
+
     <div data-bb-type="action" data-bb-style="tab" id="task-by-Project"
-        onclick="bb.pushScreen('master-detail.html', UIConfig.taskByPagePrefix, {'metaTypeName' : SeedData.ProjectMetaTypeName});"
+        onclick="UIActionBarController.openTaskGroupByMetaPage(SeedData.ProjectMetaTypeName)"
         data-bb-img="resources/image/project.png"  data-bb-accent-text="Project">Project</div>
-    <div data-bb-type="action" data-bb-style="tab" id="task-by-Context"
-        data-bb-overflow="true" onclick="bb.pushScreen('master-detail.html', UIConfig.taskByPagePrefix, {'metaTypeName' : SeedData.ContextMetaTypeName});"
+
+    <div data-bb-type="action" data-bb-style="tab" id="task-by-Context" data-bb-overflow="true" 
+        onclick="UIActionBarController.openTaskGroupByMetaPage(SeedData.ContextMetaTypeName)"
         data-bb-img="resources/image/context.png" data-bb-accent-text="Context">Context</div>
-    <div data-bb-type="action" data-bb-style="tab" id="Someday"
-        data-bb-overflow="true" onclick="bb.pushScreen('task-list.html', SeedData.SomedayMetaName);"
+
+    <div data-bb-type="action" data-bb-style="tab" id="Someday" data-bb-overflow="true"
+        onclick="UIActionBarController.openTaskByMetaPage(SeedData.SomedayMetaName);" 
         data-bb-img="resources/image/someday.png" data-bb-accent-text="Someday">Someday</div>
-    <div data-bb-type="action" data-bb-style="tab" id="fields"
-        data-bb-overflow="true" onclick="bb.pushScreen('master-detail.html',UIConfig.screenIdField);" 
+
+    <div data-bb-type="action" data-bb-style="tab" id="fields" data-bb-overflow="true" 
+        onclick="UIActionBarController.openMetaGroupByTypePage()" 
         data-bb-img="resources/image/fields.png" data-bb-accent-text="Fields">Fields</div>
-    <div data-bb-type="action" data-bb-style="tab" id="Trash Box"
-        data-bb-overflow="true" onclick="bb.pushScreen('task-list.html',SeedData.TaskDeletedStatus);" 
+
+    <div data-bb-type="action" data-bb-style="tab" id="Trash Box" data-bb-overflow="true" 
+        onclick="UIActionBarController.openTaskByStatusPage(SeedData.TaskDeletedStatus)" 
         data-bb-img="resources/image/trash.png" data-bb-accent-text="Trash Box">Trash Box</div>
-    <div data-bb-type="action" data-bb-style="tab" id="development"
-        data-bb-overflow="true" onclick="bb.pushScreen('development.html','development');" 
+
+    <div data-bb-type="action" data-bb-style="tab" id="development" data-bb-overflow="true" 
+        onclick="bb.pushScreen('development.html','development');" 
         data-bb-img="resources/image/development.png" data-bb-accent-text="Development">Development</div>
 </div>

@@ -1169,6 +1169,13 @@ bb.actionBar = {
 					backCaption.innerHTML = value;		
 				};
 		actionBar.setBackCaption = actionBar.setBackCaption.bind(actionBar);  
+
+		// Add setSelectedTab function
+		actionBar.setSelectedTabNoAction = function(tab) {
+					if (tab.getAttribute('data-bb-style') != 'tab') return;
+					bb.actionBar.highlightAction(tab);
+				};
+		actionBar.setSelectedTabNoAction = actionBar.setSelectedTabNoAction.bind(actionBar);  
 		
 		// Add setSelectedTab function
 		actionBar.setSelectedTab = function(tab) {

@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, Util*/
+/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util*/
 var UIListController = (function () {
     "use strict";
 
@@ -240,6 +240,27 @@ var UIListController = (function () {
             Util.switchPanelWidth(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin);
         },
 
+        switchDisplayToMode : function (mode) {
+            var detailListPanelDiv = document.getElementById('detail-list-panel'),
+                singleDetailDiv    = document.getElementById('task-list-container'),
+                masterDetailDiv    = document.getElementById('group-detail-container');
+            if (Util.notEmpty(masterDetailDiv) && Util.notEmpty(singleDetailDiv)) {
+                if ((masterDetailDiv.style.display !== 'none') && (UIConfig.singleDisplayMode === mode)) {
+                    singleDetailDiv.innerHTML = UIFragments.singleTaskList;
+                    masterDetailDiv.innerHTML = UIConfig.emptyString;
+                    masterDetailDiv.style.display = 'none';
+                    singleDetailDiv.style.display = 'block';
+                    bb.style(singleDetailDiv);
+                } else if (singleDetailDiv.style.display !== 'none' && (UIConfig.masterDetailDisplayMode === mode)) {
+                    masterDetailDiv.innerHTML = UIFragments.masterDetailTaskList;
+                    singleDetailDiv.innerHTML = UIConfig.emptyString;
+                    masterDetailDiv.style.display = 'block';
+                    singleDetailDiv.style.display = 'none';
+                    bb.style(masterDetailDiv);
+                }
+            }
+        },
+
         fillTasksToGroupByMetaInfo : function (metaTypeName, metaName) {
             var id, name, title = UIConfig.emptyString,
                 detailListTitle  = document.getElementById('detail-title-text'),
@@ -310,6 +331,9 @@ var UIListController = (function () {
             filterContextMenu(UIConfig.metaContextMenu);
             DataAccess.metaType.getAll(function (tx, result, arrays) {
                 var key, name, id, desc, item, internal, uiId;
+                if (Util.notEmpty(metaTypeList)) {
+                    metaTypeList.innerHTML = UIConfig.emptyString;
+                }
                 for (key in arrays) {
                     if (arrays.hasOwnProperty(key)) {
                         name     = arrays[key][Sql.MetaType.Cols.Name];
@@ -374,7 +398,7 @@ var UIListController = (function () {
                 groupAddNewLink  = document.getElementById('group-title-add-new-link'),
                 metaListTitle    = document.getElementById('group-title-text');
             metaList = getMetaListElement(pageType);
-            metaList.clear();
+            metaList.innerHTML = UIConfig.emptyString;
             DataAccess.appDb.transaction(function (tx) {
                 DataAccess.runSqlDirectly(tx, "select distinct meta_id as id, meta_name as name, meta_description as description, meta_type_name from meta_view where meta_type_internal = 0",
                     [], function (tx, result, objs) {
@@ -420,7 +444,7 @@ var UIListController = (function () {
                 groupAddNewLink  = document.getElementById('group-title-add-new-link'),
                 metaListTitle    = document.getElementById('group-title-text');
             metaList = getMetaListElement(pageType);
-            metaList.clear();
+            metaList.innerHTML = UIConfig.emptyString;
             DataAccess.metaType.getById(metaTypeId, function (tx, result, objs) {
                 if (Util.notEmpty(objs) && Util.notEmpty(objs[0])) {
                     metaTypeName     = objs[0][Sql.MetaType.Cols.Name];
@@ -490,5 +514,6 @@ var UIListController = (function () {
                 log.logSqlError("Error getting meta list[" + metaTypeId + "]", error);
             });
         }
+
     };
 }());

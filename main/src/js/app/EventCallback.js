@@ -4,26 +4,29 @@ var webworksreadyFired = false;
 var EventCallback = (function () {
     "use strict";
 
-    function onScreenReadyCallback(element, id) {
-        if (null === DataAccess.appDb) {
-            DataAccess.createDatabaseConnection();
-        }
-    }
-
     function setActionBarSelectStatus(screenId) {
-        var tab = document.getElementById(screenId),
+        var actionBar = document.getElementById('action-bar'),
+            tab = document.getElementById(screenId),
             devTab = document.getElementById('development');
         if (Util.notEmpty(tab)) {
             tab.setAttribute('data-bb-selected', 'true');
             bb.refresh();
         }
         if (!AppConfig.debugMode && undefined !== devTab) {
-            devTab.style.display = 'none';
+            devTab.hide();
         }
     }
 
+
+    function onScreenReadyCallback(element, id) {
+        if (null === DataAccess.appDb) {
+            DataAccess.createDatabaseConnection();
+        }
+        setActionBarSelectStatus(id);
+    }
+
     function onDomReadyCallback(element, id, params) {
-        var taskId, metaTypeName, metaId, metaTypeId, defaultMetaName, toastMsg;
+        var taskId, metaTypeName, metaId, metaTypeId, toastMsg;
         console.debug("Element: [%s], ID: [%s]", element, id);
         log.logObjectData("Parameters:", params, true);
         if (Util.notEmpty(params)) {
@@ -36,11 +39,6 @@ var EventCallback = (function () {
             if (Util.notEmpty(params[UIConfig.paramMetaTypeName])) {
                 metaTypeName = params[UIConfig.paramMetaTypeName];
             }
-            if (Util.notEmpty(params[UIConfig.paramMetaName])) {
-                defaultMetaName = params[UIConfig.paramMetaName];
-            } else {
-                defaultMetaName = Sql.FilterAllMeta;
-            }
             if (Util.notEmpty(params[UIConfig.paramMetaId])) {
                 metaId = params[UIConfig.paramMetaId];
             }
@@ -49,29 +47,15 @@ var EventCallback = (function () {
             }
         }
         if (id !== null) {
-            if (id === SeedData.BasketMetaName
-                    || id === SeedData.NextActionMetaName
-                    || id === SeedData.SomedayMetaName) {
+            if (id === SeedData.BasketMetaName) {
                 UIListController.fillTasksToGroupByMetaInfo(SeedData.GtdMetaTypeName, id);
             } else if (id === UIConfig.editTaskPagePrefix) {
                 UIEditFormController.fillTaskToEditForm(taskId, params);
-            } else if (id === UIConfig.taskByPagePrefix) {
-                UIListController.fillMetaListToPanelByTypeName(metaTypeName, UIConfig.taskByPagePrefix);
-                UIListController.fillTasksToGroupByMetaInfo(metaTypeName, defaultMetaName);
-            } else if (id === UIConfig.screenIdField) {
-                UIListController.fillMetaTypeToPanel();
-                UIListController.fillAllMetaToPanel(UIConfig.metaByPagePrefix);
             } else if (id === UIConfig.editMetaPagePrefix) {
                 UIEditFormController.fillMetaToEditForm(metaId);
             } else if (id === UIConfig.createMetaPagePrefix) {
                 UIListController.fillMetaToCreateForm(metaTypeId);
-            } else if (id === UIConfig.metaByPagePrefix) {
-                UIListController.fillMetaTypeToPanel();
-                UIListController.fillMetaListToPanel(metaTypeId, UIConfig.metaByPagePrefix);
-            } else if (id === SeedData.TaskDeletedStatus) {
-                UIListController.fillTasksToGroupByStatusKey(id);
             }
-            setActionBarSelectStatus(id);
             if (Util.notEmpty(toastMsg)) {
                 Util.showToast(toastMsg);
             }

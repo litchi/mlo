@@ -1,4 +1,4 @@
-/*jslint browser: true*/
+/*jslint browser: true es5: true*/
 var UIConfig = (function () {
     "use strict";
     return {
@@ -29,6 +29,8 @@ var UIConfig = (function () {
         paramTaskId                 : 'taskId',
         paramToastMsg               : 'toastMsg',
         screenIdField               : 'fields',
+        singleDisplayMode           : 'single',
+        masterDetailDisplayMode     : 'masterDetail',
         taskContextMenu : [
             'mark_task_as_done',
             'postpone_task',
@@ -50,6 +52,35 @@ var UIConfig = (function () {
         nothing : function () {}
     };
 
+}());
+
+var UIFragments = (function () {
+    "use strict";
+    return {
+        singleTaskList       : '<div data-bb-images="none" data-bb-type="image-list" id="detail-list"> </div>',
+        masterDetailTaskList : '\
+        <div id="group">\
+            <div id="group-title"\
+                onclick="Util.switchPanelWidth(UIConfig.rightPanelWidth, UIConfig.leftPanelWidth, UIConfig.rightPanelLargerLeftMargin);">\
+                <span id="group-title-text"></span>\
+                <span id="group-title-add-new-link" onclick="bb.pushScreen(\'edit-meta.html\', UIConfig.createMetaPagePrefix , {\'metaTypeId\' : Util.valueOf(\'v_meta_type_id\')})"></span>\
+            </div>\
+            <div data-bb-type="scroll-panel" id="group-list-panel">\
+                <div id="group-list" data-bb-type="image-list" data-bb-images="none" ></div>\
+                <div id="group-space" onclick="Util.switchPanelWidth(UIConfig.rightPanelWidth, UIConfig.leftPanelWidth, UIConfig.rightPanelLargerLeftMargin);"></div>\
+            </div>\
+        </div>\
+        <div id="detail" onclick="Util.switchPanelWidth(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">\
+            <div id="detail-title">\
+                <span id="detail-title-text"></span>\
+                <span id="detail-add-new-link" onclick="bb.pushScreen(\'edit-meta.html\', UIConfig.createMetaPagePrefix, {\'metaTypeId\' : Util.valueOf(\'v_meta_type_id\')})"></span>\
+            </div>\
+            <div data-bb-type="scroll-panel" id="detail-list-panel">\
+                <div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">\
+                </div>\
+            </div>\
+        </div>'
+    };
 }());
 
 var AppConfig = (function () {

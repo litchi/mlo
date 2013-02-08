@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql*/
+/*global blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, UIActionBarController*/
 var Util = (function () {
     "use strict";
     return {
@@ -179,16 +179,9 @@ var Util = (function () {
             if (metaName === SeedData.NextActionMetaName ||
                     metaName === SeedData.BasketMetaName ||
                     metaName === SeedData.SomedayMetaName) {
-                bb.pushScreen('task-list.html', metaName,
-                    {'toastMsg' : localToastMsg});
+                UIActionBarController.openTaskByMetaPage(metaName, localToastMsg);
             } else {
-                if (Util.notEmpty(metaName)) {
-                    bb.pushScreen('master-detail.html', UIConfig.taskByPagePrefix,
-                        {'metaTypeName' : metaTypeName, 'metaName' : metaName, 'toastMsg' : localToastMsg});
-                } else {
-                    bb.pushScreen('master-detail.html', UIConfig.taskByPagePrefix,
-                        {'metaTypeName' : metaTypeName, 'toastMsg' : localToastMsg});
-                }
+                UIActionBarController.openTaskGroupByMetaPage(metaTypeName, metaName, localToastMsg);
             }
         },
 
