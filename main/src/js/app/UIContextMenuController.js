@@ -89,6 +89,7 @@ var UIContextMenuController = (function () {
         }
     }
 
+    //Fixme Actually it's not move but copy, need to fix this.
     function moveTaskToGtdList(metaName) {
         var selectedItem, selectedId,
             context = document.getElementById('task-operation-context-menu');
@@ -99,11 +100,11 @@ var UIContextMenuController = (function () {
                 //TODO Generate the context menu dynamically based on current task status
                 DataAccess.taskMeta.moveTaskToGtdList(selectedId, metaName,
                     function (tx3, result3, rows3) {
-                        var metaTypeName = Util.valueOf('v_meta_type_name');
-                        if (metaTypeName !== SeedData.ProjectMetaTypeName && metaTypeName !== SeedData.ContextMetaTypeName) {
+                        var currentMetaName = Util.valueOf('v_meta_name');
+                        if (currentMetaName === SeedData.BasketMetaName || currentMetaName === SeedData.NextActionMetaName || currentMetaName === SeedData.SomedayMetaName) {
                             document.getElementById('task-' + selectedId).remove();
-                            Util.showToast(UIConfig.msgForTaskMovePref + metaName);
                         }
+                        Util.showToast(UIConfig.msgForTaskMovePref + metaName);
                     },
                     function (tx3, error3) {
                         console.error("Failed to create task meta for task[" + selectedId + "], meta[" + metaName + "]");
@@ -247,17 +248,18 @@ var UIContextMenuController = (function () {
                             if ((1 === result.rows.length) && (result.rows.item(0).id.toString() !== id)) {
                                 document.getElementById('error-msg').innerText = metaTypeName + ' name "' + name + '" has already been taken, please use another one';
                                 document.getElementById('error-panel').style.display = 'block';
-                                //Util.showToast(metaTypeName + " name " + name + " already used, pls use another one", 'OK');
                             } else {
                                 if (id !== null && id !== undefined && id !== UIConfig.emptyString) {
                                     DataAccess.meta.update(id, name, description, function (tx, result, rows) {
-                                        UIActionBarController.openMetaGroupByTypePage(meta_type_id);
+                                        bb.pushScreen('task-list.html', UIConfig.metaByPagePrefix,
+                                            { 'metaTypeId' : meta_type_id, 'toastMsg' : metaTypeName + " " + name + " updated"});
                                     }, function (tx, error) {
                                         log.logSqlError("Failed to update meta[" + id + "][" + name + "][" + meta_type_id + "][" + description + "]", error);
                                     });
                                 } else {
                                     DataAccess.meta.create(name, meta_type_id, description, function (tx, result, rows) {
-                                        UIActionBarController.openMetaGroupByTypePage(meta_type_id);
+                                        bb.pushScreen('task-list.html', UIConfig.metaByPagePrefix,
+                                            { 'metaTypeId' : meta_type_id, 'toastMsg' : metaTypeName + " " + name + " created"});
                                     }, function (tx, error) {
                                         log.logSqlError("Failed to create meta[" + id + "][" + name + "][" + meta_type_id + "][" + description + "]", error);
                                     });
@@ -270,13 +272,37 @@ var UIContextMenuController = (function () {
 
         deleteMeta : function () {
             var selectedItem, selectedId,
+                savedMetaTypeId, savedName, savedDescription, savedUIRank,
+                metaTypeName = Util.valueOf('v_meta_type_name'),
                 context = document.getElementById('task-operation-context-menu');
             selectedItem  = context.menu.selected;
             if (selectedItem) {
                 selectedId = selectedItem.selected;
                 if (selectedId !== null) {
+                    DataAccess.appDb.transaction(function (tx) {
+                        DataAccess.runSqlDirectly(tx, "select meta_type_id, name, description, ui_rank from meta where id = ?", [selectedId],
+                            function (tx, result, objs) {
+                                if (Util.notEmpty(objs) && objs.length > 0) {
+                                    savedMetaTypeId = objs[0].meta_type_id;
+                                    savedName = objs[0].name;
+                                    savedDescription = objs[0].description;
+                                    savedUIRank = objs[0].ui_rank;
+                                }
+                            });
+                    });
                     DataAccess.meta.deleteById(selectedId, function (tx, result, rows) {
                         document.getElementById('meta-' + selectedId).remove();
+                        Util.showToast(metaTypeName + " " + savedName + " Deleted", UIConfig.msgUndo, UIConfig.nothing,
+                            function () {
+                                DataAccess.appDb.transaction(function (tx) {
+                                    DataAccess.runSqlDirectly(tx, Sql.Meta.InsertById, [selectedId, savedName, savedMetaTypeId, savedDescription, savedUIRank],
+                                        function (tx, result, objs) {
+                                            UIListController.fillMetaListMarkTypeAsSelected(savedMetaTypeId);
+                                            var toastMsg = "Deletion of " + metaTypeName + " " + savedName + " reverted";
+                                            Util.showToast(toastMsg);
+                                        });
+                                });
+                            });
                     }, function (tx, error) {
                         log.logSqlError("Failed to delete meta[" + selectedId + "]", error);
                     });

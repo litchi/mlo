@@ -179,9 +179,13 @@ var Util = (function () {
             if (metaName === SeedData.NextActionMetaName ||
                     metaName === SeedData.BasketMetaName ||
                     metaName === SeedData.SomedayMetaName) {
-                UIActionBarController.openTaskByMetaPage(metaName, localToastMsg);
+                bb.pushScreen('task-list.html', metaName, {'toastMsg' : localToastMsg});
             } else {
-                UIActionBarController.openTaskGroupByMetaPage(metaTypeName, metaName, localToastMsg);
+                if (Util.notEmpty(metaName)) {
+                    bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {'metaTypeName' : metaTypeName, 'metaName' : metaName, 'toastMsg' : localToastMsg});
+                } else {
+                    bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {'metaTypeName' : metaTypeName, 'toastMsg' : localToastMsg});
+                }
             }
         },
 

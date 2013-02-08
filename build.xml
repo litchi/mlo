@@ -31,7 +31,7 @@
     <property name = "env.webworks.installation.dir"  location = "/Users/larry/bin/WebWorks_SDK"/>
     <property name = "env.ripple.remote.ip"           value    = "172.16.177.134"/>
     <property name = "env.ripple.remote.folder"       value    = "/var/www/gtd"/>
-    <property name = "env.bb10.simulator.ip"          value    = "172.16.177.137"/>
+    <property name = "env.bb10.simulator.ip"          value    = "172.16.177.138"/>
  
     <!-- Tools -->
     <property name = "tools.jslint.installation"           location = "${build.tools}/jslint"/>

@@ -4,14 +4,8 @@ var webworksreadyFired = false;
 var EventCallback = (function () {
     "use strict";
 
-    function setActionBarSelectStatus(screenId) {
-        var actionBar = document.getElementById('action-bar'),
-            tab = document.getElementById(screenId),
-            devTab = document.getElementById('development');
-        if (Util.notEmpty(tab)) {
-            tab.setAttribute('data-bb-selected', 'true');
-            bb.refresh();
-        }
+    function hideDevTab() {
+        var devTab = document.getElementById('development');
         if (!AppConfig.debugMode && undefined !== devTab) {
             devTab.hide();
         }
@@ -22,11 +16,10 @@ var EventCallback = (function () {
         if (null === DataAccess.appDb) {
             DataAccess.createDatabaseConnection();
         }
-        setActionBarSelectStatus(id);
     }
 
     function onDomReadyCallback(element, id, params) {
-        var taskId, metaTypeName, metaId, metaTypeId, toastMsg;
+        var taskId, metaTypeName, metaId, metaTypeId, defaultMetaName, toastMsg;
         console.debug("Element: [%s], ID: [%s]", element, id);
         log.logObjectData("Parameters:", params, true);
         if (Util.notEmpty(params)) {
@@ -39,6 +32,11 @@ var EventCallback = (function () {
             if (Util.notEmpty(params[UIConfig.paramMetaTypeName])) {
                 metaTypeName = params[UIConfig.paramMetaTypeName];
             }
+            if (Util.notEmpty(params[UIConfig.paramMetaName])) {
+                defaultMetaName = params[UIConfig.paramMetaName];
+            } else {
+                defaultMetaName = Sql.FilterAllMeta;
+            }
             if (Util.notEmpty(params[UIConfig.paramMetaId])) {
                 metaId = params[UIConfig.paramMetaId];
             }
@@ -47,20 +45,39 @@ var EventCallback = (function () {
             }
         }
         if (id !== null) {
-            if (id === SeedData.BasketMetaName) {
+            if (id === SeedData.BasketMetaName ||
+                    id === SeedData.NextActionMetaName ||
+                    id === SeedData.SomedayMetaName) {
+                UIListController.switchDisplayToMode(UIConfig.singleDisplayMode);
                 UIListController.fillTasksToGroupByMetaInfo(SeedData.GtdMetaTypeName, id);
             } else if (id === UIConfig.editTaskPagePrefix) {
                 UIEditFormController.fillTaskToEditForm(taskId, params);
+            } else if (id === UIConfig.taskByPagePrefix) {
+                UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
+                UIListController.fillMetaListToPanelByTypeName(metaTypeName, UIConfig.taskByPagePrefix);
+                UIListController.fillTasksToGroupByMetaInfo(metaTypeName, defaultMetaName);
+            } else if (id === UIConfig.screenIdField) {
+                UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
+                UIListController.fillMetaTypeToPanel();
+                UIListController.fillAllMetaToPanel(UIConfig.metaByPagePrefix);
             } else if (id === UIConfig.editMetaPagePrefix) {
                 UIEditFormController.fillMetaToEditForm(metaId);
             } else if (id === UIConfig.createMetaPagePrefix) {
                 UIListController.fillMetaToCreateForm(metaTypeId);
+            } else if (id === UIConfig.metaByPagePrefix) {
+                UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
+                UIListController.fillMetaTypeToPanel();
+                UIListController.fillMetaListToPanel(metaTypeId, UIConfig.metaByPagePrefix);
+            } else if (id === SeedData.TaskDeletedStatus) {
+                UIListController.fillTasksToGroupByStatusKey(id);
             }
+            hideDevTab();
             if (Util.notEmpty(toastMsg)) {
                 Util.showToast(toastMsg);
             }
         }
     }
+
     return {
         webworksReadyCallback : function (e) {
             //Init on bbUI should before any other code loads.  

@@ -299,7 +299,7 @@ var DataAccess = (function () {
 
         meta : {
             create : function (name, meta_type_id, description, successCallback, failureCallback) {
-                runSQL(Sql.Meta.Insert, [name, meta_type_id, description], successCallback, failureCallback);
+                runSQL(Sql.Meta.Insert, [name, meta_type_id, description, 0], successCallback, failureCallback);
             },
             deleteById : function (id, successCallback, failureCallback) {
                 runSQL(Sql.Meta.DeleteById, [id], successCallback, failureCallback);

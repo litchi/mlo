@@ -68,7 +68,8 @@ Sql = {
             Description : 'description'
         },
         FirstVersionTable  : 'create table if not exists meta (id integer primary key autoincrement, meta_type_id integer, name text, description text, unique(meta_type_id, name))',
-        Insert             : 'insert into meta (id, name, meta_type_id, description) values (null, ?, ?, ?)',
+        Insert             : 'insert into meta (id, name, meta_type_id, description, ui_rank) values (null, ?, ?, ?, ?)',
+        InsertById         : 'insert into meta (id, name, meta_type_id, description, ui_rank) values (?, ?, ?, ?, ?)',
         SelectAll          : 'select id, meta_type_id, name, description from meta',
         SelectById         : 'select id, meta_type_id, name, description from meta where id = ?',
         SelectByName       : 'select id, meta_type_id, name, description from meta where name = ?',

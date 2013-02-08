@@ -3,7 +3,7 @@
 var UIListController = (function () {
     "use strict";
 
-    function createItemElement(id, name, project, contexts, dueDate) {
+    function createTaskItemElement(id, name, project, contexts, dueDate) {
         var innerContent = UIConfig.emptyString, item = document.createElement('div'),
             contextCount, i, dueClass, localDueDate;
         item.setAttribute('data-bb-type', 'item');
@@ -379,7 +379,7 @@ var UIListController = (function () {
         addTaskToList : function (id, name, project, contexts, dueDate) {
             var item, taskList = document.getElementById(UIConfig.detailListElementId),
                 items = taskList.getItems();
-            item = createItemElement(id, name, project, contexts, dueDate);
+            item = createTaskItemElement(id, name, project, contexts, dueDate);
             if (0 === items.length) {
                 taskList.innerHTML = UIConfig.emptyString;
                 taskList.appendItem(item);
