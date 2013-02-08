@@ -264,6 +264,7 @@ var UIListController = (function () {
         fillTasksToGroupByMetaInfo : function (metaTypeName, metaName) {
             var id, name, title = UIConfig.emptyString,
                 detailListTitle  = document.getElementById('detail-title-text'),
+                detailAddNewLink = document.getElementById('detail-add-new-link'),
                 taskList = document.getElementById(UIConfig.detailListElementId);
             filterContextMenu(UIConfig.taskContextMenu);
             if (SeedData.DueMetaTypeName === metaTypeName) {
@@ -289,6 +290,8 @@ var UIListController = (function () {
                     detailListTitle.innerText = 'Tasks with ' + metaTypeName;
                 }
             }
+            detailAddNewLink.style.display = 'none';
+            detailListTitle.style.display = 'inline';
             if (Sql.FilterAllMeta !== metaName) {
                 setMetaFields(metaName);
             }
@@ -394,6 +397,7 @@ var UIListController = (function () {
 
         fillAllMetaToPanel : function (pageType) {
             var metaTypeName, metaList, metaTypeInternal,
+                detailListTitle  = document.getElementById('detail-title-text'),
                 detailAddNewLink = document.getElementById('detail-add-new-link'),
                 groupAddNewLink  = document.getElementById('group-title-add-new-link'),
                 metaListTitle    = document.getElementById('group-title-text');
@@ -429,8 +433,10 @@ var UIListController = (function () {
                                 }
                             }
                         }
-                        detailAddNewLink.innerText = 'All Projects and Contexts';
-                        detailAddNewLink.onclick = function () {};
+                        detailAddNewLink.innerText     = 'All Projects and Contexts';
+                        detailListTitle.style.display  = 'none';
+                        detailAddNewLink.style.display = 'inline';
+                        detailAddNewLink.onclick       = function () {};
                         setGroupPanelEmptyHeight();
                     });
             }, function (tx, error) {
