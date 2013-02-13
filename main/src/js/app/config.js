@@ -21,6 +21,7 @@ var UIConfig = (function () {
         msgForTaskMoveToTrash       : 'Task moved to trash',
         msgForTrashBoxClean         : 'Trash Box Cleaned',
         msgForTaskRestore           : 'Task Restored from Tash Box',
+        msgForTaskStatusRestore     : 'Task Status Reverted to ',
         msgUndo                     : 'Undo',
         paramMetaTypeName           : 'metaTypeName',
         paramMetaTypeId             : 'metaTypeId',

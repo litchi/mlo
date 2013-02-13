@@ -334,7 +334,16 @@ var UIContextMenuController = (function () {
         markTaskAsDone : function () {
             updateTaskStatus(SeedData.TaskDoneStatus, function (taskId) {
                 document.getElementById('task-' + taskId).style.textDecoration = 'line-through';
-                Util.showToast(UIConfig.msgForTaskStatusUpdatePref + SeedData.TaskDoneStatus);
+                Util.showToast(UIConfig.msgForTaskStatusUpdatePref + SeedData.TaskDoneStatus, UIConfig.msgUndo,
+                    UIConfig.nothing, function () {
+                        DataAccess.task.updateStatus(taskId, SeedData.TaskNewStatus,
+                            function (tx, result, rows) {
+                                document.getElementById('task-' + taskId).style.textDecoration = 'none';
+                                Util.showToast(UIConfig.msgForTaskStatusRestore + SeedData.TaskNewStatus);
+                            }, function (tx, error) {
+                                log.logSqlError("Failed to update status to [" + SeedData.TaskNewStatus + "] for task[" + taskId + "]", error);
+                            });
+                    });
             });
         },
         markTaskAsNew : function () {
