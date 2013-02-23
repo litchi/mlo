@@ -32,6 +32,8 @@
     <property name = "env.ripple.remote.ip"           value    = "172.16.177.134"/>
     <property name = "env.ripple.remote.folder"       value    = "/var/www/gtd"/>
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.138"/>
+    <property name = "env.bb10.device.ip"             value    = "192.168.53.219"/>
+    <property name = "env.bb10.device.password"       value    = "hetaolxq"/>
  
     <!-- Tools -->
     <property name = "tools.jslint.installation"           location = "${build.tools}/jslint"/>
@@ -203,10 +205,17 @@
         </exec>
     </target>
 
-    <target name="bb" depends="package">
+    <target name="ds" depends="package">
         <!-- Deploy to simulator-->
         <exec executable="${env.webworks.installation.dir}/dependencies/tools/bin/blackberry-deploy" dir="${build.target}">
             <arg line='-installApp -launchApp -device ${env.bb10.simulator.ip} "${build.target.output.simulator.bar}"'/>
+        </exec>
+    </target>
+
+    <target name="dd" depends="package">
+        <!-- Deploy to simulator-->
+        <exec executable="${env.webworks.installation.dir}/dependencies/tools/bin/blackberry-deploy" dir="${build.target}">
+            <arg line='-installApp -password ${env.bb10.device.password} -device ${env.bb10.device.ip} -package "${build.target.output.device.bar}"'/>
         </exec>
     </target>
 
