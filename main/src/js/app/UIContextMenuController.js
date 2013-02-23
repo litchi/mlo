@@ -76,7 +76,6 @@ var UIContextMenuController = (function () {
         if (selectedItem) {
             selectedId = selectedItem.selected;
             if (selectedId !== null) {
-                //TODO Change to set style class 
                 DataAccess.task.updateStatus(selectedId, statusKey,
                     function (tx, result, rows) {
                         if (Util.isFunction(successCallback)) {
@@ -97,7 +96,6 @@ var UIContextMenuController = (function () {
         if (selectedItem) {
             selectedId = selectedItem.selected;
             if (selectedId !== null) {
-                //TODO Generate the context menu dynamically based on current task status
                 DataAccess.taskMeta.moveTaskToGtdList(selectedId, metaName,
                     function (tx3, result3, rows3) {
                         var currentMetaName = Util.valueOf('v_meta_name');
