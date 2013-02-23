@@ -17,6 +17,13 @@ var EventCallback = (function () {
         }
     }
 
+    function showAndClearToastMsg(toastMsg, params) {
+        if (Util.notEmpty(toastMsg)) {
+            Util.showToast(toastMsg);
+            params[UIConfig.paramToastMsg] = UIConfig.emptyString;
+        }
+    }
+
     function onDomReadyCallback(element, id, params) {
         var taskId, metaTypeName, metaId, metaTypeId, defaultMetaName, toastMsg;
         console.debug("Element: [%s], ID: [%s]", element, id);
@@ -71,9 +78,7 @@ var EventCallback = (function () {
                 UIListController.fillTasksToGroupByStatusKey(id);
             }
             hideDevTab();
-            if (Util.notEmpty(toastMsg)) {
-                Util.showToast(toastMsg);
-            }
+            showAndClearToastMsg(toastMsg, params);
         }
     }
 
