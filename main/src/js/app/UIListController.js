@@ -3,6 +3,25 @@
 var UIListController = (function () {
     "use strict";
 
+    function setMetaContextMenuAction(item, metaTypeName, metaId, metaName, metaDesc) {
+        if (Util.isEmpty(metaDesc)) {
+            metaDesc = UIConfig.emptyString;
+        }
+        item.innerHTML = metaDesc;
+        item.setAttribute(
+            'onclick',
+            "document.getElementById('task-operation-context-menu').menu.peek({ title : '" + metaName + " : "  + metaTypeName + "', description : '" + metaDesc + "', selected : '" + metaId + "'});"
+        );
+    }
+
+    function decorateTaskNumber(taskNumber) {
+        return '<span class="list-context" style="vertical-align:top;margin-top:0px;border:1px solid #CCC">' + taskNumber + '</span>';
+    }
+
+    function getNumberOfTasks(metaTypeName, metaName) {
+        return '20';
+    }
+
     function createTaskItemElement(id, name, project, contexts, dueDate) {
         var innerContent = UIConfig.emptyString, item = document.createElement('div'),
             contextCount, i, dueClass, localDueDate;
@@ -34,7 +53,7 @@ var UIListController = (function () {
             item.innerHTML = innerContent;
             item.onclick = function () {
                 document.getElementById('task-operation-context-menu').menu.peek({
-                    title : 'Edit Task',
+                    title : UIConfig.msgTaskContextMenuTitle,
                     description : name,
                     selected : id
                 });
@@ -43,48 +62,52 @@ var UIListController = (function () {
         return item;
     }
 
-    //TODO Optimize, first construct a document fragment and then append it to the element.
     //TODO Put project/contexts/dueDate to an array to avoid changing the method definition all the time.
+    function taskFromDbToUIFunc(id, name, taskIndex, taskCount, taskList, items) {
+        return function (tx) {
+            DataAccess.runSqlDirectly(
+                tx,
+                'select meta_name, meta_type_name, task_due_date from task_view where task_id = ?',
+                [id],
+                function (tx, result, objs) {
+                    var metaCount, metaIndex, contexts = [], project = null, metaTypeName = null, taskDueDate = null, obj, item;
+                    metaCount = result.rows.length;
+                    for (metaIndex = 0; metaIndex < metaCount; metaIndex += 1) {
+                        obj = result.rows.item(metaIndex);
+                        metaTypeName = obj.meta_type_name;
+                        //An array is used to store context since there might be more than one context assigned to one task
+                        if (SeedData.ContextMetaTypeName === metaTypeName) {
+                            contexts.push(obj.meta_name);
+                        } else if (SeedData.ProjectMetaTypeName === metaTypeName) {
+                            project = obj.meta_name;
+                        }
+                        //Only get once task due date since it's the same for all the result set 
+                        if (null === taskDueDate) {
+                            taskDueDate = obj.task_due_date;
+                        }
+                    }
+                    item = createTaskItemElement(id, name, project, contexts, taskDueDate);
+                    items.push(item);
+                    if (taskIndex === taskCount - 1) {
+                        taskList.refresh(items);
+                    }
+                }
+            );
+        };
+    }
 
     function tasksFromDbToUI(tasks, taskList) {
-        var key, id, name, i, max, height;
-        taskList.clear();
+        var id, name, taskIndex, taskCount, items = [], loopFunc;
+        taskList.innerHTML = UIConfig.emptyString;
         if (null === tasks || undefined === tasks || 0 === tasks.length) {
             taskList.innerHTML = UIConfig.msgForNoTask;
         } else {
-            for (key in tasks) {
-                if (tasks.hasOwnProperty(key)) {
-                    name = tasks[key][Sql.Task.Cols.Name];
-                    id   = tasks[key][Sql.Task.Cols.Id];
-                    DataAccess.appDb.transaction(
-                        (function (id, name) {
-                            return function (tx) {
-                                DataAccess.runSqlDirectly(
-                                    tx,
-                                    'select meta_name, meta_type_name, task_due_date from task_view where task_id = ?',
-                                    [id],
-                                    function (tx, result, objs) {
-                                        var context = [], project = null, mt = null, rt = null, obj;
-                                        for (i = 0, max = result.rows.length; i < max; i += 1) {
-                                            obj = result.rows.item(i);
-                                            mt = obj.meta_type_name;
-                                            if (SeedData.ContextMetaTypeName === mt) {
-                                                context.push(obj.meta_name);
-                                            } else if (SeedData.ProjectMetaTypeName === mt) {
-                                                project = obj.meta_name;
-                                            }
-                                            if (null === rt) {
-                                                rt = obj.task_due_date;
-                                            }
-                                        }
-                                        UIListController.addTaskToList(id, name, project, context, rt);
-                                    }
-                                );
-                            };
-                        }(id, name)
-                        )
-                    );
-                }
+            taskCount = tasks.length;
+            for (taskIndex = 0; taskIndex < taskCount; taskIndex += 1) {
+                name = tasks[taskIndex][Sql.Task.Cols.Name];
+                id   = tasks[taskIndex][Sql.Task.Cols.Id];
+                loopFunc = taskFromDbToUIFunc(id, name, taskIndex, taskCount, taskList, items);
+                DataAccess.appDb.transaction(loopFunc);
             }
         }
     }
@@ -380,9 +403,8 @@ var UIListController = (function () {
             });
         },
 
-        addTaskToList : function (id, name, project, contexts, dueDate) {
-            var item, taskList = document.getElementById(UIConfig.detailListElementId),
-                items = taskList.getItems();
+        addTaskToList : function (taskList, id, name, project, contexts, dueDate) {
+            var item, items = taskList.getItems();
             item = createTaskItemElement(id, name, project, contexts, dueDate);
             if (0 === items.length) {
                 taskList.innerHTML = UIConfig.emptyString;
@@ -410,29 +432,23 @@ var UIListController = (function () {
             DataAccess.appDb.transaction(function (tx) {
                 DataAccess.runSqlDirectly(tx, "select distinct meta_id as id, meta_name as name, meta_description as description, meta_type_name from meta_view where meta_type_internal = 0",
                     [], function (tx, result, objs) {
-                        var key, name, id, desc, item, type;
+                        var key, name, id, desc, item, metaTypeName;
                         for (key in objs) {
                             if (objs.hasOwnProperty(key)) {
                                 name = objs[key][Sql.Meta.Cols.Name];
                                 id   = objs[key][Sql.Meta.Cols.Id];
                                 desc = objs[key][Sql.Meta.Cols.Description];
-                                type = objs[key].meta_type_name;
+                                metaTypeName = objs[key].meta_type_name;
                                 item = document.createElement('div');
                                 item.setAttribute('data-bb-type', 'item');
                                 item.setAttribute('data-bb-style', 'stretch');
                                 if (Util.notEmpty(id)) {
                                     item.setAttribute('id', 'meta-' + id);
                                     if (Util.notEmpty(name)) {
-                                        item.setAttribute('title', type + ": " + name);
-                                        item.setAttribute('data-bb-title', type + ": " + name);
+                                        item.setAttribute('title', metaTypeName + ": " + name);
+                                        item.setAttribute('data-bb-title', metaTypeName + ": " + name);
                                     }
-                                    if (Util.notEmpty(desc)) {
-                                        item.innerHTML = desc;
-                                    }
-                                    item.setAttribute(
-                                        'onclick',
-                                        "document.getElementById('task-operation-context-menu').menu.peek({ title : '" + name + "', description : '" + desc + "', selected : '" + id + "'});"
-                                    );
+                                    setMetaContextMenuAction(item, metaTypeName, id, name, desc);
                                     metaList.appendItem(item);
                                 }
                             }
@@ -503,21 +519,16 @@ var UIListController = (function () {
                             item.setAttribute('id', uiId);
                             if (name !== null) {
                                 item.setAttribute('title', name);
-                                item.setAttribute('data-bb-title', name);
                             }
                             if (UIConfig.taskByPagePrefix === pageType) {
+                                item.setAttribute('data-bb-title',  name + decorateTaskNumber(getNumberOfTasks(metaTypeName, name)));
                                 item.setAttribute(
                                     'onclick',
                                     "UIListController.fillTaskAndMarkGroup('" + uiId + "', '" + metaTypeName + "','" + name + "')"
                                 );
                             } else if (UIConfig.metaByPagePrefix === pageType) {
-                                if (desc !== null && desc !== undefined) {
-                                    item.innerHTML = desc;
-                                }
-                                item.setAttribute(
-                                    'onclick',
-                                    "document.getElementById('task-operation-context-menu').menu.peek({ title : '" + name + "', description : '" + metaTypeName + "', selected : '" + id + "'});"
-                                );
+                                item.setAttribute('data-bb-title', name);
+                                setMetaContextMenuAction(item, metaTypeName, id, name, desc);
                             }
                             metaList.appendItem(item);
                         }

@@ -114,7 +114,12 @@ var UIContextMenuController = (function () {
     }
 
     function createTaskInternal(name, metaId) {
-        var taskId, metaTypeName, metaName, project = null, context = null;
+        var taskList = document.getElementById(UIConfig.detailListElementId),
+            taskId,
+            metaTypeName,
+            metaName,
+            project = null,
+            context = null;
         DataAccess.appDb.transaction(function (tx) {
             DataAccess.runSqlDirectly(tx, Sql.Task.InsertByName, [name],
                 function (tx, result, objs) {
@@ -130,7 +135,7 @@ var UIContextMenuController = (function () {
                                     context = [metaName];
                                 }
                             }
-                            UIListController.addTaskToList(taskId, name, project, context, null);
+                            UIListController.addTaskToList(taskList, taskId, name, project, context, null);
                             Util.setValue('ctsi', UIConfig.emptyString);
                             Util.showToast('Task created successfully', 'Undo Task Creation', null, function () {
                                 DataAccess.task.updateStatus(taskId, SeedData.TaskDeletedStatus,

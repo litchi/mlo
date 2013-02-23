@@ -23,6 +23,7 @@ var UIConfig = (function () {
         msgForTaskRestore           : 'Task Restored from Tash Box',
         msgForTaskStatusRestore     : 'Task Status Reverted to ',
         msgUndo                     : 'Undo',
+        msgTaskContextMenuTitle     : 'Task',
         paramMetaTypeName           : 'metaTypeName',
         paramMetaTypeId             : 'metaTypeId',
         paramMetaName               : 'metaName',
