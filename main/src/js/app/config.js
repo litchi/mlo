@@ -34,6 +34,7 @@ var UIConfig = (function () {
         singleDisplayMode           : 'single',
         masterDetailDisplayMode     : 'masterDetail',
         taskContextMenu : [
+            'view_task',
             'mark_task_as_done',
             'postpone_task',
             'edit_task',
