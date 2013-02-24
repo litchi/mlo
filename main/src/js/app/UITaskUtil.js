@@ -3,6 +3,21 @@
 var UITaskUtil = (function () {
     "use strict";
 
+    function setFieldInTaskDetailPopup(value, element, mode) {
+        if (Util.notEmpty(value)) {
+            if (mode === 'html') {
+                element.innerHTML = value;
+            } else {
+                element.innerText = value;
+            }
+            element.className = 'view-task-detail-sub-field';
+            element.style.display = 'block';
+        } else {
+            element.className = '';
+            element.style.display = 'none';
+        }
+    }
+
     return {
 
         decorateTaskNumber : function (taskNumber) {
@@ -42,6 +57,7 @@ var UITaskUtil = (function () {
                     document.getElementById('task-operation-context-menu').menu.peek({
                         title : UIConfig.msgTaskContextMenuTitle,
                         description : name,
+                        //FIXME: Make this parameter pass all the fetched data and avoid querying from DB again
                         selected : id
                     });
                 };
@@ -97,6 +113,57 @@ var UITaskUtil = (function () {
                     DataAccess.appDb.transaction(loopFunc);
                 }
             }
+        },
+
+        setTaskDetailPanelDisplay : function (display) {
+            var container, closeButton, taskListContainer;
+            container = document.getElementById(UIConfig.viewTaskDetailElementId);
+            closeButton = document.getElementById(UIConfig.viewTaskCloseButElementId);
+            if (container.style.display !== display) {
+                container.style.display = display;
+            }
+            if (closeButton.style.display !== display) {
+                closeButton.style.display = display;
+            }
+        },
+
+        createTaskDetailView : function (container, id, name, project, contexts, taskDueDate) {
+            console.log("paramers: container = %s, id = %s, name = %s, project = %s, contexts = %s, taskDueDate = %s", container, id, name, project, contexts, taskDueDate);
+            var contextCount, contextIndex, dueClass, localDueDate,
+                comma = UIConfig.emptyString,
+                metaContent = UIConfig.emptyString,
+                contextContent = UIConfig.emptyString,
+                dueContent = UIConfig.emptyString,
+                titleDiv = document.getElementById(UIConfig.viewTaskTitleElementId),
+                projectDiv = document.getElementById(UIConfig.viewTaskProjectElementId),
+                dueDiv = document.getElementById(UIConfig.viewTaskDueElementId),
+                contextDiv = document.getElementById(UIConfig.viewTaskContextElementId),
+                notesDiv = document.getElementById(UIConfig.viewTaskNotesElementId),
+                metaDiv = document.getElementById('view-task-detail-meta');
+            setFieldInTaskDetailPopup(name, titleDiv);
+            if (Util.notEmpty(project)) {
+                metaContent = project + " project";
+            }
+            if (Util.notEmpty(taskDueDate)) {
+                //localDueDate = Util.timeToDateWithZone(dueDate);
+                localDueDate = new Date(taskDueDate * 1000);
+                dueClass = (localDueDate.getTime() > new Date().getTime()) ? 'task-detail-list-due' : 'task-detail-list-overdue';
+                if (Util.notEmpty(metaContent)) {
+                    comma = ",";
+                }
+                metaContent = metaContent + comma + " Due on <span class='" + dueClass + "'>" + Util.getPrettyDateStr(localDueDate) + "</span>";
+            }
+            if (contexts !== null) {
+                contextCount = contexts.length;
+                if (contextCount > 0) {
+                    metaContent += '<div class="view-task-detail-meta-separator"></div>';
+                    for (contextIndex = 0; contextIndex < contextCount; contextIndex += 1) {
+                        metaContent = metaContent + "\n<span class='task-detail-list-context'>" + contexts[contextIndex] + "</span>";
+                    }
+                }
+            }
+
+            setFieldInTaskDetailPopup(metaContent, metaDiv, 'html');
         }
     };
 

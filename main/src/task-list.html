@@ -1,9 +1,9 @@
 ﻿<div data-bb-type="screen" xmlns="http://www.w3.org/1999/html" data-bb-effect='fade'>
-    <div data-bb-type="scroll-panel" id='task-list-container'>
+    <div data-bb-type="scroll-panel" id='task-list-container' onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
         <div data-bb-images="none" data-bb-type="image-list" id="detail-list">
         </div>
     </div>
-    <div id='group-detail-container' style="display:none">
+    <div id='group-detail-container' style="display:none" onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
         <div id="group">
             <div id="group-title"
                 onclick="Util.switchPanelWidth(UIConfig.rightPanelWidth, UIConfig.leftPanelWidth, UIConfig.rightPanelLargerLeftMargin);">
@@ -25,6 +25,13 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div id='view-task-detail' onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
+        <div id="view-task-detail-title"></div>
+        <div id="view-task-detail-meta"></div>
+    </div>
+    <div id="close-view-task-detail-window" onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
+        <img src="resources/image/close-window.png" width="48" height="48"/>
     </div>
     @meta-fields@
     @task-context-menu@
