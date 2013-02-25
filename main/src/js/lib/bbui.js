@@ -2045,6 +2045,7 @@ bb.contextMenu = {
 								this.actions[i].ontouchend();
 							}
 						}						
+                        setTimeout(function() {UITaskUtil.setTaskDetailPanelDisplay('none')}, 100);
 					};
 		menu.hide = menu.hide.bind(menu);
 		// Peek the menu
@@ -2082,6 +2083,7 @@ bb.contextMenu = {
 								};
 						// Remove the header click handling while peeking
 						this.header.removeEventListener("click", this.hide, false);		
+                        setTimeout(function() {UITaskUtil.setTaskDetailPanelDisplay('block')}, 200);
 						this.style.visibility = 'visible';
 						this.visible = true;
 					};

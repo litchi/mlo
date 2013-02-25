@@ -54,12 +54,14 @@ var UITaskUtil = (function () {
                 }
                 item.innerHTML = innerContent;
                 item.onclick = function () {
+                    var taskDetailHtml, container = document.getElementById(UIConfig.viewTaskDetailElementId);
                     document.getElementById('task-operation-context-menu').menu.peek({
                         title : UIConfig.msgTaskContextMenuTitle,
                         description : name,
                         //FIXME: Make this parameter pass all the fetched data and avoid querying from DB again
                         selected : id
                     });
+                    taskDetailHtml = UITaskUtil.createTaskDetailView(container, id, name, project, contexts, dueDate);
                 };
             }
             return item;
@@ -116,14 +118,14 @@ var UITaskUtil = (function () {
         },
 
         setTaskDetailPanelDisplay : function (display) {
-            var container, closeButton, taskListContainer;
+            var container, taskListContainer;
             container = document.getElementById(UIConfig.viewTaskDetailElementId);
-            closeButton = document.getElementById(UIConfig.viewTaskCloseButElementId);
             if (container.style.display !== display) {
+                document.getElementById('main-content-overlay').style.display = display;
+                container.style['-webkit-transition'] = 'all 1s ease-in-out';
+                container.style['-webkit-backface-visibility'] = 'hidden';
+                container.style['-webkit-perspective'] = '1000';
                 container.style.display = display;
-            }
-            if (closeButton.style.display !== display) {
-                closeButton.style.display = display;
             }
         },
 

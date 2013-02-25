@@ -5,7 +5,7 @@ var UIContextMenuUtil = (function () {
 
     return {
         filterContextMenu : function (items) {
-            var index, menuItems, menuItem,
+            var index, menuItems, menuItem, loopItem,
                 contextMenu = document.getElementById('task-operation-context-menu');
             if (Util.isEmpty(items)) {
                 console.warn("Want to display no item in the context map?");
@@ -28,7 +28,10 @@ var UIContextMenuUtil = (function () {
                 }
             }
             for (index = 0; index < items.length; index += 1) {
-                document.getElementById(items[index]).style.display = 'block';
+                loopItem = document.getElementById(items[index]);
+                if (Util.notEmpty(loopItem)) {
+                    loopItem.style.display = 'block';
+                }
             }
         },
 

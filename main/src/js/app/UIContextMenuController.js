@@ -356,53 +356,6 @@ var UIContextMenuController = (function () {
             });
         },
 
-        viewTaskDetail : function () {
-            var selectedItem, selectedId, container, closeButton, taskDetailHtml,
-                context = document.getElementById('task-operation-context-menu');
-            selectedItem  = context.menu.selected;
-            if (!selectedItem) {
-                console.warn("Selected Item is null");
-                return;
-            }
-            selectedId = selectedItem.selected;
-            if (null === selectedId) {
-                console.warn("Selected Id is null");
-                return;
-            }
-            container = document.getElementById(UIConfig.viewTaskDetailElementId);
-            UITaskUtil.setTaskDetailPanelDisplay('block');
-            DataAccess.appDb.transaction(function (tx) {
-                DataAccess.runSqlDirectly(
-                    tx,
-                    'select task_name, meta_name, meta_type_name, task_due_date from task_view where task_id = ?',
-                    [selectedId],
-                    function (tx, result, objs) {
-                        var taskName, metaCount, metaIndex, contexts = [], project = null, metaTypeName = null, taskDueDate = null, obj;
-                        metaCount = result.rows.length;
-                        for (metaIndex = 0; metaIndex < metaCount; metaIndex += 1) {
-                            obj = result.rows.item(metaIndex);
-                            metaTypeName = obj.meta_type_name;
-                            //An array is used to store context since there might be more than one context assigned to one task
-                            if (SeedData.ContextMetaTypeName === metaTypeName) {
-                                contexts.push(obj.meta_name);
-                            } else if (SeedData.ProjectMetaTypeName === metaTypeName) {
-                                project = obj.meta_name;
-                            }
-                            //Only get once task due date since it's the same for all the result set 
-                            //TODO: Code here and the method taskFromDbToUIFunc is the same, rewrite to avoid duplicate
-                            if (Util.isEmpty(taskDueDate)) {
-                                taskDueDate = obj.task_due_date;
-                            }
-                            if (Util.isEmpty(taskName)) {
-                                taskName = obj.task_name;
-                            }
-                        }
-                        taskDetailHtml = UITaskUtil.createTaskDetailView(container, selectedId, taskName, project, contexts, taskDueDate);
-                    }
-                );
-            });
-        },
-
         postponeTask         : function () { postponeTaskInternal(); },
         moveTaskToNextAction : function () { moveTaskToGtdList(SeedData.NextActionMetaName); },
         moveTaskToSomeday    : function () { moveTaskToGtdList(SeedData.SomedayMetaName); },

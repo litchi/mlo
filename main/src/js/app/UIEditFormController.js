@@ -174,8 +174,9 @@ var UIEditFormController = (function () {
             elem.setAttribute('cols', '28');
             elem.innerHTML = taskName;
             Util.resizeTextarea(elem);
-            elem.focus();
-            Util.moveCaretToEnd(elem);
+            //This behaivor is very annoying so comment out at this moment.
+            //elem.focus();
+            //Util.moveCaretToEnd(elem);
         } else {
             console.warn('Task Name for [%s] is [%s](empty ?)', id, taskName);
         }

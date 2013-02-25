@@ -27,12 +27,10 @@
         </div>
     </div>
     <div id='view-task-detail' onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
-        <div id="view-task-detail-title"></div>
-        <div id="view-task-detail-meta"></div>
+        <div id="view-task-detail-title" class="view-task-detail-sub-field"></div>
+        <div id="view-task-detail-meta" class="view-task-detail-sub-field"></div>
     </div>
-    <div id="close-view-task-detail-window" onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
-        <img src="resources/image/close-window.png" width="48" height="48"/>
-    </div>
+    <div id="main-content-overlay"></div>
     @meta-fields@
     @task-context-menu@
     @task-create-inputbox@

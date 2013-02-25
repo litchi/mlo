@@ -15,7 +15,6 @@ var UIConfig = (function () {
         detailListElementId         : 'detail-list',
         detailListPanelElementId    : 'detail',
         viewTaskDetailElementId     : 'view-task-detail',
-        viewTaskCloseButElementId   : 'close-view-task-detail-window',
         viewTaskTitleElementId      : 'view-task-detail-title',
         viewTaskProjectElementId    : 'view-task-detail-project',
         viewTaskDueElementId        : 'view-task-detail-due',
