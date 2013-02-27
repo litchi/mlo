@@ -349,7 +349,7 @@ var DataAccess = (function () {
             },
             moveTaskToGtdList : function (taskId, metaName, successCallback, failureCallback) {
                 DataAccess.appDb.transaction(function (tx) {
-                    DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteByMetaTypeName, [SeedData.GtdMetaTypeName]);
+                    DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteByMetaTypeName, [taskId, SeedData.GtdMetaTypeName]);
                     DataAccess.runSqlDirectly(tx, Sql.TaskMeta.ThrowTaskToList, [taskId, metaName, SeedData.GtdMetaTypeName], successCallback, failureCallback);
                 });
             }
