@@ -111,12 +111,13 @@ var UIContextMenuController = (function () {
         }
     }
 
-    function createTaskInternal(name, metaId) {
+    function createTaskInternal(name, metaId, toBasket) {
         var taskList = document.getElementById(UIConfig.detailListElementId),
+            metaTypeNameLabel = 'list',
+            metaNameActual = UIConfig.emptyString,
             taskId,
             metaTypeName,
             metaName,
-            metaTypeNameLabel = 'list',
             project = null,
             context = null;
         DataAccess.appDb.transaction(function (tx) {
@@ -138,9 +139,12 @@ var UIContextMenuController = (function () {
                             }
                             if ((metaTypeName === SeedData.GtdMetaTypeName || metaName !== SeedData.BasketMetaName) && (metaTypeName !== SeedData.DueMetaTypeName)) {
                                 UIListController.addTaskToList(taskList, taskId, name, project, context, null);
+                                metaNameActual = metaName;
+                            } else {
+                                metaNameActual = SeedData.BasketMetaName;
                             }
                             Util.setValue('ctsi', UIConfig.emptyString);
-                            Util.showToast('Task created to ' + metaTypeNameLabel + ' ' + metaName, 'Undo', null, function () {
+                            Util.showToast('Task created to ' + metaTypeNameLabel + ' ' + metaNameActual, 'Undo', null, function () {
                                 DataAccess.task.updateStatus(taskId, SeedData.TaskDeletedStatus,
                                     function (tx, result, rows) {
                                         UIListController.removeTaskFromList(taskId);
@@ -166,14 +170,14 @@ var UIContextMenuController = (function () {
                         [SeedData.BasketMetaName],
                         function (tx, result, objs) {
                             if (1 === result.rows.length) {
-                                createTaskInternal(name, result.rows.item(0).id);
+                                createTaskInternal(name, result.rows.item(0).id, true);
                             } else {
                                 console.warn("Meta with name[%s] was not found when trying to insert task to it", SeedData.BasketMetaName);
                             }
                         });
                 });
             } else {
-                createTaskInternal(name, metaId);
+                createTaskInternal(name, metaId, false);
             }
             return false;
         },

@@ -110,9 +110,8 @@
     font-size:36px;
 }
 
-#group-title-add-new-link {
+.group-title-add-new-link-show {
     -webkit-border-radius:10px;
-    background-color:#CCC;
     margin:0 0 0 20px;
     padding:0px 20px 6px 20px;
     border-radius:10px;
@@ -121,9 +120,10 @@
     display:inline-block; 
     font-size: 36px;
     font-weight:bolder;
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(225,225,225,1)), to(rgba(204, 204, 204, 0.95)))
 }
 
-.group-title-add-new-link-h {
+.group-title-add-new-link-hide {
     -webkit-border-radius:10px;
     background-color:#EEE;
     margin:0 0 0 20px;

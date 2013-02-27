@@ -41,12 +41,18 @@ var UIListController = (function () {
         }
     }
 
+    function showPlusShortcut(elem) {
+        elem.innerText = '+';
+        elem.className = 'group-title-add-new-link-show';
+        elem.onclick = function () {
+            bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix, {'metaTypeId' : Util.valueOf('v_meta_type_id')});
+        };
+    }
+
     function hidePlusShortcut(elem) {
         elem.innerText = '+';
-        elem.style.backgroundColor = '#EEE';
-        elem.style.color = '#EEE';
-        elem.onclick = function () {
-        };
+        elem.className = 'group-title-add-new-link-hide';
+        elem.onclick = function () {};
     }
 
     return {
@@ -297,7 +303,7 @@ var UIListController = (function () {
                         hidePlusShortcut(groupAddNewLink);
                     } else if (UIConfig.taskByPagePrefix === pageType) {
                         if (0 === metaTypeInternal) {
-                            groupAddNewLink.innerText = '+';
+                            showPlusShortcut(groupAddNewLink);
                         } else if (1 === metaTypeInternal) {
                             hidePlusShortcut(groupAddNewLink);
                         }
