@@ -152,9 +152,9 @@ var UIContextMenuController = (function () {
     }
 
     return {
-        createTask : function (name, metaId) {
-            var taskId, project = null, metaIdToDb, metaTypeName, metaName, context = null;
-            if (Util.isEmpty(metaId)) {
+        createTask : function (name, metaTypeName, metaId) {
+            var taskId, project = null, metaIdToDb, metaName, context = null;
+            if (Util.isEmpty(metaId) || (metaTypeName === SeedData.DueMetaTypeName)) {
                 DataAccess.appDb.transaction(function (tx) {
                     DataAccess.runSqlDirectly(tx,
                         'select id from meta where name = ?',

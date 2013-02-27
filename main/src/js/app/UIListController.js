@@ -129,6 +129,8 @@ var UIListController = (function () {
             }
             if (Sql.FilterAllMeta !== metaName) {
                 UIMetaUtil.setMetaFields(metaName);
+            } else {
+                UIMetaUtil.setMetaFields(SeedData.BasketMetaName);
             }
             if (UIConfig.emptyString !== metaTypeName) {
                 UIMetaUtil.setMetaTypeFields(metaTypeName);
