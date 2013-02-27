@@ -116,6 +116,7 @@ var UIContextMenuController = (function () {
             taskId,
             metaTypeName,
             metaName,
+            metaTypeNameLabel = 'list',
             project = null,
             context = null;
         DataAccess.appDb.transaction(function (tx) {
@@ -126,16 +127,20 @@ var UIContextMenuController = (function () {
                         function (tx, r2, objs2) {
                             metaTypeName = Util.valueOf('v_meta_type_name');
                             metaName = Util.valueOf('v_meta_name');
-                            if (Util.isEmpty(metaName)) {
+                            if (Util.notEmpty(metaName)) {
                                 if (metaTypeName === SeedData.ProjectMetaTypeName) {
                                     project = metaName;
+                                    metaTypeNameLabel = 'project';
                                 } else if (metaTypeName === SeedData.ContextMetaTypeName) {
                                     context = [metaName];
+                                    metaTypeNameLabel = 'context';
                                 }
                             }
-                            UIListController.addTaskToList(taskList, taskId, name, project, context, null);
+                            if ((metaTypeName === SeedData.GtdMetaTypeName || metaName !== SeedData.BasketMetaName) && (metaTypeName !== SeedData.DueMetaTypeName)) {
+                                UIListController.addTaskToList(taskList, taskId, name, project, context, null);
+                            }
                             Util.setValue('ctsi', UIConfig.emptyString);
-                            Util.showToast('Task Created', 'Undo', null, function () {
+                            Util.showToast('Task created to ' + metaTypeNameLabel + ' ' + metaName, 'Undo', null, function () {
                                 DataAccess.task.updateStatus(taskId, SeedData.TaskDeletedStatus,
                                     function (tx, result, rows) {
                                         UIListController.removeTaskFromList(taskId);
