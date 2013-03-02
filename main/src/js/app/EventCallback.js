@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController*/
 var webworksreadyFired = false;
 var EventCallback = (function () {
     "use strict";
@@ -54,26 +54,17 @@ var EventCallback = (function () {
             if (id === SeedData.BasketMetaName ||
                     id === SeedData.NextActionMetaName ||
                     id === SeedData.SomedayMetaName) {
-                UIListController.switchDisplayToMode(UIConfig.singleDisplayMode);
-                UIListController.fillTasksToGroupByMetaInfo(SeedData.GtdMetaTypeName, id);
+                UIActionBarController.openTaskByMetaPage(id, toastMsg);
             } else if (id === UIConfig.editTaskPagePrefix) {
                 UIEditFormController.fillTaskToEditForm(taskId, params);
             } else if (id === UIConfig.taskByPagePrefix) {
-                UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
-                UIListController.fillMetaListToPanelByTypeName(metaTypeName, UIConfig.taskByPagePrefix);
-                UIListController.fillTasksToGroupByMetaInfo(metaTypeName, defaultMetaName);
-            } else if (id === UIConfig.screenIdField) {
-                UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
-                UIListController.fillMetaTypeToPanel();
-                UIListController.fillAllMetaToPanel(UIConfig.metaByPagePrefix);
+                UIActionBarController.openTaskGroupByMetaPage(metaTypeName, defaultMetaName, toastMsg);
+            } else if ((id === UIConfig.screenIdField) || (id === UIConfig.metaByPagePrefix)) {
+                UIActionBarController.openMetaGroupByTypePage(metaTypeId);
             } else if (id === UIConfig.editMetaPagePrefix) {
                 UIEditFormController.fillMetaToEditForm(metaId);
             } else if (id === UIConfig.createMetaPagePrefix) {
                 UIListController.fillMetaToCreateForm(metaTypeId);
-            } else if (id === UIConfig.metaByPagePrefix) {
-                UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
-                UIListController.fillMetaTypeToPanel();
-                UIListController.fillMetaListToPanel(metaTypeId, UIConfig.metaByPagePrefix);
             } else if (id === SeedData.TaskDeletedStatus) {
                 UIListController.fillTasksToGroupByStatusKey(id);
             }

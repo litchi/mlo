@@ -3,8 +3,8 @@ var UIConfig = (function () {
     "use strict";
     return {
         emptyString                 : '',
-        leftPanelWidth              : '32%',
-        rightPanelWidth             : '68%',
+        leftPanelWidth              : '245',
+        rightPanelWidth             : '523',
         rightPanelSmallerLeftMargin : '245',
         rightPanelLargerLeftMargin  : '515',
         editTaskPagePrefix          : 'edit-task',

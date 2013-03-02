@@ -5,11 +5,13 @@ var UIActionBarController = (function () {
     return {
         openTaskByMetaPage : function (metaName, toastMsg) {
             UITaskUtil.setTaskDetailPanelDisplay('none');
-            UIListController.switchDisplayToMode(UIConfig.singleDisplayMode);
-            UIListController.fillTasksToGroupByMetaInfo(SeedData.GtdMetaTypeName, metaName);
-            if (Util.notEmpty) {
-                Util.showToast(toastMsg);
-            }
+            UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
+            UIListController.fillMetaListToPanelByTypeName(SeedData.GtdMetaTypeName, UIConfig.taskByPagePrefix, function () {
+                UIListController.fillTaskAndMarkGroupNoId(SeedData.GtdMetaTypeName, metaName);
+                if (Util.notEmpty) {
+                    Util.showToast(toastMsg);
+                }
+            });
         },
 
         openTaskByStatusPage : function (statusKey) {
@@ -21,15 +23,16 @@ var UIActionBarController = (function () {
         openTaskGroupByMetaPage : function (metaTypeName, metaName, toastMsg) {
             UITaskUtil.setTaskDetailPanelDisplay('none');
             UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
-            UIListController.fillMetaListToPanelByTypeName(metaTypeName, UIConfig.taskByPagePrefix);
-            if (Util.isEmpty(metaName)) {
-                UIListController.fillTasksToGroupByMetaInfo(metaTypeName, Sql.FilterAllMeta);
-            } else {
-                UIListController.fillTasksToGroupByMetaInfo(metaTypeName, metaName);
-            }
-            if (Util.notEmpty) {
-                Util.showToast(toastMsg);
-            }
+            UIListController.fillMetaListToPanelByTypeName(metaTypeName, UIConfig.taskByPagePrefix, function () {
+                if (Util.isEmpty(metaName)) {
+                    UIListController.fillTaskAndMarkGroup(metaTypeName, metaTypeName, Sql.FilterAllMeta);
+                } else {
+                    UIListController.fillTaskAndMarkGroupNoId(metaTypeName, metaName);
+                }
+                if (Util.notEmpty) {
+                    Util.showToast(toastMsg);
+                }
+            });
         },
 
         openMetaGroupByTypePage : function (metaTypeId) {

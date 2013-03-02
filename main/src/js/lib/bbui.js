@@ -2083,7 +2083,7 @@ bb.contextMenu = {
 								};
 						// Remove the header click handling while peeking
 						this.header.removeEventListener("click", this.hide, false);		
-                        setTimeout(function() {UITaskUtil.setTaskDetailPanelDisplay('block')}, 200);
+                        setTimeout(function() {UITaskUtil.setTaskDetailPanelDisplay('block')}, 100);
 						this.style.visibility = 'visible';
 						this.visible = true;
 					};

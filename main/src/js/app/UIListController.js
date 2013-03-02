@@ -3,10 +3,6 @@
 var UIListController = (function () {
     "use strict";
 
-    function getNumberOfTasks(metaTypeName, metaName) {
-        return '20';
-    }
-
     function setGroupPanelEmptyHeight() {
         var height,
             groupParent      = document.getElementById('group'),
@@ -20,6 +16,46 @@ var UIListController = (function () {
             height = groupParent.offsetHeight - metaListTitle.offsetHeight - metaListDiv.offsetHeight;
             metaListSpaceDiv.style.height = height + 'px';
         }
+    }
+
+    function fillMetaInternal(metaTypeId, metaTypeName, metaList, pageType, taskNumbers, callback) {
+        DataAccess.meta.getByTypeId(metaTypeId, function (tx, result, arrays) {
+            var key, name, id, desc, item, uiId;
+            for (key in arrays) {
+                if (arrays.hasOwnProperty(key)) {
+                    name = arrays[key][Sql.Meta.Cols.Name];
+                    id   = arrays[key][Sql.Meta.Cols.Id];
+                    desc = arrays[key][Sql.Meta.Cols.Description];
+                    item = document.createElement('div');
+                    item.setAttribute('data-bb-type', 'item');
+                    item.setAttribute('data-bb-style', 'stretch');
+                    if (id !== null) {
+                        uiId = UIMetaUtil.getMetaUiId(id);
+                        item.setAttribute('id', uiId);
+                        if (name !== null) {
+                            item.setAttribute('title', '<span class="master-title">' + name + '</span>');
+                        }
+                        if (UIConfig.taskByPagePrefix === pageType) {
+                            item.setAttribute('data-bb-title',  '<span class="master-title">' + name + '</span>' + UITaskUtil.decorateTaskNumber(taskNumbers, name));
+                            item.setAttribute(
+                                'onclick',
+                                "UIListController.fillTaskAndMarkGroup('" + uiId + "', '" + metaTypeName + "','" + name + "')"
+                            );
+                        } else if (UIConfig.metaByPagePrefix === pageType) {
+                            item.setAttribute('data-bb-title', '<span class="detail-title">' + name + '</span>');
+                            UIContextMenuUtil.setMetaContextMenuAction(item, metaTypeName, id, name, desc);
+                        }
+                        metaList.appendItem(item);
+                    }
+                }
+            }
+            if (Util.isFunction(callback)) {
+                callback();
+            }
+            setGroupPanelEmptyHeight();
+        }, function (tx, error) {
+            log.logSqlError("Error getting meta list[" + metaTypeId + "]", error);
+        });
     }
 
     function setCreateTaskInputPlaceHolder(metaName, metaTypeName) {
@@ -57,23 +93,40 @@ var UIListController = (function () {
 
     return {
 
-        fillTaskAndMarkGroup : function (id, metaTypeName, filter) {
+        fillTaskAndMarkGroupNoId : function (metaTypeName, filter) {
+            DataAccess.appDb.transaction(function (tx) {
+                DataAccess.runSqlDirectly(tx, "select id from meta where name = ?",
+                    [filter], function (tx, result, objs) {
+                        var key, id;
+                        for (key in objs) {
+                            if (objs.hasOwnProperty(key)) {
+                                id   = objs[key][Sql.Meta.Cols.Id];
+                                UIListController.fillTaskAndMarkGroup(UIMetaUtil.getMetaUiId(id), metaTypeName, filter);
+                            }
+                        }
+                    });
+            }, function (tx, error) {
+                log.logSqlError("Error getting all meta list", error);
+            });
+        },
+
+        fillTaskAndMarkGroup : function (uiId, metaTypeName, filter) {
             if (Util.notEmpty(document.getElementById('selected-group-item'))) {
                 document.getElementById('selected-group-item').setAttribute('id', Util.valueOf('v_curr_hl_item'));
             }
-            document.getElementById(id).setAttribute('id', 'selected-group-item');
-            document.getElementById('v_curr_hl_item').value = id;
+            document.getElementById(uiId).setAttribute('id', 'selected-group-item');
+            document.getElementById('v_curr_hl_item').value = uiId;
             UIListController.fillTasksToGroupByMetaInfo(metaTypeName, filter);
             Util.switchPanelWidth(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin);
         },
 
-        fillMetaListMarkTypeAsSelected : function (id) {
+        fillMetaListMarkTypeAsSelected : function (uiId) {
             if (Util.notEmpty(document.getElementById('selected-group-item'))) {
                 document.getElementById('selected-group-item').setAttribute('id', Util.valueOf('v_curr_hl_item'));
             }
-            document.getElementById(id).setAttribute('id', 'selected-group-item');
-            document.getElementById('v_curr_hl_item').value = id;
-            UIListController.fillMetaListToPanel(id, UIConfig.metaByPagePrefix);
+            document.getElementById(uiId).setAttribute('id', 'selected-group-item');
+            document.getElementById('v_curr_hl_item').value = uiId;
+            UIListController.fillMetaListToPanel(uiId, UIConfig.metaByPagePrefix);
             Util.switchPanelWidth(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin);
         },
 
@@ -153,10 +206,10 @@ var UIListController = (function () {
             });
         },
 
-        fillMetaListToPanelByTypeName : function (metaTypeName, pageType) {
+        fillMetaListToPanelByTypeName : function (metaTypeName, pageType, callback) {
             DataAccess.metaType.getByName(metaTypeName, function (tx, result, objs) {
                 if (null !== objs && undefined !== objs && objs.length > 0 && null !== objs[0] && undefined !== objs[0]) {
-                    UIListController.fillMetaListToPanel(objs[0][Sql.MetaType.Cols.Id], pageType);
+                    UIListController.fillMetaListToPanel(objs[0][Sql.MetaType.Cols.Id], pageType, callback);
                 } else {
                     console.warn("Meta type with name[%s] was not found on page type[%s]", metaTypeName, pageType);
                 }
@@ -192,8 +245,8 @@ var UIListController = (function () {
                         if (id !== null && 1 !== internal) {
                             item.setAttribute('id', id);
                             if (name !== null) {
-                                item.setAttribute('title', name);
-                                item.setAttribute('data-bb-title', name);
+                                item.setAttribute('title', '<span class="master-title">' + name + '</span>');
+                                item.setAttribute('data-bb-title', '<span class="master-title">' + name + '</span>');
                             }
                             item.setAttribute(
                                 'onclick',
@@ -259,10 +312,10 @@ var UIListController = (function () {
                                 item.setAttribute('data-bb-type', 'item');
                                 item.setAttribute('data-bb-style', 'stretch');
                                 if (Util.notEmpty(id)) {
-                                    item.setAttribute('id', 'meta-' + id);
+                                    item.setAttribute('id', UIMetaUtil.getMetaUiId(id));
                                     if (Util.notEmpty(name)) {
-                                        item.setAttribute('title', metaTypeName + ": " + name);
-                                        item.setAttribute('data-bb-title', metaTypeName + ": " + name);
+                                        item.setAttribute('title', '<span class="detail-title">' + metaTypeName + ": " + name + '</span>');
+                                        item.setAttribute('data-bb-title', '<span class="detail-title">' + metaTypeName + ": " + name + '</span>');
                                     }
                                     UIContextMenuUtil.setMetaContextMenuAction(item, metaTypeName, id, name, desc);
                                     metaList.appendItem(item);
@@ -284,13 +337,18 @@ var UIListController = (function () {
             });
         },
 
-        fillMetaListToPanel : function (metaTypeId, pageType) {
-            var metaTypeName, metaList, metaTypeInternal,
+        fillMetaListToPanel : function (metaTypeId, pageType, callback) {
+            var metaTypeName, metaList, metaTypeInternal, taskNumbers,
                 detailAddNewLink = document.getElementById('detail-add-new-link'),
                 groupAddNewLink  = document.getElementById('group-title-add-new-link'),
                 metaListTitle    = document.getElementById('group-title-text');
             metaList = UIMetaUtil.getMetaListElement(pageType);
             metaList.innerHTML = UIConfig.emptyString;
+            if (UIConfig.taskByPagePrefix === pageType) {
+                UITaskUtil.getGroupedTaskNumber(metaTypeId, function (result) {
+                    taskNumbers = result;
+                });
+            }
             DataAccess.metaType.getById(metaTypeId, function (tx, result, objs) {
                 if (Util.notEmpty(objs) && Util.notEmpty(objs[0])) {
                     metaTypeName     = objs[0][Sql.MetaType.Cols.Name];
@@ -301,7 +359,12 @@ var UIListController = (function () {
                         };
                         detailAddNewLink.innerText = 'Add New ' + metaTypeName;
                         hidePlusShortcut(groupAddNewLink);
+                        fillMetaInternal(metaTypeId, metaTypeName, metaList, pageType, taskNumbers, callback);
                     } else if (UIConfig.taskByPagePrefix === pageType) {
+                        UIMetaUtil.makeMetaTypeDefaultList(metaTypeName, function (defaultItem) {
+                            metaList.appendItem(defaultItem);
+                            fillMetaInternal(metaTypeId, metaTypeName, metaList, pageType, taskNumbers, callback);
+                        });
                         if (0 === metaTypeInternal) {
                             showPlusShortcut(groupAddNewLink);
                         } else if (1 === metaTypeInternal) {
@@ -312,47 +375,12 @@ var UIListController = (function () {
                         } else {
                             console.warn("Element with id[%s] is null, failed to set innerText to [%s]", 'group-title-text', metaTypeName);
                         }
-                        metaList.appendItem(UIMetaUtil.makeMetaTypeDefaultList(metaTypeName));
                     }
                     Util.setValue('v_meta_type_id', metaTypeId);
                     Util.setValue('v_meta_type_name', metaTypeName);
                 }
             }, function (tx, error) {
                 log.logSqlError("Error getting meta type[" + metaTypeId + "], pageType:[" + pageType + "]", error);
-            });
-            DataAccess.meta.getByTypeId(metaTypeId, function (tx, result, arrays) {
-                var key, name, id, desc, item, uiId;
-                for (key in arrays) {
-                    if (arrays.hasOwnProperty(key)) {
-                        name = arrays[key][Sql.Meta.Cols.Name];
-                        id   = arrays[key][Sql.Meta.Cols.Id];
-                        desc = arrays[key][Sql.Meta.Cols.Description];
-                        item = document.createElement('div');
-                        item.setAttribute('data-bb-type', 'item');
-                        item.setAttribute('data-bb-style', 'stretch');
-                        if (id !== null) {
-                            uiId = 'meta-' + id;
-                            item.setAttribute('id', uiId);
-                            if (name !== null) {
-                                item.setAttribute('title', name);
-                            }
-                            if (UIConfig.taskByPagePrefix === pageType) {
-                                item.setAttribute('data-bb-title',  name + UITaskUtil.decorateTaskNumber(getNumberOfTasks(metaTypeName, name)));
-                                item.setAttribute(
-                                    'onclick',
-                                    "UIListController.fillTaskAndMarkGroup('" + uiId + "', '" + metaTypeName + "','" + name + "')"
-                                );
-                            } else if (UIConfig.metaByPagePrefix === pageType) {
-                                item.setAttribute('data-bb-title', name);
-                                UIContextMenuUtil.setMetaContextMenuAction(item, metaTypeName, id, name, desc);
-                            }
-                            metaList.appendItem(item);
-                        }
-                    }
-                }
-                setGroupPanelEmptyHeight();
-            }, function (tx, error) {
-                log.logSqlError("Error getting meta list[" + metaTypeId + "]", error);
             });
         }
 

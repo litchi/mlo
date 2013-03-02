@@ -1,5 +1,5 @@
 /*jslint browser: true es5: true*/
-/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util*/
+/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, UITaskUtil*/
 var UIMetaUtil = (function () {
     "use strict";
 
@@ -32,19 +32,25 @@ var UIMetaUtil = (function () {
             });
         },
 
-        makeMetaTypeDefaultList : function (metaTypeName) {
-            var item = document.createElement('div'),
+        makeMetaTypeDefaultList : function (metaTypeName, callback) {
+            var taskNumber = [],
+                item = document.createElement('div'),
                 title = 'All ' + metaTypeName + 's';
-            item.setAttribute('data-bb-type', 'item');
-            item.setAttribute('data-bb-style', 'stretch');
-            item.setAttribute('title', title);
-            item.setAttribute('data-bb-title', title);
-            item.setAttribute('id', metaTypeName);
-            item.setAttribute(
-                'onclick',
-                "UIListController.fillTaskAndMarkGroup('" + metaTypeName + "', '" + metaTypeName + "', '" + Sql.FilterAllMeta + "');"
-            );
-            return item;
+            UITaskUtil.getTaskNumberOfMetaType(metaTypeName, function (result) {
+                taskNumber[metaTypeName] = result;
+                item.setAttribute('data-bb-type', 'item');
+                item.setAttribute('data-bb-style', 'stretch');
+                item.setAttribute('title', '<span class="default-master-detail">' + title + '</span>');
+                item.setAttribute('data-bb-title',  '<span class="default-master-detail">' + title + '</span>' + UITaskUtil.decorateTaskNumber(taskNumber, metaTypeName));
+                item.setAttribute('id', metaTypeName);
+                item.setAttribute(
+                    'onclick',
+                    "UIListController.fillTaskAndMarkGroup('" + metaTypeName + "', '" + metaTypeName + "', '" + Sql.FilterAllMeta + "');"
+                );
+                if (Util.isFunction(callback)) {
+                    callback(item);
+                }
+            });
         },
 
         getMetaListElement : function (pageType) {
@@ -61,6 +67,10 @@ var UIMetaUtil = (function () {
                 }
             }
             return metaList;
+        },
+
+        getMetaUiId : function (id) {
+            return 'meta-' + id;
         }
 
     };

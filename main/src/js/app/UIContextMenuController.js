@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, UITaskUtil*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, UITaskUtil, UIMetaUtil*/
 
 var UIContextMenuController = (function () {
     "use strict";
@@ -303,7 +303,7 @@ var UIContextMenuController = (function () {
                             });
                     });
                     DataAccess.meta.deleteById(selectedId, function (tx, result, rows) {
-                        document.getElementById('meta-' + selectedId).remove();
+                        document.getElementById(UIMetaUtil.getMetaUiId(selectedId)).remove();
                         Util.showToast(metaTypeName + " " + savedName + " Deleted", UIConfig.msgUndo, UIConfig.nothing,
                             function () {
                                 DataAccess.appDb.transaction(function (tx) {

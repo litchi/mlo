@@ -54,7 +54,7 @@
     display:inline-block;
     font-size:24px;
     line-height:24px;
-    background: -webkit-gradient(linear, 0 0, 0 bottom, from(#E0E5E4), to(rgba(154, 154, 154, 0.5)));
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(#E0E5E4), to(rgba(204, 204, 204, 0.5)));
 }
 .list-project {
     margin-right:10px;
@@ -85,7 +85,7 @@
     -webkit-border-bottom-left-radius: 0px;
     -webkit-border-bottom-right-radius: 0px;
     /*float:left;*/
-    width:32%;
+    width:245px;
     height:1020px;
     margin:25px 0 0 0;
     border-bottom: 0px;
@@ -147,7 +147,7 @@
     -webkit-border-bottom-left-radius: 0px;
     -webkit-border-bottom-right-radius: 0px;
     /*float:right;*/
-    width:68%;
+    width:523px;
     background-color:#FFF;
     height:1040px;
     margin:9px 0 0 0;
@@ -309,5 +309,38 @@
     bottom:0px;
     left:0px;
     display:none;
-    background: rgba(0,0,0, 0.7);
+    background: rgba(0,0,0, 0.8);
+}
+
+.detail-title {
+    font-size:36px;
+}
+.default-master-detail, .master-title {
+    font-size:30px;
+    max-width:159px;
+    float:left;
+    overflow:hidden; 
+    text-overflow: ellipsis; 
+    word-wrap: break-word;
+}
+
+.list-task-number-zero, .list-task-number {
+    -webkit-border-radius:10px ;
+    margin: 5px 20px 5px 5px;
+    /** Please notice the behaivor of ripple and the actual device is not exactly the same here so we put different number here */
+    padding:5px 8px 8px 8px;
+    border-radius:10px;
+    color:#333;
+    display:inline-block;
+    font-size:24px;
+    line-height:24px;
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(#E0E5E4), to(rgba(254, 254, 254, 0.5)));
+    border:1px solid #CCC;
+    float:right;
+    text-align: center;
+    min-width: 26px;
+}
+.list-task-number-zero {
+    background: transparent;
+    border: 0px;
 }

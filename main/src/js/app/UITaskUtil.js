@@ -20,8 +20,57 @@ var UITaskUtil = (function () {
 
     return {
 
-        decorateTaskNumber : function (taskNumber) {
-            return '<span class="list-context" style="vertical-align:top;margin-top:0px;border:1px solid #CCC">' + taskNumber + '</span>';
+        decorateTaskNumber : function (list, key) {
+            var taskNumber = 0;
+            if (Util.notEmpty(list) && list.hasOwnProperty(key)) {
+                taskNumber = list[key];
+            }
+            if (Util.isEmpty(taskNumber) || (0 === taskNumber)) {
+                return '<span class="list-task-number-zero">:-)</span>';
+            }
+            return '<span class="list-task-number">' + taskNumber + '</span>';
+        },
+
+        getTaskNumberOfMetaType : function (metaTypeName, callback) {
+            var result = 0, key, metaName;
+            DataAccess.appDb.transaction(function (tx) {
+                DataAccess.runSqlDirectly(tx, "select count(distinct(task_id)) as task_number from task_view where meta_type_name = ? and task_status != ? and task_status != ?",
+                    [metaTypeName, SeedData.TaskDeletedStatus, SeedData.TaskDoneStatus], function (tx, result, objs) {
+                        var key;
+                        for (key in objs) {
+                            if (objs.hasOwnProperty(key)) {
+                                result = objs[key].task_number;
+                            }
+                        }
+                        if (Util.isFunction(callback)) {
+                            callback(result);
+                        }
+                    });
+            }, function (tx, error) {
+                log.logSqlError("Error getting number of tasks", error);
+            });
+        },
+
+        getGroupedTaskNumber : function (metaTypeId, callback) {
+            var result = [], num, key, metaName;
+            DataAccess.appDb.transaction(function (tx) {
+                DataAccess.runSqlDirectly(tx, "select count(distinct(task_id)) as task_number, meta_name from task_view where meta_type_name != ? and meta_type_id = ? and task_status != ? and task_status != ? group by meta_name",
+                    [SeedData.DueMetaTypeName, metaTypeId, SeedData.TaskDeletedStatus, SeedData.TaskDoneStatus], function (tx, result, objs) {
+                        var key;
+                        for (key in objs) {
+                            if (objs.hasOwnProperty(key)) {
+                                num = objs[key].task_number;
+                                metaName = objs[key].meta_name;
+                                result[metaName] = num;
+                            }
+                        }
+                        if (Util.isFunction(callback)) {
+                            callback(result);
+                        }
+                    });
+            }, function (tx, error) {
+                log.logSqlError("Error getting number of tasks", error);
+            });
         },
 
         createTaskItemElement : function (id, name, project, contexts, dueDate) {
@@ -32,8 +81,8 @@ var UITaskUtil = (function () {
             if (id !== null) {
                 item.setAttribute('id', 'task-' + id);
                 if (name !== null) {
-                    item.setAttribute('title', name);
-                    item.setAttribute('data-bb-title', name);
+                    item.setAttribute('title', '<span class="detail-title">' + name + '</span>');
+                    item.setAttribute('data-bb-title', '<span class="detail-title">' + name + '</span>');
                 }
                 if (project !== null) {
                     innerContent = "\n<span class='list-project'>p:" + project + "</span>";

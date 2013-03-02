@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, UIActionBarController*/
+/*global blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, UIActionBarController, $, jQuery*/
 var Util = (function () {
     "use strict";
     return {
@@ -118,9 +118,14 @@ var Util = (function () {
 
         switchPanelWidth : function (groupWidth, taskWidth, taskLeft) {
             if (document.getElementById('group').style.width !== groupWidth) {
-                document.getElementById('group').style.width = groupWidth;
-                document.getElementById(UIConfig.detailListPanelElementId).style.width = taskWidth;
+                document.getElementById('group').style.width = groupWidth + 'px';
+                document.getElementById(UIConfig.detailListPanelElementId).style.width = taskWidth + 'px';
                 document.getElementById(UIConfig.detailListPanelElementId).style.left = taskLeft + 'px';
+                if (taskLeft > '350') {
+                    $(".master-title").css("max-width", "450px");
+                } else {
+                    $(".master-title").css("max-width", "159px");
+                }
             }
         },
 
