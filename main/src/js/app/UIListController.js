@@ -344,15 +344,15 @@ var UIListController = (function () {
                 metaListTitle    = document.getElementById('group-title-text');
             metaList = UIMetaUtil.getMetaListElement(pageType);
             metaList.innerHTML = UIConfig.emptyString;
-            if (UIConfig.taskByPagePrefix === pageType) {
-                UITaskUtil.getGroupedTaskNumber(metaTypeId, function (result) {
-                    taskNumbers = result;
-                });
-            }
             DataAccess.metaType.getById(metaTypeId, function (tx, result, objs) {
                 if (Util.notEmpty(objs) && Util.notEmpty(objs[0])) {
                     metaTypeName     = objs[0][Sql.MetaType.Cols.Name];
                     metaTypeInternal = objs[0][Sql.MetaType.Cols.Internal];
+                    if (UIConfig.taskByPagePrefix === pageType) {
+                        UITaskUtil.getGroupedTaskNumber(metaTypeName, function (result) {
+                            taskNumbers = result;
+                        });
+                    }
                     if (UIConfig.metaByPagePrefix === pageType) {
                         detailAddNewLink.onclick = function () {
                             bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix, {'metaTypeId' : metaTypeId});

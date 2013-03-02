@@ -32,31 +32,53 @@ var UITaskUtil = (function () {
         },
 
         getTaskNumberOfMetaType : function (metaTypeName, callback) {
-            var result = 0, key, metaName;
+            var result = 0, key, metaName, sql, params;
+            if (SeedData.DueMetaTypeName === metaTypeName) {
+                sql = "select count(distinct(task_id)) as task_number from task_view where task_due_date is not null and task_status != ? and task_status != ?";
+                params = [SeedData.TaskDeletedStatus, SeedData.TaskDoneStatus];
+            } else {
+                sql = "select count(distinct(task_id)) as task_number from task_view where meta_type_name = ? and task_status != ? and task_status != ?";
+                params = [metaTypeName, SeedData.TaskDeletedStatus, SeedData.TaskDoneStatus];
+            }
             DataAccess.appDb.transaction(function (tx) {
-                DataAccess.runSqlDirectly(tx, "select count(distinct(task_id)) as task_number from task_view where meta_type_name = ? and task_status != ? and task_status != ?",
-                    [metaTypeName, SeedData.TaskDeletedStatus, SeedData.TaskDoneStatus], function (tx, result, objs) {
-                        var key;
-                        for (key in objs) {
-                            if (objs.hasOwnProperty(key)) {
-                                result = objs[key].task_number;
-                            }
+                DataAccess.runSqlDirectly(tx, sql, params, function (tx, resultset, objs) {
+                    var key;
+                    for (key in objs) {
+                        if (objs.hasOwnProperty(key)) {
+                            result = objs[key].task_number;
                         }
-                        if (Util.isFunction(callback)) {
-                            callback(result);
-                        }
-                    });
+                    }
+                    if (Util.isFunction(callback)) {
+                        callback(result);
+                    }
+                });
             }, function (tx, error) {
                 log.logSqlError("Error getting number of tasks", error);
             });
         },
 
-        getGroupedTaskNumber : function (metaTypeId, callback) {
-            var result = [], num, key, metaName;
+        getGroupedTaskNumber : function (metaTypeName, callback) {
+            var result = [], num, key, metaName, sql, params;
+            if (SeedData.DueMetaTypeName === metaTypeName) {
+                sql =  "\
+                    select \
+                    (select count(distinct(id)) from task as Today where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now') and status != 'Done' and status != 'Deleted') as 'Today',\
+                    (select count(distinct(id)) from task as Tomorrow where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','+1 day') and status != 'Done' and status != 'Deleted') as 'Tomorrow',\
+                    (select count(distinct(id)) from task as 'This Week' where strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now') and status != 'Done' and status != 'Deleted') as 'This Week',\
+                    (select count(distinct(id)) from task as 'Next Week' where strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now', '+7 days') and status != 'Done' and status != 'Deleted') as 'Next Week',\
+                    (select count(distinct(id)) from task as 'Done Yesterday' where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = 'Done') as 'Done Yesterday',\
+                    (select count(distinct(id)) from task as 'Overdue Yesterday' where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != 'Done' and status != 'Deleted') as 'Overdue Yesterday',\
+                    (select count(distinct(id)) from task as 'Overdue' where strftime('%Y-%m-%d %H:%M:%S', due_date, 'unixepoch') < datetime('now') and status != 'Done' and status != 'Deleted') as 'Overdue'\
+                ";
+                params = [];
+            } else {
+                sql = "select count(distinct(task_id)) as task_number, meta_name from task_view where meta_type_name = ? and task_status != ? and task_status != ? group by meta_name";
+                params = [metaTypeName, SeedData.TaskDeletedStatus, SeedData.TaskDoneStatus];
+            }
             DataAccess.appDb.transaction(function (tx) {
-                DataAccess.runSqlDirectly(tx, "select count(distinct(task_id)) as task_number, meta_name from task_view where meta_type_name != ? and meta_type_id = ? and task_status != ? and task_status != ? group by meta_name",
-                    [SeedData.DueMetaTypeName, metaTypeId, SeedData.TaskDeletedStatus, SeedData.TaskDoneStatus], function (tx, result, objs) {
-                        var key;
+                DataAccess.runSqlDirectly(tx, sql, params, function (tx, resultset, objs) {
+                    var key, i, max, obj;
+                    if (SeedData.DueMetaTypeName !== metaTypeName) {
                         for (key in objs) {
                             if (objs.hasOwnProperty(key)) {
                                 num = objs[key].task_number;
@@ -64,10 +86,15 @@ var UITaskUtil = (function () {
                                 result[metaName] = num;
                             }
                         }
-                        if (Util.isFunction(callback)) {
-                            callback(result);
+                    } else {
+                        for (i = 0, max = resultset.rows.length; i < max; i += 1) {
+                            result = resultset.rows.item(i);
                         }
-                    });
+                    }
+                    if (Util.isFunction(callback)) {
+                        callback(result);
+                    }
+                });
             }, function (tx, error) {
                 log.logSqlError("Error getting number of tasks", error);
             });
