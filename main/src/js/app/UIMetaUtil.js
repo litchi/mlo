@@ -3,6 +3,18 @@
 var UIMetaUtil = (function () {
     "use strict";
 
+    function getUiLabel(metaTypeName) {
+        var result;
+        if (SeedData.GtdMetaTypeName === metaTypeName) {
+            result = 'in List';
+        } else if (SeedData.DueMetaTypeName === metaTypeName) {
+            result = 'with Due';
+        } else {
+            result = 'All ' + metaTypeName + '(s)';
+        }
+        return result;
+    }
+
     return {
         setMetaTypeFields : function (metaTypeName) {
             DataAccess.metaType.getByName(metaTypeName, function (tx, result, resultObj) {
@@ -35,13 +47,13 @@ var UIMetaUtil = (function () {
         makeMetaTypeDefaultList : function (metaTypeName, callback) {
             var taskNumber = [],
                 item = document.createElement('div'),
-                title = 'All ' + metaTypeName + 's';
+                title = getUiLabel(metaTypeName);
             UITaskUtil.getTaskNumberOfMetaType(metaTypeName, function (result) {
                 taskNumber[metaTypeName] = result;
                 item.setAttribute('data-bb-type', 'item');
                 item.setAttribute('data-bb-style', 'stretch');
-                item.setAttribute('title', '<span class="default-master-detail">' + title + '</span>');
-                item.setAttribute('data-bb-title',  '<span class="default-master-detail">' + title + '</span>' + UITaskUtil.decorateTaskNumber(taskNumber, metaTypeName));
+                item.setAttribute('title', '<span class="default-master-detail master-title">' + title + '</span>');
+                item.setAttribute('data-bb-title',  '<span class="default-master-detail master-title">' + title + '</span>' + UITaskUtil.decorateTaskNumber(taskNumber, metaTypeName));
                 item.setAttribute('id', metaTypeName);
                 item.setAttribute(
                     'onclick',

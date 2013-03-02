@@ -70,7 +70,7 @@ var UIEditFormController = (function () {
         return icon;
     }
 
-    function createContextSpan(container, taskId, metaId, metaName) {
+    function createContextSpan(container, tempDiv, taskId, metaId, metaName, callback) {
         var span, count, icon;
         DataAccess.appDb.transaction(function (tx) {
             DataAccess.runSqlDirectly(
@@ -95,15 +95,24 @@ var UIEditFormController = (function () {
                         if (Util.notEmpty(icon)) {
                             span.appendChild(icon);
                         }
-                        container.appendChild(span);
+                        tempDiv.appendChild(span);
+                        if (Util.isFunction(callback)) {
+                            callback(container, tempDiv);
+                        }
                     }
                 }
             );
         });
     }
 
+    function showContextContainer(contextContainer, tempDiv) {
+        contextContainer.innerHTML = tempDiv.innerHTML;
+        contextContainer.style.display = 'block';
+    }
+
     function prepareContextData(taskId) {
-        var contextContainer = document.getElementById('contextContainer'), i, max;
+        var contextContainer = document.getElementById('contextContainer'), i, max, tempDiv = document.createElement('div');
+        contextContainer.style.display = 'none';
         DataAccess.appDb.transaction(function (tx) {
             DataAccess.runSqlDirectly(
                 tx,
@@ -112,7 +121,11 @@ var UIEditFormController = (function () {
                 function (tx, result, obj) {
                     if (null !== result && null !== result.rows && null !== result.rows.item) {
                         for (i = 0, max = result.rows.length; i < max; i += 1) {
-                            createContextSpan(contextContainer, taskId, result.rows.item(i).meta_id, result.rows.item(i).meta_name);
+                            if (i === max - 1) {
+                                createContextSpan(contextContainer, tempDiv, taskId, result.rows.item(i).meta_id, result.rows.item(i).meta_name);
+                            } else {
+                                createContextSpan(contextContainer, tempDiv, taskId, result.rows.item(i).meta_id, result.rows.item(i).meta_name, showContextContainer);
+                            }
                         }
                     }
                 }
