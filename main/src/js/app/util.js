@@ -116,7 +116,7 @@ var Util = (function () {
             }
         },
 
-        switchPanelWidth : function (groupWidth, taskWidth, taskLeft) {
+        expandDetailPanel : function (groupWidth, taskWidth, taskLeft) {
             if (document.getElementById('group').style.width !== groupWidth) {
                 document.getElementById('group').style.width = groupWidth + 'px';
                 document.getElementById(UIConfig.detailListPanelElementId).style.width = taskWidth + 'px';
@@ -126,6 +126,26 @@ var Util = (function () {
                 } else {
                     $(".master-title").css("max-width", "159px");
                 }
+                document.getElementById('group-space').innerText = '>';
+            }
+        },
+
+        togglePanelWidth : function () {
+            if (document.getElementById(UIConfig.detailListPanelElementId).style.left === UIConfig.rightPanelLargerLeftMargin + 'px') {
+                document.getElementById('group').style.width = UIConfig.leftPanelWidth + 'px';
+                document.getElementById(UIConfig.detailListPanelElementId).style.width = UIConfig.rightPanelWidth + 'px';
+                document.getElementById(UIConfig.detailListPanelElementId).style.left = UIConfig.rightPanelSmallerLeftMargin + 'px';
+                document.getElementById('group-space').innerText = '>';
+            } else {
+                document.getElementById('group').style.width = UIConfig.rightPanelWidth + 'px';
+                document.getElementById(UIConfig.detailListPanelElementId).style.width = UIConfig.leftPanelWidth + 'px';
+                document.getElementById(UIConfig.detailListPanelElementId).style.left = UIConfig.rightPanelLargerLeftMargin + 'px';
+                document.getElementById('group-space').innerText = '<';
+            }
+            if (document.getElementById(UIConfig.detailListPanelElementId).style.left > '350') {
+                $(".master-title").css("max-width", "450px");
+            } else {
+                $(".master-title").css("max-width", "159px");
             }
         },
 

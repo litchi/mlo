@@ -76,23 +76,20 @@
     padding-bottom: 2px;
 }
 
-#group-detail-container {height:1022px;}
+#group-detail-container {
+    height:1047px;
+}
 
 #group {
-    border: 1px solid #949089; 
-    -webkit-border-top-left-radius: 0px;
-    -webkit-border-top-right-radius: 50px;
-    -webkit-border-bottom-left-radius: 0px;
-    -webkit-border-bottom-right-radius: 0px;
     /*float:left;*/
     width:245px;
-    height:1020px;
-    margin:25px 0 0 0;
-    border-bottom: 0px;
+    height:1045px;
+    margin:0 0 0 0;
+    background-color: #EEE;
 }
 
 #selected-group-item {
-    background-color: #EEE;
+    background-color: #FFF;
 }
 
 #group-title {
@@ -137,24 +134,27 @@
 }
 
 #group-list-panel {
-    height: 900px;
+    max-height:900px;
+}
+
+#group-list {}
+
+#group-space {
+    text-align: center;
+    height:152px;
+    line-height:152px;
+    color: #AAA;
 }
 
 #detail {
-    border: 1px solid #C0BAAE; 
-    -webkit-border-top-left-radius: 40px;
-    -webkit-border-top-right-radius: 0px;
-    -webkit-border-bottom-left-radius: 0px;
-    -webkit-border-bottom-right-radius: 0px;
     /*float:right;*/
     width:523px;
     background-color:#FFF;
-    height:1040px;
-    margin:9px 0 0 0;
+    height:1047px;
+    margin:0 0 0 0;
     position:absolute;
     top:0px;
     left:245px;
-    border-bottom: 0px;
 }
 
 #detail-title {
@@ -181,7 +181,7 @@
 }
 
 #detail-list-panel {
-    height:870px;
+    height:1030px;
 }
 
 #meta_name::-webkit-input-placeholder, 
@@ -326,7 +326,7 @@
 
 .list-task-number-zero, .list-task-number {
     -webkit-border-radius:10px ;
-    margin: 5px 20px 5px 5px;
+    margin: 10px 20px 5px 5px;
     /** Please notice the behaivor of ripple and the actual device is not exactly the same here so we put different number here */
     padding:5px 8px 8px 8px;
     border-radius:10px;

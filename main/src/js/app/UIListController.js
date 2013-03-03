@@ -3,29 +3,36 @@
 var UIListController = (function () {
     "use strict";
 
-    function setGroupPanelEmptyHeight() {
-        var height,
+    function setGroupPanelEmptyHeight(numberOfMeta) {
+        var height, heightString, metaListHeightByNumberOfMeta,
             groupParent      = document.getElementById('group'),
-            metaListTitle    = document.getElementById('group-title'),
             metaListDiv      = document.getElementById('group-list'),
             metaListSpaceDiv = document.getElementById('group-space');
         if (Util.notEmpty(groupParent) &&
-                Util.notEmpty(metaListTitle) &&
                 Util.notEmpty(metaListDiv) &&
                 Util.notEmpty(metaListSpaceDiv)) {
-            height = groupParent.offsetHeight - metaListTitle.offsetHeight - metaListDiv.offsetHeight;
-            metaListSpaceDiv.style.height = height + 'px';
+            metaListHeightByNumberOfMeta = ((numberOfMeta + 1) * 110);
+            if (metaListHeightByNumberOfMeta < metaListDiv.style.height) {
+                metaListDiv.style.height = metaListHeightByNumberOfMeta + 'px';
+            }
+            height = groupParent.offsetHeight - metaListDiv.offsetHeight;
+            height = height < 152 ? 152 : height;
+            heightString = height + 'px';
+            metaListSpaceDiv.style.height = heightString;
+            metaListSpaceDiv.innerText = '>';
+            metaListSpaceDiv.style.lineHeight = heightString;
         }
     }
 
     function fillMetaInternal(metaTypeId, metaTypeName, metaList, pageType, taskNumbers, callback) {
         DataAccess.meta.getByTypeId(metaTypeId, function (tx, result, arrays) {
-            var key, name, id, desc, item, uiId;
+            var key, name, id, desc, item, uiId, numberOfMeta = 0;
             for (key in arrays) {
                 if (arrays.hasOwnProperty(key)) {
                     name = arrays[key][Sql.Meta.Cols.Name];
                     id   = arrays[key][Sql.Meta.Cols.Id];
                     desc = arrays[key][Sql.Meta.Cols.Description];
+                    numberOfMeta += 1;
                     item = document.createElement('div');
                     item.setAttribute('data-bb-type', 'item');
                     item.setAttribute('data-bb-style', 'stretch');
@@ -52,7 +59,7 @@ var UIListController = (function () {
             if (Util.isFunction(callback)) {
                 callback();
             }
-            setGroupPanelEmptyHeight();
+            setGroupPanelEmptyHeight(numberOfMeta);
         }, function (tx, error) {
             log.logSqlError("Error getting meta list[" + metaTypeId + "]", error);
         });
@@ -75,20 +82,6 @@ var UIListController = (function () {
             }
             ctf.setAttribute('placeholder', placeholder);
         }
-    }
-
-    function showPlusShortcut(elem) {
-        elem.innerText = '+';
-        elem.className = 'group-title-add-new-link-show';
-        elem.onclick = function () {
-            bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix, {'metaTypeId' : Util.valueOf('v_meta_type_id')});
-        };
-    }
-
-    function hidePlusShortcut(elem) {
-        elem.innerText = '+';
-        elem.className = 'group-title-add-new-link-hide';
-        elem.onclick = function () {};
     }
 
     return {
@@ -117,7 +110,7 @@ var UIListController = (function () {
             document.getElementById(uiId).setAttribute('id', 'selected-group-item');
             document.getElementById('v_curr_hl_item').value = uiId;
             UIListController.fillTasksToGroupByMetaInfo(metaTypeName, filter);
-            Util.switchPanelWidth(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin);
+            Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin);
         },
 
         fillMetaListMarkTypeAsSelected : function (uiId) {
@@ -127,7 +120,7 @@ var UIListController = (function () {
             document.getElementById(uiId).setAttribute('id', 'selected-group-item');
             document.getElementById('v_curr_hl_item').value = uiId;
             UIListController.fillMetaListToPanel(uiId, UIConfig.metaByPagePrefix);
-            Util.switchPanelWidth(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin);
+            Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin);
         },
 
         switchDisplayToMode : function (mode) {
@@ -220,12 +213,10 @@ var UIListController = (function () {
 
         fillMetaTypeToPanel : function () {
             var item, name,
-                groupAddNewLink    = document.getElementById('group-title-add-new-link'),
                 metaTypeListTitle  = document.getElementById('group-title-text'),
                 metaTypeList       = document.getElementById('group-list');
             if (Util.notEmpty(metaTypeListTitle)) {
                 metaTypeListTitle.innerText = 'Fields';
-                hidePlusShortcut(groupAddNewLink);
             }
             UIContextMenuUtil.filterContextMenu(UIConfig.metaContextMenu);
             DataAccess.metaType.getAll(function (tx, result, arrays) {
@@ -291,12 +282,10 @@ var UIListController = (function () {
         },
 
         fillAllMetaToPanel : function (pageType) {
-            var metaTypeName, metaList, metaTypeInternal,
+            var metaTypeName, metaTypeInternal,
                 detailListTitle  = document.getElementById('detail-title-text'),
                 detailAddNewLink = document.getElementById('detail-add-new-link'),
-                groupAddNewLink  = document.getElementById('group-title-add-new-link'),
-                metaListTitle    = document.getElementById('group-title-text');
-            metaList = UIMetaUtil.getMetaListElement(pageType);
+                metaList = UIMetaUtil.getMetaListElement(pageType);
             metaList.innerHTML = UIConfig.emptyString;
             DataAccess.appDb.transaction(function (tx) {
                 DataAccess.runSqlDirectly(tx, "select distinct meta_id as id, meta_name as name, meta_description as description, meta_type_name from meta_view where meta_type_internal = 0",
@@ -338,11 +327,9 @@ var UIListController = (function () {
         },
 
         fillMetaListToPanel : function (metaTypeId, pageType, callback) {
-            var metaTypeName, metaList, metaTypeInternal, taskNumbers,
+            var metaTypeName, metaTypeInternal, taskNumbers,
                 detailAddNewLink = document.getElementById('detail-add-new-link'),
-                groupAddNewLink  = document.getElementById('group-title-add-new-link'),
-                metaListTitle    = document.getElementById('group-title-text');
-            metaList = UIMetaUtil.getMetaListElement(pageType);
+                metaList = UIMetaUtil.getMetaListElement(pageType);
             metaList.innerHTML = UIConfig.emptyString;
             DataAccess.metaType.getById(metaTypeId, function (tx, result, objs) {
                 if (Util.notEmpty(objs) && Util.notEmpty(objs[0])) {
@@ -358,23 +345,12 @@ var UIListController = (function () {
                             bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix, {'metaTypeId' : metaTypeId});
                         };
                         detailAddNewLink.innerText = 'Add New ' + metaTypeName;
-                        hidePlusShortcut(groupAddNewLink);
                         fillMetaInternal(metaTypeId, metaTypeName, metaList, pageType, taskNumbers, callback);
                     } else if (UIConfig.taskByPagePrefix === pageType) {
                         UIMetaUtil.makeMetaTypeDefaultList(metaTypeName, function (defaultItem) {
                             metaList.appendItem(defaultItem);
                             fillMetaInternal(metaTypeId, metaTypeName, metaList, pageType, taskNumbers, callback);
                         });
-                        if (0 === metaTypeInternal) {
-                            showPlusShortcut(groupAddNewLink);
-                        } else if (1 === metaTypeInternal) {
-                            hidePlusShortcut(groupAddNewLink);
-                        }
-                        if (Util.notEmpty(metaListTitle)) {
-                            metaListTitle.innerText = metaTypeName;
-                        } else {
-                            console.warn("Element with id[%s] is null, failed to set innerText to [%s]", 'group-title-text', metaTypeName);
-                        }
                     }
                     Util.setValue('v_meta_type_id', metaTypeId);
                     Util.setValue('v_meta_type_name', metaTypeName);

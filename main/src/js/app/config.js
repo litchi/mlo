@@ -69,21 +69,12 @@ var UIFragments = (function () {
         singleTaskList       : '<div data-bb-images="none" data-bb-type="image-list" id="detail-list"> </div>',
         masterDetailTaskList : '\
         <div id="group">\
-            <div id="group-title"\
-                onclick="Util.switchPanelWidth(UIConfig.rightPanelWidth, UIConfig.leftPanelWidth, UIConfig.rightPanelLargerLeftMargin);">\
-                <span id="group-title-text"></span>\
-                <span id="group-title-add-new-link" onclick="bb.pushScreen(\'edit-meta.html\', UIConfig.createMetaPagePrefix , {\'metaTypeId\' : Util.valueOf(\'v_meta_type_id\')})"></span>\
-            </div>\
             <div data-bb-type="scroll-panel" id="group-list-panel">\
                 <div id="group-list" data-bb-type="image-list" data-bb-images="none" ></div>\
-                <div id="group-space" onclick="Util.switchPanelWidth(UIConfig.rightPanelWidth, UIConfig.leftPanelWidth, UIConfig.rightPanelLargerLeftMargin);"></div>\
             </div>\
+            <div id="group-space" onclick="Util.togglePanelWidth();"></div>\
         </div>\
-        <div id="detail" onclick="Util.switchPanelWidth(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">\
-            <div id="detail-title">\
-                <span id="detail-title-text"></span>\
-                <span id="detail-add-new-link" onclick="bb.pushScreen(\'edit-meta.html\', UIConfig.createMetaPagePrefix, {\'metaTypeId\' : Util.valueOf(\'v_meta_type_id\')})"></span>\
-            </div>\
+        <div id="detail" onclick="Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">\
             <div data-bb-type="scroll-panel" id="detail-list-panel">\
                 <div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">\
                 </div>\

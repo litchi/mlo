@@ -2933,7 +2933,8 @@ bb.screen = {
 		          	outerScrollArea.style['left'] = '0px';
 		          	outerScrollArea.style['right'] = '0px';
 				} else if (actionBar) {
-					outerScrollArea.style['overflow'] = 'auto'; 
+					//outerScrollArea.style['overflow'] = 'auto'; 
+					outerScrollArea.style['overflow'] = 'hidden'; 
           			outerScrollArea.style['position'] = 'absolute';
 		          	outerScrollArea.style['bottom'] = actionBarHeight+ 'px';
 		          	outerScrollArea.style['top'] = '0px';
