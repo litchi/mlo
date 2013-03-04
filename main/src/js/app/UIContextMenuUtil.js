@@ -42,7 +42,7 @@ var UIContextMenuUtil = (function () {
             item.innerHTML = metaDesc;
             item.setAttribute(
                 'onclick',
-                "document.getElementById('task-operation-context-menu').menu.peek({ title : '" + metaName + " : "  + metaTypeName + "', description : '" + metaDesc + "', selected : '" + metaId + "'});"
+                "document.getElementById('task-operation-context-menu').menu.peek({ title : '" + metaName + " : "  + metaTypeName + "', description : '" + metaDesc + "', selected : '" + metaId + "', type: 'Meta'});"
             );
         }
 

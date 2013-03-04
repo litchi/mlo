@@ -135,7 +135,8 @@ var UITaskUtil = (function () {
                         title : UIConfig.msgTaskContextMenuTitle,
                         description : name,
                         //FIXME: Make this parameter pass all the fetched data and avoid querying from DB again
-                        selected : id
+                        selected : id,
+                        type : 'Task'
                     });
                     taskDetailHtml = UITaskUtil.createTaskDetailView(container, id, name, project, contexts, dueDate);
                 };
@@ -193,15 +194,14 @@ var UITaskUtil = (function () {
             }
         },
 
-        setTaskDetailPanelDisplay : function (display) {
+        setTaskDetailPanelDisplay : function (display, data) {
             var container, taskListContainer;
-            container = document.getElementById(UIConfig.viewTaskDetailElementId);
-            if (container.style.display !== display) {
-                document.getElementById('main-content-overlay').style.display = display;
-                container.style['-webkit-transition'] = 'all 1s ease-in-out';
-                container.style['-webkit-backface-visibility'] = 'hidden';
-                container.style['-webkit-perspective'] = '1000';
-                container.style.display = display;
+            if (Util.isEmpty(data) || (data.type === 'Task')) {
+                container = document.getElementById(UIConfig.viewTaskDetailElementId);
+                if (container.style.display !== display) {
+                    document.getElementById('main-content-overlay').style.display = display;
+                    container.style.display = display;
+                }
             }
         },
 
