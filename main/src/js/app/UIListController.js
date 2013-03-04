@@ -147,7 +147,6 @@ var UIListController = (function () {
         fillTasksToGroupByMetaInfo : function (metaTypeName, metaName) {
             var id, name, title = UIConfig.emptyString,
                 detailListTitle  = document.getElementById('detail-title-text'),
-                detailAddNewLink = document.getElementById('detail-add-new-link'),
                 taskList = document.getElementById(UIConfig.detailListElementId);
             UIContextMenuUtil.filterContextMenu(UIConfig.taskContextMenu);
             if (SeedData.DueMetaTypeName === metaTypeName) {
@@ -172,9 +171,6 @@ var UIListController = (function () {
                 } else if (Util.notEmpty(metaTypeName)) {
                     detailListTitle.innerText = 'Tasks with ' + metaTypeName;
                 }
-            }
-            if (Util.notEmpty(detailAddNewLink)) {
-                detailAddNewLink.style.display = 'none';
             }
             if (Util.notEmpty(detailListTitle)) {
                 detailListTitle.style.display = 'inline';
@@ -220,7 +216,7 @@ var UIListController = (function () {
             }
             UIContextMenuUtil.filterContextMenu(UIConfig.metaContextMenu);
             DataAccess.metaType.getAll(function (tx, result, arrays) {
-                var key, name, id, desc, item, internal, uiId;
+                var key, name, id, desc, item, internal, uiId, addIconParent, addIcon;
                 if (Util.notEmpty(metaTypeList)) {
                     metaTypeList.innerHTML = UIConfig.emptyString;
                 }
@@ -236,8 +232,17 @@ var UIListController = (function () {
                         if (id !== null && 1 !== internal) {
                             item.setAttribute('id', id);
                             if (name !== null) {
-                                item.setAttribute('title', '<span class="master-title">' + name + '</span>');
-                                item.setAttribute('data-bb-title', '<span class="master-title">' + name + '</span>');
+                                addIconParent = document.createElement('div');
+                                addIcon = document.createElement('span');
+                                addIcon.setAttribute(
+                                    'onclick',
+                                    "bb.pushScreen('edit-meta.html', '" + UIConfig.createMetaPagePrefix + "', {'metaTypeId' : '" + id + "'})"
+                                );
+                                addIcon.innerText = '+';
+                                addIcon.setAttribute('class', 'list-task-number');
+                                addIconParent.appendChild(addIcon);
+                                item.setAttribute('title', '<span class="master-title">' + name + '</span>' + addIconParent.innerHTML);
+                                item.setAttribute('data-bb-title', '<span class="master-title">' + name + '</span>' + addIconParent.innerHTML);
                             }
                             item.setAttribute(
                                 'onclick',
@@ -284,7 +289,6 @@ var UIListController = (function () {
         fillAllMetaToPanel : function (pageType) {
             var metaTypeName, metaTypeInternal,
                 detailListTitle  = document.getElementById('detail-title-text'),
-                detailAddNewLink = document.getElementById('detail-add-new-link'),
                 metaList = UIMetaUtil.getMetaListElement(pageType);
             metaList.innerHTML = UIConfig.emptyString;
             DataAccess.appDb.transaction(function (tx) {
@@ -311,13 +315,8 @@ var UIListController = (function () {
                                 }
                             }
                         }
-                        detailAddNewLink.innerText     = 'All Projects and Contexts';
                         if (Util.notEmpty(detailListTitle)) {
                             detailListTitle.style.display  = 'none';
-                        }
-                        if (Util.notEmpty(detailAddNewLink)) {
-                            detailAddNewLink.style.display = 'inline';
-                            detailAddNewLink.onclick       = function () {};
                         }
                         setGroupPanelEmptyHeight();
                     });
@@ -328,7 +327,6 @@ var UIListController = (function () {
 
         fillMetaListToPanel : function (metaTypeId, pageType, callback) {
             var metaTypeName, metaTypeInternal, taskNumbers,
-                detailAddNewLink = document.getElementById('detail-add-new-link'),
                 metaList = UIMetaUtil.getMetaListElement(pageType);
             metaList.innerHTML = UIConfig.emptyString;
             DataAccess.metaType.getById(metaTypeId, function (tx, result, objs) {
@@ -341,10 +339,6 @@ var UIListController = (function () {
                         });
                     }
                     if (UIConfig.metaByPagePrefix === pageType) {
-                        detailAddNewLink.onclick = function () {
-                            bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix, {'metaTypeId' : metaTypeId});
-                        };
-                        detailAddNewLink.innerText = 'Add New ' + metaTypeName;
                         fillMetaInternal(metaTypeId, metaTypeName, metaList, pageType, taskNumbers, callback);
                     } else if (UIConfig.taskByPagePrefix === pageType) {
                         UIMetaUtil.makeMetaTypeDefaultList(metaTypeName, function (defaultItem) {
