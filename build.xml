@@ -33,6 +33,7 @@
     <property name = "env.ripple.remote.folder"       value    = "/var/www/gtd"/>
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.138"/>
     <property name = "env.bb10.device.ip"             value    = "192.168.53.219"/>
+    <!--<property name = "env.bb10.device.ip"             value    = "172.20.10.14"/>-->
     <property name = "env.bb10.device.password"       value    = "hetaolxq"/>
  
     <!-- Tools -->
