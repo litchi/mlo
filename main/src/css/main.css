@@ -77,13 +77,13 @@
 }
 
 #group-detail-container {
-    height:1047px;
+    height:1060px;
 }
 
 #group {
     /*float:left;*/
     width:245px;
-    height:1045px;
+    height:1006px;
     margin:0 0 0 0;
     background-color: #EEE;
 }
@@ -107,32 +107,6 @@
     font-size:36px;
 }
 
-.group-title-add-new-link-show {
-    -webkit-border-radius:10px;
-    margin:0 0 0 20px;
-    padding:0px 20px 6px 20px;
-    border-radius:10px;
-    color:#FFF;
-    display:-moz-inline-box; 
-    display:inline-block; 
-    font-size: 36px;
-    font-weight:bolder;
-    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(225,225,225,1)), to(rgba(204, 204, 204, 0.95)))
-}
-
-.group-title-add-new-link-hide {
-    -webkit-border-radius:10px;
-    background-color:#EEE;
-    margin:0 0 0 20px;
-    padding:0px 20px 6px 20px;
-    border-radius:10px;
-    color:#EEE;
-    display:-moz-inline-box; 
-    display:inline-block; 
-    font-size: 36px;
-    font-weight:bolder;
-}
-
 #group-list-panel {
     max-height:900px;
 }
@@ -141,8 +115,8 @@
 
 #group-space {
     text-align: center;
-    height:152px;
-    line-height:152px;
+    height:102px;
+    line-height:102px;
     color: #AAA;
 }
 
@@ -150,38 +124,21 @@
     /*float:right;*/
     width:523px;
     background-color:#FFF;
-    height:1047px;
+    height:1147px;
     margin:0 0 0 0;
     position:absolute;
     top:0px;
     left:245px;
 }
 
-#detail-title {
-    padding: 42px 0 20px 20px;
-    background-color: #EEE;
-    -webkit-border-top-left-radius: 50px;
-    -webkit-border-top-right-radius: 0px;
-    -webkit-border-bottom-left-radius: 0px;
-    -webkit-border-bottom-right-radius: 0px;
-    border-bottom: solid 1px #BBB;
-    white-space: nowrap;
-    overflow:hidden;
-}
-
-#detail-add-new-link {
-    text-align: center;
-    margin-top: 10px;
-}
-
 #task-list-container{height:1048px;}
 
 #detail-list{
-    height:1000px;
+    height:1130px;
 }
 
 #detail-list-panel {
-    height:1030px;
+    height:1130px;
 }
 
 #meta_name::-webkit-input-placeholder, 
@@ -203,14 +160,23 @@
     font-size:48px;
     font-family: 'monospaceTextarea';
     line-height:150%;
-    border:0px solid #000;
-    border-bottom:0px solid #333;  
     outline: none;
     resize: none;
+    border:0px solid #000;
 }
 
 #ctsi {
-    width:690px;
+    width:700px;
+    border: 15px solid rgba(78, 187, 96, 0.56);
+    /*height: 120px;*/
+    background-color: rgba(168, 223, 117, 0.51);
+    color:white;  
+    font-family:monospaceTextarea;
+    font-size:48px;
+    margin: 3px 5px 3px 5px;
+    padding: 5px;
+    font-size:48px;
+    line-height:150%;
 }
 
 @font-face {
@@ -242,16 +208,23 @@
     vertical-align:top;
 }
 
-#create-task-input-container {}
+#create-task-input-container {
+    display:none;
+    position: absolute; 
+    left: 26px; 
+    top: 50px; 
+    z-index: 1000;
+    width:0px;
+}
 
 #view-task-detail {
     display: none; 
     position: absolute; 
     left: 40px; 
-    top: 95px; 
+    top: 80px; 
     width: 570px; 
     height: 970px; 
-    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgb(255,255,255)), to(rgba(204, 204, 204, 0.95)));
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(255, 255, 255, 0.8)), to(rgba(163, 163, 163, 0)));
     -webkit-border-top-left-radius: 40px;
     -webkit-border-top-right-radius: 40px;
     -webkit-border-bottom-left-radius: 40px;
@@ -279,11 +252,11 @@
     /** Please notice the behaivor of ripple and the actual device is not exactly the same here so we put different number here */
     padding:0 10px 0 10px;
     border-radius:20px;
-    color:#333;
+    color:#CCC;
     display:-moz-inline-box;
     display:inline-block;
     border: 1px solid #77777;
-    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(225,225,225, 0.5)), to(rgba(154, 154, 154, 0.5)));
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(128, 128, 128, 0.5)), to(rgba(46, 46, 46, 0.9)));
 }
 .task-detail-list-due {
     border-bottom: 1px solid #000;
@@ -296,7 +269,7 @@
 }
 .view-task-detail-sub-field {
     padding: 20px;
-    border-bottom: 2px solid #CCC;
+    border-bottom: 1px solid #777;
     border-style: none none solid none;
     margin: 0 20px 0 20px;
 }
@@ -343,4 +316,26 @@
 .list-task-number-zero {
     background: transparent;
     border: 0px;
+}
+
+#create-task-shortcut {
+    min-height:141px; 
+    line-height:121px;
+    text-align:center;
+    height: 141px;
+    font-size: 141px;
+    color: green;
+    background: #EEE;
+    border-top: 1px solid #AAA;
+    width:245px;
+}
+
+#create-task-placeholder {
+    background: transparent;
+    color: rgba(218, 253, 167, 0.51);
+    width: 700px;
+    margin-left: 10px;
+    margin: auto;
+    text-align: center;
+    padding-bottom: 20px;
 }

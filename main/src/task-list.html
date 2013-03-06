@@ -1,4 +1,4 @@
-﻿<div data-bb-type="screen" xmlns="http://www.w3.org/1999/html" data-bb-effect='fade'>
+﻿<div data-bb-type="screen" xmlns="http://www.w3.org/1999/html" data-bb-effect='fade' style="overflow:hidden" data-bb-scroll-effect="off">
     <div data-bb-type="scroll-panel" id='task-list-container' onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
         <div data-bb-images="none" data-bb-type="image-list" id="detail-list">
         </div>
@@ -10,6 +10,7 @@
             </div>
             <div id='group-space' onclick="Util.togglePanelWidth();"></div>
         </div>
+        <div id="create-task-shortcut" onclick="Util.toggleCreateTaskShortcutDisplay();">+</div>
         <div id="detail" onclick="Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">
             <div data-bb-type="scroll-panel" id='detail-list-panel'>
                 <div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">
@@ -21,9 +22,14 @@
         <div id="view-task-detail-title" class="view-task-detail-sub-field"></div>
         <div id="view-task-detail-meta" class="view-task-detail-sub-field"></div>
     </div>
+    <div id='create-task-input-container'>
+        <div id="create-task-placeholder"></div>
+        <form name="ctf" id="ctf" onSubmit="return UIContextMenuController.createTask(Util.valueOf('ctsi'), Util.valueOf('v_meta_type_name'), Util.valueOf('v_meta_id'));">
+            <textarea id="ctsi" rows='1' onkeyup="Util.resizeTextarea(this, 26)" onmouseup="Util.resizeTextarea(this, 26)"></textarea>
+        </form>
+    </div>
     <div id="main-content-overlay"></div>
     @meta-fields@
     @task-context-menu@
-    @task-create-inputbox@
     @actionbar@
 </div>

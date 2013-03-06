@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, UIContextMenuUtil, UITaskUtil, UIMetaUtil*/
+/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, UIContextMenuUtil, UITaskUtil, UIMetaUtil, $, JQuery*/
 var UIListController = (function () {
     "use strict";
 
@@ -7,16 +7,18 @@ var UIListController = (function () {
         var height, heightString, metaListHeightByNumberOfMeta,
             groupParent      = document.getElementById('group'),
             metaListDiv      = document.getElementById('group-list'),
-            metaListSpaceDiv = document.getElementById('group-space');
+            metaListSpaceDiv = document.getElementById('group-space'),
+            createTaskShortcutDiv = document.getElementById('create-task-shortcut');
         if (Util.notEmpty(groupParent) &&
                 Util.notEmpty(metaListDiv) &&
-                Util.notEmpty(metaListSpaceDiv)) {
+                Util.notEmpty(metaListSpaceDiv) &&
+                Util.notEmpty(createTaskShortcutDiv)) {
             metaListHeightByNumberOfMeta = ((numberOfMeta + 1) * 110);
             if (metaListHeightByNumberOfMeta < metaListDiv.style.height) {
                 metaListDiv.style.height = metaListHeightByNumberOfMeta + 'px';
             }
             height = groupParent.offsetHeight - metaListDiv.offsetHeight;
-            height = height < 152 ? 152 : height;
+            height = height < 102 ? 102 : height;
             heightString = height + 'px';
             metaListSpaceDiv.style.height = heightString;
             metaListSpaceDiv.innerText = '>';
@@ -66,22 +68,23 @@ var UIListController = (function () {
     }
 
     function setCreateTaskInputPlaceHolder(metaName, metaTypeName) {
-        var placeholder = 'New task',
-            ctf = document.getElementById('ctsi');
-        if (Util.notEmpty(ctf)) {
-            if (Util.notEmpty(metaName) &&
-                    Sql.FilterAllMeta !== metaName &&
-                    SeedData.DueMetaTypeName !== metaTypeName) {
-                if (SeedData.GtdMetaTypeName === metaTypeName) {
-                    placeholder = placeholder + ' on ' + metaName;
-                } else {
-                    placeholder = placeholder + ' on ' + metaTypeName + ' ' + metaName;
-                }
+        var placeholder = 'New task';
+            //ctf = document.getElementById('ctsi');
+        //if (Util.notEmpty(ctf)) {
+        if (Util.notEmpty(metaName) &&
+                Sql.FilterAllMeta !== metaName &&
+                SeedData.DueMetaTypeName !== metaTypeName) {
+            if (SeedData.GtdMetaTypeName === metaTypeName) {
+                placeholder = placeholder + ' on ' + metaName + ' list';
             } else {
-                placeholder = placeholder + '(Goes to list Basket)';
+                placeholder = placeholder + ' on ' + metaTypeName + ' ' + metaName;
             }
-            ctf.setAttribute('placeholder', placeholder);
+        } else {
+            placeholder = placeholder + ' (Goes to Basket list)';
         }
+        //ctf.setAttribute('placeholder', placeholder);
+        $("#create-task-placeholder").text(placeholder);
+        //}
     }
 
     return {

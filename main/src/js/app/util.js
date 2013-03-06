@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, UIActionBarController, $, jQuery*/
+/*global blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, UIActionBarController, $, jQuery, UITaskUtil*/
 var Util = (function () {
     "use strict";
     return {
@@ -125,8 +125,28 @@ var Util = (function () {
                     $(".master-title").css("max-width", "450px");
                 } else {
                     $(".master-title").css("max-width", "159px");
+                    $('#create-task-shortcut').css('width', '245px');
                 }
-                document.getElementById('group-space').innerText = '>';
+                $('#group-space').innerText = '>';
+            }
+        },
+
+        toggleCreateTaskShortcutDisplay : function () {
+            var currentDisplay = $('#create-task-input-container').css('display');
+            if ('none' === currentDisplay) {
+                $('#create-task-input-container').css('display', 'block');
+                $('#main-content-overlay').css('display', 'block');
+                $('#ctsi').focus();
+                $('#main-content-overlay').click(function () {
+                    $('#create-task-input-container').css('display', 'none');
+                    $('#main-content-overlay').css('display', 'none');
+                });
+                $('#ctsi').parent().css('border', '0px solid #000');
+                $('#ctsi').parent().css('background', 'transparent');
+            } else {
+                $('#create-task-input-container').css('display', 'none');
+                $('#main-content-overlay').css('display', 'none');
+                $("#main-content-overlay").removeAttr('onclick');
             }
         },
 
@@ -136,11 +156,13 @@ var Util = (function () {
                 document.getElementById(UIConfig.detailListPanelElementId).style.width = UIConfig.rightPanelWidth + 'px';
                 document.getElementById(UIConfig.detailListPanelElementId).style.left = UIConfig.rightPanelSmallerLeftMargin + 'px';
                 document.getElementById('group-space').innerText = '>';
+                document.getElementById('create-task-shortcut').style.width = UIConfig.leftPanelWidth + 'px';
             } else {
                 document.getElementById('group').style.width = UIConfig.rightPanelWidth + 'px';
                 document.getElementById(UIConfig.detailListPanelElementId).style.width = UIConfig.leftPanelWidth + 'px';
                 document.getElementById(UIConfig.detailListPanelElementId).style.left = UIConfig.rightPanelLargerLeftMargin + 'px';
                 document.getElementById('group-space').innerText = '<';
+                document.getElementById('create-task-shortcut').style.width = UIConfig.rightPanelWidth + 'px';
             }
             if (document.getElementById(UIConfig.detailListPanelElementId).style.left > '350') {
                 $(".master-title").css("max-width", "450px");
@@ -160,15 +182,25 @@ var Util = (function () {
             return result;
         },
 
-        resizeTextarea : function (elem) {
+        resizeTextarea : function (elem, charNumberOneLine) {
             var contents = elem.value.split('\n'), newRows = 0, currentLine,
                 currentRows = elem.rows, longLines = 0;
+            if (Util.notEmpty(event)
+                    && Util.notEmpty(event.keyCode)
+                    && Util.notEmpty($('#ctf'))
+                    && Util.notEmpty($('#ctsi'))
+                    && event.keyCode === 13) {
+                Util.toggleCreateTaskShortcutDisplay();
+                $('#ctf').submit();
+                $('#ctsi').value('');
+                $('#ctsi').blur();
+            }
             if (!elem.initialRows) {
                 elem.initialRows = 1;
             }
             for (currentLine = 0; currentLine < contents.length; currentLine += 1) {
-                if (contents[currentLine].length > elem.cols) {
-                    newRows += Math.floor(contents[currentLine].length / elem.cols);
+                if (contents[currentLine].length > charNumberOneLine) {
+                    newRows += Math.floor(contents[currentLine].length / charNumberOneLine);
                     longLines += 1;
                 }
             }

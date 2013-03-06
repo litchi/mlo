@@ -186,7 +186,7 @@ var UIEditFormController = (function () {
             elem = document.getElementById('task-name');
             elem.setAttribute('cols', '28');
             elem.innerHTML = taskName;
-            Util.resizeTextarea(elem);
+            Util.resizeTextarea(elem, 27);
             //This behaivor is very annoying so comment out at this moment.
             //elem.focus();
             //Util.moveCaretToEnd(elem);

@@ -1,5 +1,5 @@
 /*jslint browser: true es5: true*/
-/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util*/
+/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, $, jQuery*/
 var UITaskUtil = (function () {
     "use strict";
 
@@ -199,9 +199,12 @@ var UITaskUtil = (function () {
             if (Util.isEmpty(data) || (data.type === 'Task')) {
                 container = document.getElementById(UIConfig.viewTaskDetailElementId);
                 if (container.style.display !== display) {
-                    document.getElementById('main-content-overlay').style.display = display;
                     container.style.display = display;
+                    $('#main-content-overlay').css('display', display);
                 }
+            }
+            if (display === 'block') {
+                $('#create-task-input-container').css('display', 'none');
             }
         },
 

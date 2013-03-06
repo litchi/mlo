@@ -74,6 +74,7 @@ var UIFragments = (function () {
             </div>\
             <div id="group-space" onclick="Util.togglePanelWidth();"></div>\
         </div>\
+        <div id="create-task-shortcut" onclick="Util.toggleCreateTaskShortcutDisplay();">+</div>\
         <div id="detail" onclick="Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">\
             <div data-bb-type="scroll-panel" id="detail-list-panel">\
                 <div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">\
