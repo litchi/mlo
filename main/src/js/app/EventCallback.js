@@ -54,11 +54,11 @@ var EventCallback = (function () {
             if (id === SeedData.BasketMetaName ||
                     id === SeedData.NextActionMetaName ||
                     id === SeedData.SomedayMetaName) {
-                UIActionBarController.openTaskByMetaPage(id, toastMsg);
+                UIActionBarController.openTaskByMetaPage(id);
             } else if (id === UIConfig.editTaskPagePrefix) {
                 UIEditFormController.fillTaskToEditForm(taskId, params);
             } else if (id === UIConfig.taskByPagePrefix) {
-                UIActionBarController.openTaskGroupByMetaPage(metaTypeName, defaultMetaName, toastMsg);
+                UIActionBarController.openTaskGroupByMetaPage(metaTypeName, defaultMetaName);
             } else if ((id === UIConfig.screenIdField) || (id === UIConfig.metaByPagePrefix)) {
                 UIActionBarController.openMetaGroupByTypePage(metaTypeId);
             } else if (id === UIConfig.editMetaPagePrefix) {
