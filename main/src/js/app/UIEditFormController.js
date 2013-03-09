@@ -148,7 +148,6 @@ var UIEditFormController = (function () {
     function saveContextPopScreen(tx, taskId) {
         DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteByMetaTypeName, [taskId, SeedData.ContextMetaTypeName]);
         saveContextToDb(tx, taskId);
-        Util.showToast();
         Util.refreshCurrentPage(UIConfig.msgForSuccessfulTaskUpdate);
     }
 
