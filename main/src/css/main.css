@@ -285,8 +285,13 @@
     background: rgba(0,0,0, 0.8);
 }
 
-.detail-title {
+.add-new-detail-title, .detail-title {
     font-size:36px;
+}
+
+.add-new-detail-title {
+    margin:auto;
+    text-align:center;
 }
 .default-master-detail, .master-title {
     font-size:30px;

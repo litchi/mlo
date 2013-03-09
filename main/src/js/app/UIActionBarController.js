@@ -1,5 +1,5 @@
 /*jslint browser: true es5: true*/
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UITaskUtil*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UITaskUtil, $*/
 var UIActionBarController = (function () {
     "use strict";
     return {
@@ -12,12 +12,14 @@ var UIActionBarController = (function () {
                     Util.showToast(toastMsg);
                 }
             });
+            $("[id^=add-meta-link-]").remove();
         },
 
         openTaskByStatusPage : function (statusKey) {
             UITaskUtil.setTaskDetailPanelDisplay('none');
             UIListController.switchDisplayToMode(UIConfig.singleDisplayMode);
             UIListController.fillTasksToGroupByStatusKey(statusKey);
+            $("[id^=add-meta-link-]").remove();
         },
 
         openTaskGroupByMetaPage : function (metaTypeName, metaName, toastMsg) {
@@ -33,6 +35,7 @@ var UIActionBarController = (function () {
                     Util.showToast(toastMsg);
                 }
             });
+            $("[id^=add-meta-link-]").remove();
         },
 
         openMetaGroupByTypePage : function (metaTypeId) {

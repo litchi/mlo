@@ -219,7 +219,7 @@ var UIListController = (function () {
             }
             UIContextMenuUtil.filterContextMenu(UIConfig.metaContextMenu);
             DataAccess.metaType.getAll(function (tx, result, arrays) {
-                var key, name, id, desc, item, internal, uiId, addIconParent, addIcon;
+                var index = 0, key, name, id, desc, item, internal, uiId, titleParent, titleSpan, addIcon;
                 if (Util.notEmpty(metaTypeList)) {
                     metaTypeList.innerHTML = UIConfig.emptyString;
                 }
@@ -235,24 +235,36 @@ var UIListController = (function () {
                         if (id !== null && 1 !== internal) {
                             item.setAttribute('id', id);
                             if (name !== null) {
-                                addIconParent = document.createElement('div');
                                 addIcon = document.createElement('span');
-                                addIcon.setAttribute(
-                                    'onclick',
-                                    "bb.pushScreen('edit-meta.html', '" + UIConfig.createMetaPagePrefix + "', {'metaTypeId' : '" + id + "'})"
-                                );
                                 addIcon.innerText = '+';
                                 addIcon.setAttribute('class', 'list-task-number');
-                                addIconParent.appendChild(addIcon);
-                                item.setAttribute('title', '<span class="master-title">' + name + '</span>' + addIconParent.innerHTML);
-                                item.setAttribute('data-bb-title', '<span class="master-title">' + name + '</span>' + addIconParent.innerHTML);
+                                $('<div id="add-meta-link-' + name + '"></div>').appendTo($('#group-list')).css({
+                                    'position' : 'absolute',
+                                    'top' : (25 + index * 110) + 'px',
+                                    'left' :  '180px',
+                                    'z-index' : '200'
+                                }).click(function (id) {
+                                    return function () {
+                                        bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix, {'metaTypeId' : id, 'abc' : 'def' });
+                                    };
+                                }(id)).append(addIcon);
+
+                                titleParent = document.createElement('div');
+                                titleSpan = document.createElement('span');
+                                titleSpan.setAttribute('class', 'master-title');
+                                titleSpan.innerText = name;
+                                titleParent.appendChild(titleSpan);
+
+                                item.setAttribute(
+                                    'onclick',
+                                    'UIListController.fillMetaListMarkTypeAsSelected(\'' + id + '\');'
+                                );
+                                item.setAttribute('title', titleParent.innerHTML);
+                                item.setAttribute('data-bb-title', titleParent.innerHTML);
                             }
-                            item.setAttribute(
-                                'onclick',
-                                "UIListController.fillMetaListMarkTypeAsSelected('" + id + "');"
-                            );
                             metaTypeList.appendItem(item);
                         }
+                        index += 1;
                     }
                 }
                 setCreateTaskInputPlaceHolder(UIConfig.emptyString, UIConfig.emptyString);
