@@ -10,7 +10,7 @@ var UIMetaUtil = (function () {
         } else if (SeedData.DueMetaTypeName === metaTypeName) {
             result = 'with Due';
         } else {
-            result = 'All ' + metaTypeName + '(s)';
+            result = metaTypeName + '(s)';
         }
         return result;
     }
