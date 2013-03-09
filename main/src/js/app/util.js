@@ -196,8 +196,10 @@ var Util = (function () {
                     && event.keyCode === 13) {
                 Util.toggleCreateTaskShortcutDisplay();
                 $('#ctf').submit();
-                $('#ctsi').value('');
+                $('#ctsi').val(UIConfig.emptyString);
                 $('#ctsi').blur();
+                contents = UIConfig.emptyString;
+                currentRows = 1;
             }
             if (!elem.initialRows) {
                 elem.initialRows = 1;
