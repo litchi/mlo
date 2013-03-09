@@ -43,7 +43,13 @@
     position:absolute; top:-10px; right:-10px;
     background-color:transparent;
 }
-.list-context {
+
+.list-project {
+    margin-right:10px;
+    font-size:24px;
+}
+
+.list-context, .list-context-last {
     -webkit-border-radius:10px ;
     margin: 5px;
     /** Please notice the behaivor of ripple and the actual device is not exactly the same here so we put different number here */
@@ -56,13 +62,12 @@
     line-height:24px;
     background: -webkit-gradient(linear, 0 0, 0 bottom, from(#E0E5E4), to(rgba(204, 204, 204, 0.5)));
 }
-.list-project {
-    margin-right:10px;
-    font-size:24px;
+
+.list-context-last {
+    margin-right: 10px;
 }
 
 .list-due {
-    margin-left: 10px;
     font-size:24px;
     border-bottom: 1px solid #000;
     padding-bottom: 2px;
@@ -325,15 +330,18 @@
 
 #create-task-shortcut {
     min-height:141px; 
-    line-height:121px;
     text-align:center;
     height: 141px;
-    font-size: 141px;
-    color: green;
     background: #EEE;
     border-top: 1px solid #AAA;
     width:245px;
+    padding-top:25px;
 }
+
+#create-task-shortcut-search {
+    padding-left: 35px;
+}
+
 
 #create-task-placeholder {
     background: transparent;

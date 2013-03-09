@@ -102,7 +102,7 @@ var UITaskUtil = (function () {
 
         createTaskItemElement : function (id, name, project, contexts, dueDate) {
             var innerContent = UIConfig.emptyString, item = document.createElement('div'),
-                contextCount, i, dueClass, localDueDate;
+                contextCount, i, dueClass, localDueDate, contextClass;
             item.setAttribute('data-bb-type', 'item');
             item.setAttribute('data-bb-style', 'stretch');
             if (id !== null) {
@@ -118,7 +118,12 @@ var UITaskUtil = (function () {
                     contextCount = contexts.length;
                     if (contextCount > 0) {
                         for (i = 0; i < contextCount; i += 1) {
-                            innerContent = innerContent + "\n<span class='list-context'>" + contexts[i] + "</span>";
+                            if (i === contextCount - 1) {
+                                contextClass = 'list-context-last';
+                            } else {
+                                contextClass = 'list-context';
+                            }
+                            innerContent = innerContent + "\n<span class='" + contextClass + "'>" + contexts[i] + "</span>";
                         }
                     }
                 }
@@ -168,10 +173,23 @@ var UITaskUtil = (function () {
                                 taskDueDate = obj.task_due_date;
                             }
                         }
-                        item = UITaskUtil.createTaskItemElement(id, name, project, contexts, taskDueDate);
-                        items.push(item);
-                        if (taskIndex === taskCount - 1) {
-                            taskList.refresh(items);
+                        if (null === taskDueDate) {
+                            DataAccess.runSqlDirectly(tx,
+                                'select due_date from task where id = ?', [id],
+                                function (tx, result, objs) {
+                                    taskDueDate = result.rows.item(0).due_date;
+                                    item = UITaskUtil.createTaskItemElement(id, name, project, contexts, taskDueDate);
+                                    items.push(item);
+                                    if (taskIndex === taskCount - 1) {
+                                        taskList.refresh(items);
+                                    }
+                                });
+                        } else {
+                            item = UITaskUtil.createTaskItemElement(id, name, project, contexts, taskDueDate);
+                            items.push(item);
+                            if (taskIndex === taskCount - 1) {
+                                taskList.refresh(items);
+                            }
                         }
                     }
                 );
