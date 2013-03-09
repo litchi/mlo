@@ -87,7 +87,7 @@
 
 #group {
     /*float:left;*/
-    width:245px;
+    width:205px;
     height:1006px;
     margin:0 0 0 0;
     background-color: #EEE;
@@ -299,8 +299,8 @@
     text-align:center;
 }
 .default-master-detail, .master-title {
-    font-size:30px;
-    max-width:159px;
+    font-size:24px;
+    max-width:119px;
     float:left;
     overflow:hidden; 
     text-overflow: ellipsis; 
@@ -334,12 +334,12 @@
     height: 141px;
     background: #EEE;
     border-top: 1px solid #AAA;
-    width:245px;
+    width:205px;
     padding-top:25px;
 }
 
 #create-task-shortcut-search {
-    padding-left: 35px;
+    padding-left: 10px;
 }
 
 

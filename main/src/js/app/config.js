@@ -3,10 +3,10 @@ var UIConfig = (function () {
     "use strict";
     return {
         emptyString                 : '',
-        leftPanelWidth              : '245',
-        rightPanelWidth             : '523',
-        rightPanelSmallerLeftMargin : '245',
-        rightPanelLargerLeftMargin  : '515',
+        leftPanelWidth              : '205',
+        rightPanelWidth             : '563',
+        rightPanelSmallerLeftMargin : '205',
+        rightPanelLargerLeftMargin  : '555',
         editTaskPagePrefix          : 'edit-task',
         metaByPagePrefix            : 'meta-by',
         taskByPagePrefix            : 'task-by',
@@ -74,7 +74,10 @@ var UIFragments = (function () {
             </div>\
             <div id="group-space" onclick="Util.togglePanelWidth();"></div>\
         </div>\
-        <div id="create-task-shortcut" onclick="Util.toggleCreateTaskShortcutDisplay();">+</div>\
+        <div id="create-task-shortcut">\
+            <img id="create-task-shortcut-add" src="resources/image/bullet_add.png" onclick="Util.toggleCreateTaskShortcutDisplay();"/>\
+            <img id="create-task-shortcut-search" src="resources/image/search.png" onclick="Util.toggleSearchTaskTaskShortcutDisplay();"/>\
+        </div>\
         <div id="detail" onclick="Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">\
             <div data-bb-type="scroll-panel" id="detail-list-panel">\
                 <div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">\

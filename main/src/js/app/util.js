@@ -124,11 +124,15 @@ var Util = (function () {
                 if (taskLeft > '350') {
                     $(".master-title").css("max-width", "450px");
                 } else {
-                    $(".master-title").css("max-width", "159px");
-                    $('#create-task-shortcut').css('width', '245px');
+                    $(".master-title").css("max-width", "119px");
+                    $('#create-task-shortcut').css('width', UIConfig.leftPanelWidth + 'px');
                 }
                 $('#group-space').innerText = '>';
             }
+        },
+
+        toggleSearchTaskTaskShortcutDisplay : function () {
+        
         },
 
         toggleCreateTaskShortcutDisplay : function () {
@@ -167,7 +171,7 @@ var Util = (function () {
             if (document.getElementById(UIConfig.detailListPanelElementId).style.left > '350') {
                 $(".master-title").css("max-width", "450px");
             } else {
-                $(".master-title").css("max-width", "159px");
+                $(".master-title").css("max-width", "119px");
             }
         },
 
