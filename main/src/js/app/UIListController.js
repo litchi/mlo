@@ -241,7 +241,7 @@ var UIListController = (function () {
                                 $('<div id="add-meta-link-' + name + '"></div>').appendTo($('#group-list')).css({
                                     'position' : 'absolute',
                                     'top' : (25 + index * 110) + 'px',
-                                    'left' :  '180px',
+                                    'left' :  '140px',
                                     'z-index' : '200'
                                 }).click(function (id) {
                                     return function () {
