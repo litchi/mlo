@@ -164,13 +164,16 @@ var UIEditFormController = (function () {
             dueDate = Util.valueOf('due-date'),
             reminderOnInt = (reminderOn === true) ? 1 : 0,
             myDate = Util.timeToDateWithZone(new Date(dueDate).getTime() / 1000);
-        DataAccess.runSqlDirectly(tx,
-            "update task set due_date = ?, reminder_on = ? where id = ?", [myDate.getTime() / 1000, reminderOnInt, taskId],
-            function (tx, result, objs) {
-                if (reminderOn) {
-                    setReminder(taskId, dueDate);
-                }
-            });
+        if (Util.notEmpty(dueDate)) {
+            DataAccess.runSqlDirectly(tx,
+                "update task set due_date = ?, reminder_on = ? where id = ?", [myDate.getTime() / 1000, reminderOnInt, taskId],
+                function (tx, result, objs) {
+                    if (reminderOn) {
+                        setReminder(taskId, dueDate);
+                    }
+                });
+            DataAccess.runSqlDirectly(tx, 'delete from task_meta where task_id = ? and meta_id = (select id from meta where name = ?)', [taskId, SeedData.BasketMetaName]);
+        }
     }
 
     function saveProjectInfo(tx, taskId, projectId) {
