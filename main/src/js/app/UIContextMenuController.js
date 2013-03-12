@@ -111,76 +111,7 @@ var UIContextMenuController = (function () {
         }
     }
 
-    function createTaskInternal(name, metaId, toBasket) {
-        var taskList = document.getElementById(UIConfig.detailListElementId),
-            metaTypeNameLabel = 'list',
-            metaNameActual = UIConfig.emptyString,
-            taskId,
-            metaTypeName,
-            metaName,
-            project = null,
-            context = null;
-        DataAccess.appDb.transaction(function (tx) {
-            DataAccess.runSqlDirectly(tx, Sql.Task.InsertByName, [name],
-                function (tx, result, objs) {
-                    taskId = result.insertId;
-                    DataAccess.runSqlDirectly(tx, Sql.TaskMeta.Insert, [taskId, metaId],
-                        function (tx, r2, objs2) {
-                            metaTypeName = Util.valueOf('v_meta_type_name');
-                            metaName = Util.valueOf('v_meta_name');
-                            if (Util.notEmpty(metaName)) {
-                                if (metaTypeName === SeedData.ProjectMetaTypeName) {
-                                    project = metaName;
-                                    metaTypeNameLabel = 'project';
-                                } else if (metaTypeName === SeedData.ContextMetaTypeName) {
-                                    context = [metaName];
-                                    metaTypeNameLabel = 'context';
-                                }
-                            }
-                            if ((metaTypeName === SeedData.GtdMetaTypeName || metaName !== SeedData.BasketMetaName) && (metaTypeName !== SeedData.DueMetaTypeName)) {
-                                UIListController.addTaskToList(taskList, taskId, name, project, context, null);
-                                metaNameActual = metaName;
-                            } else {
-                                metaNameActual = SeedData.BasketMetaName;
-                            }
-                            Util.setValue('ctsi', UIConfig.emptyString);
-                            Util.showToast('Task created to ' + metaTypeNameLabel + ' ' + metaNameActual, 'Undo', null, function () {
-                                DataAccess.task.updateStatus(taskId, SeedData.TaskDeletedStatus,
-                                    function (tx, result, rows) {
-                                        UIListController.removeTaskFromList(taskId);
-                                        Util.showToast("Undo task creation successfully");
-                                    }, function (tx, error) {
-                                        log.logSqlError("Failed to delete task[" + taskId + "]", error);
-                                    });
-                            });
-                        });
-                });
-        }, function (tx, e1) {
-            log.logSqlError("Failed creating task[" + name + "]", e1);
-        });
-    }
-
     return {
-        createTask : function (name, metaTypeName, metaId) {
-            var taskId, project = null, metaIdToDb, metaName, context = null;
-            if (Util.isEmpty(metaId) || (metaTypeName === SeedData.DueMetaTypeName)) {
-                DataAccess.appDb.transaction(function (tx) {
-                    DataAccess.runSqlDirectly(tx,
-                        'select id from meta where name = ?',
-                        [SeedData.BasketMetaName],
-                        function (tx, result, objs) {
-                            if (1 === result.rows.length) {
-                                createTaskInternal(name, result.rows.item(0).id, true);
-                            } else {
-                                console.warn("Meta with name[%s] was not found when trying to insert task to it", SeedData.BasketMetaName);
-                            }
-                        });
-                });
-            } else {
-                createTaskInternal(name, metaId, false);
-            }
-            return false;
-        },
 
         moveTaskToTrash : function () {
             var selectedItem, selectedId,

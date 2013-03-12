@@ -170,7 +170,7 @@
     border:0px solid #000;
 }
 
-#ctsi {
+#ctsi, #stsi {
     width:700px;
     border: 15px solid rgba(78, 187, 96, 0.56);
     /*height: 120px;*/
@@ -182,6 +182,10 @@
     padding: 5px;
     font-size:48px;
     line-height:150%;
+}
+
+#stsi {
+    height: 110px;
 }
 
 @font-face {
@@ -213,7 +217,7 @@
     vertical-align:top;
 }
 
-#create-task-input-container {
+#create-task-input-container, #search-task-input-container {
     display:none;
     position: absolute; 
     left: 26px; 
@@ -343,7 +347,8 @@
 }
 
 
-#create-task-placeholder {
+#create-task-placeholder,
+#search-task-placeholder {
     background: transparent;
     color: rgba(218, 253, 167, 0.51);
     width: 700px;
@@ -351,4 +356,28 @@
     margin: auto;
     text-align: center;
     padding-bottom: 20px;
+}
+
+#search-result-title {
+    display:none;
+    height:110px;
+    line-height:110px;
+    text-align:center;
+    border-bottom: 1px solid rgb(194, 81, 81);
+}
+
+#search-keyword-title-span {
+    -webkit-border-radius:20px ; 
+    background-color:lightgray;
+    margin: 20px;
+    /** Please notice the behaivor of ripple and the actual device is not exactly the same here so we put different number here */
+    padding:5px 15px 10px 15px;
+    border-radius:20px;
+    color: rgb(255, 255, 255);
+    display:-moz-inline-box;
+    display:inline-block;
+    border: 1px solid #77777;
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(95, 95, 95, 0.5)), to(rgba(138, 138, 138, 0.9)));
+    line-height: 48px;
+    font-size: 36px;      
 }

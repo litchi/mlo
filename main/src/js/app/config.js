@@ -79,6 +79,7 @@ var UIFragments = (function () {
             <img id="create-task-shortcut-search" src="resources/image/search.png" onclick="Util.toggleSearchTaskTaskShortcutDisplay();"/>\
         </div>\
         <div id="detail" onclick="Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">\
+            <div id="search-result-title"></div>\
             <div data-bb-type="scroll-panel" id="detail-list-panel">\
                 <div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">\
                 </div>\

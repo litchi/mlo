@@ -1,22 +1,29 @@
 ﻿<div data-bb-type="screen" xmlns="http://www.w3.org/1999/html" data-bb-effect='fade' style="overflow:hidden" data-bb-scroll-effect="off">
     <div data-bb-type="scroll-panel" id='task-list-container' onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
-        <div data-bb-images="none" data-bb-type="image-list" id="detail-list">
-        </div>
+        <!-- The contents below are just a sample of the generated html code, actual meta data is file config.js -->
+        <div data-bb-images="none" data-bb-type="image-list" id="detail-list"></div>
+        <!-- End the sample -->
     </div>
     <div id='group-detail-container' style="display:none" onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
+        <!-- The contents below are just a sample of the generated html code, actual meta data is file config.js -->
         <div id="group">
             <div data-bb-type="scroll-panel" id='group-list-panel'>
                 <div id="group-list" data-bb-type="image-list" data-bb-images="none" ></div>
             </div>
             <div id='group-space' onclick="Util.togglePanelWidth();"></div>
         </div>
-        <div id="create-task-shortcut" onclick="Util.toggleCreateTaskShortcutDisplay();">+</div>
+        <div id="create-task-shortcut">
+            <img id="create-task-shortcut-add" src="resources/image/bullet_add.png" onclick="Util.toggleCreateTaskShortcutDisplay();"/>\
+            <img id="create-task-shortcut-search" src="resources/image/search.png" onclick="Util.toggleSearchTaskTaskShortcutDisplay();"/>\
+        </div>
         <div id="detail" onclick="Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">
+            <div id='search-result-title'></div>
             <div data-bb-type="scroll-panel" id='detail-list-panel'>
                 <div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">
                 </div>
             </div>
         </div>
+        <!-- End the sample -->
     </div>
     <div id='view-task-detail' onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
         <div id="view-task-detail-title" class="view-task-detail-sub-field"></div>
@@ -24,8 +31,14 @@
     </div>
     <div id='create-task-input-container'>
         <div id="create-task-placeholder"></div>
-        <form name="ctf" id="ctf" onSubmit="return UIContextMenuController.createTask(Util.valueOf('ctsi'), Util.valueOf('v_meta_type_name'), Util.valueOf('v_meta_id'));">
+        <form name="ctf" id="ctf" onSubmit="return UITaskUtil.createTask(Util.valueOf('ctsi'), Util.valueOf('v_meta_type_name'), Util.valueOf('v_meta_id'));">
             <textarea id="ctsi" rows='1' onkeyup="Util.resizeTextarea(this, 26)" onmouseup="Util.resizeTextarea(this, 26)"></textarea>
+        </form>
+    </div>
+    <div id='search-task-input-container'>
+        <div id="search-task-placeholder">Search for task</div>
+        <form name="stf" id="stf" onSubmit="return UITaskUtil.searchTask(Util.valueOf('stsi'));">
+            <input id="stsi" type="text" placeholder="Keywords" required="required"/>
         </form>
     </div>
     <div id="main-content-overlay"></div>

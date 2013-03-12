@@ -1,7 +1,70 @@
 /*jslint browser: true es5: true*/
-/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, $, jQuery*/
+/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, $, jQuery, UIListController, UIMetaUtil*/
 var UITaskUtil = (function () {
     "use strict";
+
+    function createSearchMetaElement(keyword) {
+        var item = document.createElement('div');
+        item.setAttribute('data-bb-type', 'item');
+        item.setAttribute('data-bb-style', 'stretch');
+        item.setAttribute('title', '<span class="default-master-detail master-title">' + keyword + '</span>');
+        item.setAttribute('data-bb-title',  '<span class="default-master-detail master-title">' + keyword + '</span>');
+        item.setAttribute('id', keyword);
+        item.setAttribute(
+            'onclick',
+            "UIListController.fillSearchResultAndMarkGroup('" + keyword + "');"
+        );
+        return item;
+    }
+
+    function createTaskInternal(name, metaId, toBasket) {
+        var taskList = document.getElementById(UIConfig.detailListElementId),
+            metaTypeNameLabel = 'list',
+            metaNameActual = UIConfig.emptyString,
+            taskId,
+            metaTypeName,
+            metaName,
+            project = null,
+            context = null;
+        DataAccess.appDb.transaction(function (tx) {
+            DataAccess.runSqlDirectly(tx, Sql.Task.InsertByName, [name],
+                function (tx, result, objs) {
+                    taskId = result.insertId;
+                    DataAccess.runSqlDirectly(tx, Sql.TaskMeta.Insert, [taskId, metaId],
+                        function (tx, r2, objs2) {
+                            metaTypeName = Util.valueOf('v_meta_type_name');
+                            metaName = Util.valueOf('v_meta_name');
+                            if (Util.notEmpty(metaName)) {
+                                if (metaTypeName === SeedData.ProjectMetaTypeName) {
+                                    project = metaName;
+                                    metaTypeNameLabel = 'project';
+                                } else if (metaTypeName === SeedData.ContextMetaTypeName) {
+                                    context = [metaName];
+                                    metaTypeNameLabel = 'context';
+                                }
+                            }
+                            if ((metaTypeName === SeedData.GtdMetaTypeName || metaName !== SeedData.BasketMetaName) && (metaTypeName !== SeedData.DueMetaTypeName)) {
+                                UIListController.addTaskToList(taskList, taskId, name, project, context, null);
+                                metaNameActual = metaName;
+                            } else {
+                                metaNameActual = SeedData.BasketMetaName;
+                            }
+                            Util.setValue('ctsi', UIConfig.emptyString);
+                            Util.showToast('Task created to ' + metaTypeNameLabel + ' ' + metaNameActual, 'Undo', null, function () {
+                                DataAccess.task.updateStatus(taskId, SeedData.TaskDeletedStatus,
+                                    function (tx, result, rows) {
+                                        UIListController.removeTaskFromList(taskId);
+                                        Util.showToast("Undo task creation successfully");
+                                    }, function (tx, error) {
+                                        log.logSqlError("Failed to delete task[" + taskId + "]", error);
+                                    });
+                            });
+                        });
+                });
+        }, function (tx, e1) {
+            log.logSqlError("Failed creating task[" + name + "]", e1);
+        });
+    }
 
     function setFieldInTaskDetailPopup(value, element, mode) {
         if (Util.notEmpty(value)) {
@@ -196,9 +259,14 @@ var UITaskUtil = (function () {
             };
         },
 
-        tasksFromDbToUI : function (tasks, taskList) {
+        tasksFromDbToUI : function (tasks, taskList, keyword) {
             var id, name, taskIndex, taskCount, items = [], loopFunc;
             taskList.innerHTML = UIConfig.emptyString;
+            if (Util.notEmpty(keyword)) {
+                Util.showSearchTitle(keyword);
+            } else {
+                Util.hideSearchTitle();
+            }
             if (null === tasks || undefined === tasks || 0 === tasks.length) {
                 taskList.innerHTML = UIConfig.msgForNoTask;
             } else {
@@ -263,6 +331,53 @@ var UITaskUtil = (function () {
             }
 
             setFieldInTaskDetailPopup(metaContent, metaDiv, 'html');
+        },
+
+        createTask : function (name, metaTypeName, metaId) {
+            var taskId, project = null, metaIdToDb, metaName, context = null;
+            if (Util.isEmpty(metaId) || (metaTypeName === SeedData.DueMetaTypeName)) {
+                DataAccess.appDb.transaction(function (tx) {
+                    DataAccess.runSqlDirectly(tx,
+                        'select id from meta where name = ?',
+                        [SeedData.BasketMetaName],
+                        function (tx, result, objs) {
+                            if (1 === result.rows.length) {
+                                createTaskInternal(name, result.rows.item(0).id, true);
+                            } else {
+                                console.warn("Meta with name[%s] was not found when trying to insert task to it", SeedData.BasketMetaName);
+                            }
+                        });
+                });
+            } else {
+                createTaskInternal(name, metaId, false);
+            }
+            return false;
+        },
+
+        searchTask : function (keyword) {
+            var sqlKeyword = Util.addLikeStrForKeyword(keyword),
+                taskList = document.getElementById(UIConfig.detailListElementId),
+                metaList = UIMetaUtil.getMetaListElement(UIConfig.taskByPagePrefix);
+            Util.toggleSearchTaskTaskShortcutDisplay();
+
+            DataAccess.appDb.transaction(function (tx) {
+                DataAccess.runSqlDirectly(tx,
+                    "select distinct task_id as id, task_name as name, task_status as status from task_view where (task_name like ? or meta_name like ?) and status = ?",
+                    [sqlKeyword, sqlKeyword, SeedData.TaskNewStatus],
+                    function (tx, result, objs) {
+                        log.logObjectData('search result', objs, DataAccess.logDebug);
+                        //Switch the highlight of the action bar to GTD List
+                        //Add a list to the meta list(below GTD lists), with name set as the keyword typed in the search input box.
+                        //metaList.appendItem(createSearchMetaElement(keyword));
+                        //Display the search result(task list) in the detail task list panel.
+                        UITaskUtil.tasksFromDbToUI(objs, taskList, keyword);
+                        //Display the search condition as the title of the list.
+                        //Show search title div
+                    });
+            });
+
+            Util.hideSearchTitle();
+            return false;
         }
     };
 

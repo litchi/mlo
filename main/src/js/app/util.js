@@ -132,23 +132,27 @@ var Util = (function () {
         },
 
         toggleSearchTaskTaskShortcutDisplay : function () {
-        
+            Util.toggleShortcutDisplay($('#search-task-input-container'), $('#stsi'));
         },
 
         toggleCreateTaskShortcutDisplay : function () {
-            var currentDisplay = $('#create-task-input-container').css('display');
+            Util.toggleShortcutDisplay($('#create-task-input-container'), $('#ctsi'));
+        },
+
+        toggleShortcutDisplay : function (containerDiv, inputDiv) {
+            var currentDisplay = containerDiv.css('display');
             if ('none' === currentDisplay) {
-                $('#create-task-input-container').css('display', 'block');
+                containerDiv.css('display', 'block');
                 $('#main-content-overlay').css('display', 'block');
-                $('#ctsi').focus();
+                inputDiv.focus();
                 $('#main-content-overlay').click(function () {
-                    $('#create-task-input-container').css('display', 'none');
+                    containerDiv.css('display', 'none');
                     $('#main-content-overlay').css('display', 'none');
                 });
-                $('#ctsi').parent().css('border', '0px solid #000');
-                $('#ctsi').parent().css('background', 'transparent');
+                inputDiv.parent().css('border', '0px solid #000');
+                inputDiv.parent().css('background', 'transparent');
             } else {
-                $('#create-task-input-container').css('display', 'none');
+                containerDiv.css('display', 'none');
                 $('#main-content-overlay').css('display', 'none');
                 $("#main-content-overlay").removeAttr('onclick');
             }
@@ -276,6 +280,23 @@ var Util = (function () {
 
         setMetaDetailPageCaption : function (caption) {
             document.getElementById('edit-meta-title').setCaption(caption);
+        },
+
+        addLikeStrForKeyword : function (keyword) {
+            return '%' + keyword + '%';
+        },
+
+        showSearchTitle : function (keyword) {
+            $("#search-result-title").css('display', 'block');
+            $("#search-result-title").html('Search Result <span id="search-keyword-title-span">' + keyword + '</span>');
+            $("#detail-list-panel").css('height', '1020px');
+        },
+
+        hideSearchTitle : function () {
+            $("#search-result-title").css('display', 'none');
+            $("#detail-list-panel").css('height', '1130px');
+            $('#stsi').val(UIConfig.emptyString);
+            $("#stsi").blur();
         }
     };
 
