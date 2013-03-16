@@ -10,18 +10,18 @@ var UIContextMenuController = (function () {
         return newDate;
     }
 
-    function postponeToTomorrow(currentDate, oldDueDate) {
+    function postponeToToday(currentDate, oldDueDate) {
         var newDate = currentDate;
-        newDate.setDate(currentDate.getDate() + 1);
+        newDate.setDate(currentDate.getDate());
         newDate.setHours(oldDueDate.getHours());
         newDate.setMinutes(oldDueDate.getMinutes());
         newDate.setSeconds(oldDueDate.getSeconds());
         return newDate;
     }
 
-    function postponeToTomorrowDefaultTime(currentDate) {
+    function postponeToTodayDefaultTime(currentDate) {
         var newDueDate = currentDate;
-        newDueDate.setDate(currentDate.getDate() + 1);
+        newDueDate.setDate(currentDate.getDate());
         newDueDate.setHours(10);
         newDueDate.setMinutes(0);
         newDueDate.setSeconds(0);
@@ -50,13 +50,16 @@ var UIContextMenuController = (function () {
             currDueDateTimestamp = rows[0][Sql.Task.Cols.DueDate];
             if (Util.notEmpty(currDueDateTimestamp)) {
                 var localDueDate = new Date(currDueDateTimestamp * 1000);
-                if (localDueDate.getTime() > currentDate.getTime()) {
+                if ((localDueDate.getTime() > currentDate.getTime() ||
+                        (localDueDate.getDate() === currentDate.getDate() &&
+                            localDueDate.getMonth() === currentDate.getMonth() &&
+                            localDueDate.getFullYear() === currentDate.getFullYear()))) {
                     newDueDate = postponeToNextDay(localDueDate);
                 } else {
-                    newDueDate = postponeToTomorrow(currentDate, localDueDate);
+                    newDueDate = postponeToToday(currentDate, localDueDate);
                 }
             } else {
-                newDueDate = postponeToTomorrowDefaultTime(currentDate);
+                newDueDate = postponeToTodayDefaultTime(currentDate);
             }
             DataAccess.appDb.transaction(function (tx) {
                 DataAccess.runSqlDirectly(tx, "update task set due_date = ? where id = ?", [newDueDate.getTime() / 1000, selectedId],
