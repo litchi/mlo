@@ -20,6 +20,7 @@
     <property name = "build.target"                      location = "./target"/>
     <property name = "build.target.code"                 location = "${build.target}/src"/>
     <property name = "build.target.output"               location = "${build.target}/output"/>
+    <property name = "build.target.release"              location = "${build.target}/release"/>
     <property name = "build.target.output.src.zip"       location = "${build.target.output}/${build.app.name}.zip"/>
 
     <property name = "build.target.output.device"        location = "${build.target}/output/device"/>
@@ -32,8 +33,11 @@
     <property name = "env.ripple.remote.ip"           value    = "172.16.177.134"/>
     <property name = "env.ripple.remote.folder"       value    = "/var/www/gtd"/>
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.138"/>
-    <property name = "env.bb10.device.ip"             value    = "192.168.53.219"/>
-    <!--<property name = "env.bb10.device.ip"             value    = "172.20.10.14"/>-->
+    <property name = "env.bb10.device.ip"             value    = "192.168.11.2"/>
+    <!--
+       -<property name = "env.bb10.device.ip"             value    = "192.168.51.39"/>
+       -<property name = "env.bb10.device.ip"             value    = "172.20.10.14"/>
+    -->
     <property name = "env.bb10.device.password"       value    = "hetaolxq"/>
  
     <!-- Tools -->
@@ -72,6 +76,8 @@
     <property name = "qa.coverage.target.report.dat"       location = "${qa.coverage.target.report}/dat"/>
     <property name = "qa.coverage.target.report.html"      location = "${qa.coverage.target.report}/html"/>
 
+    <property name = "release.password"  value = "hetaolxq"/>
+
     <!-- Please notice that by using open we are using the default browser defined by current OS user-->
     <property name = "env.browser.executable"      value = "open"/>
 
@@ -81,6 +87,7 @@
     <target name="init">
         <mkdir dir = "${build.target.code}"/>
         <mkdir dir = "${build.target.output}"/>
+        <mkdir dir = "${build.target.release}"/>
     </target>
 
     <target name="qa.init">
@@ -201,6 +208,22 @@
         <!-- Create package -->
         <exec executable="${env.webworks.installation.dir}/bbwp" dir="${build.target}">
             <arg line='${build.target.output.src.zip} -d -o ${build.target.output}'/>
+        </exec>
+    </target>
+
+    <target name="release" depends="pre.process.copy">
+        <!-- Create zip file -->
+        <zip destfile="${build.target.output.src.zip}">
+            <fileset dir="${build.target.code}">
+                <exclude name = ".DS_Store"/>
+                <exclude name = ".git"/>
+            </fileset>
+        </zip>
+
+        <!-- Create package -->
+        <!-- /blackberry-signer -register -csjpin hetaolxq -storepass client-RDK-1973952.csj client-PBDT-1973952.csj-->
+        <exec executable="${env.webworks.installation.dir}/bbwp" dir="${build.target}">
+            <arg line='${build.target.output.src.zip} -g ${release.password} -o ${build.target.release} --buildId 1'/>
         </exec>
     </target>
 
