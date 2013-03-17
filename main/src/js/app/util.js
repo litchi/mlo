@@ -2,6 +2,11 @@
 /*global blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, UIActionBarController, $, jQuery, UITaskUtil*/
 var Util = (function () {
     "use strict";
+
+    function thirtyOneDayMonth(myDate) {
+        return myDate.getMonth % 2 === 0;
+    }
+
     return {
         isEmpty : function (str) {
             return (null === str || undefined === str || '' === str);
@@ -77,24 +82,52 @@ var Util = (function () {
             return resultStr;
         },
 
+        getNameOfWeekday : function (myDate) {
+            var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            return days[myDate.getDay()];
+        },
+
+        getNameOfMonth : function (myDate) {
+            var days = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return days[myDate.getMonth()];
+        },
+
         getPrettyDateStr : function (myDate) {
-            var d, t, now, resultStr;
-            now = new Date();
-            if (now.getFullYear() === myDate.getFullYear() && now.getMonth() === myDate.getMonth()) {
-                if (now.getDate() === myDate.getDate()) {
-                    d = 'Today ';
-                } else if (1 === (myDate.getDate() - now.getDate())) {
-                    d = 'Tomorrow ';
-                } else if (-1 === (myDate.getDate() - now.getDate())) {
-                    d = 'Yesterday ';
+            var d, t, now = new Date(), resultStr, weekPrefix, sep = ' ',
+                dayDiff = myDate.getDate() - now.getDate(),
+                monthDiff = myDate.getMonth() - now.getMonth();
+            if (now.getFullYear() === myDate.getFullYear()) {
+                if (monthDiff === 0) {
+                    if (now.getDate() === myDate.getDate()) {
+                        d = 'Today';
+                    } else if (1 === dayDiff) {
+                        d = 'Tomorrow';
+                    } else if (-1 === dayDiff) {
+                        d = 'Yesterday';
+                    } else if ((0 === monthDiff && dayDiff <= 7 && dayDiff >= -7)) {
+                        weekPrefix = (dayDiff < 0) ? 'Last' : 'Next';
+                        d = myDate.getDate() + '/' + (myDate.getMonth() + 1) + ' (' + weekPrefix + sep + Util.getNameOfWeekday(myDate) + ')';
+                    }
                 } else {
-                    d = (myDate.getMonth() + 1) + '/' + (myDate.getDate()) + ' ';
+                    if ((myDate.getMonth === 2 && monthDiff === -1 && dayDiff < 21 && dayDiff > 15) &&
+                            (thirtyOneDayMonth(myDate) &&  monthDiff === -1 && dayDiff <= 24 && dayDiff >= 18) &&
+                            (!thirtyOneDayMonth(myDate) && monthDiff === -1 && dayDiff <= 23 && dayDiff >= 17)) {
+                        weekPrefix = 'Last';
+                        d = weekPrefix + sep + Util.getNameOfWeekday(myDate);
+                    } else if ((myDate.getMonth === 2 && monthDiff === 1 && dayDiff > -21 && dayDiff < -15) &&
+                            (thirtyOneDayMonth(myDate) &&  monthDiff === 1 && dayDiff >= -24 && dayDiff <= -18) &&
+                            (!thirtyOneDayMonth(myDate) && monthDiff === 1 && dayDiff >= -23 && dayDiff <= -17)) {
+                        weekPrefix = 'Next';
+                        d = weekPrefix + sep + Util.getNameOfWeekday(myDate);
+                    } else {
+                        d = (myDate.getDate()) + sep + Util.getNameOfMonth(myDate);
+                    }
                 }
             } else {
-                d = myDate.getFullYear() + '/' + (myDate.getMonth() + 1) + '/' + (myDate.getDate()) + ' ';
+                d = Util.getNameOfMonth(myDate) + sep + (myDate.getDate()) + ',' + sep + myDate.getFullYear();
             }
             t = (('0' + myDate.getHours()).slice(-2)) + ':' + (('0' + myDate.getMinutes()).slice(-2));
-            resultStr =  d + t;
+            resultStr =  d + sep + t;
             return resultStr;
         },
 
