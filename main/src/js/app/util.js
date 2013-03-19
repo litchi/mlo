@@ -120,7 +120,7 @@ var Util = (function () {
                         weekPrefix = 'Next';
                         d = weekPrefix + sep + Util.getNameOfWeekday(myDate);
                     } else {
-                        d = (myDate.getDate()) + sep + Util.getNameOfMonth(myDate);
+                        d = Util.getNameOfMonth(myDate) + sep + (myDate.getDate());
                     }
                 }
             } else {
