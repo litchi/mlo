@@ -232,6 +232,7 @@ var Util = (function () {
                     && Util.notEmpty($('#ctsi'))
                     && event.keyCode === 13) {
                 Util.toggleCreateTaskShortcutDisplay();
+                $('#ctsi').val($('#ctsi').val().trim());
                 $('#ctf').submit();
                 $('#ctsi').val(UIConfig.emptyString);
                 $('#ctsi').blur();
