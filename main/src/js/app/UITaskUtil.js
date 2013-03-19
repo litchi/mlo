@@ -123,16 +123,14 @@ var UITaskUtil = (function () {
         getGroupedTaskNumber : function (metaTypeName, callback) {
             var result = [], num, key, metaName, sql, params;
             if (SeedData.DueMetaTypeName === metaTypeName) {
-                sql =  "\
-                    select \
-                    (select count(distinct(id)) from task as Today where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now') and status != 'Done' and status != 'Deleted') as 'Today',\
-                    (select count(distinct(id)) from task as Tomorrow where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','+1 day') and status != 'Done' and status != 'Deleted') as 'Tomorrow',\
-                    (select count(distinct(id)) from task as 'This Week' where strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now') and status != 'Done' and status != 'Deleted') as 'This Week',\
-                    (select count(distinct(id)) from task as 'Next Week' where strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now', '+7 days') and status != 'Done' and status != 'Deleted') as 'Next Week',\
-                    (select count(distinct(id)) from task as 'Done Yesterday' where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = 'Done') as 'Done Yesterday',\
-                    (select count(distinct(id)) from task as 'Overdue Yesterday' where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != 'Done' and status != 'Deleted') as 'Overdue Yesterday',\
-                    (select count(distinct(id)) from task as 'Overdue' where strftime('%Y-%m-%d %H:%M:%S', due_date, 'unixepoch') < datetime('now') and status != 'Done' and status != 'Deleted') as 'Overdue'\
-                ";
+                sql =  "select" +
+                    "(select count(distinct(id)) from task as Today where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now') and status != 'Done' and status != 'Deleted') as 'Today'," +
+                    "(select count(distinct(id)) from task as Tomorrow where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','+1 day') and status != 'Done' and status != 'Deleted') as 'Tomorrow'," +
+                    "(select count(distinct(id)) from task as 'This Week' where strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now') and status != 'Done' and status != 'Deleted') as 'This Week'," +
+                    "(select count(distinct(id)) from task as 'Next Week' where strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now', '+7 days') and status != 'Done' and status != 'Deleted') as 'Next Week'," +
+                    "(select count(distinct(id)) from task as 'Done Yesterday' where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = 'Done') as 'Done Yesterday'," +
+                    "(select count(distinct(id)) from task as 'Overdue Yesterday' where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != 'Done' and status != 'Deleted') as 'Overdue Yesterday'," +
+                    "(select count(distinct(id)) from task as 'Overdue' where strftime('%Y-%m-%d %H:%M:%S', due_date, 'unixepoch') < datetime('now') and status != 'Done' and status != 'Deleted') as 'Overdue'";
                 params = [];
             } else {
                 sql = "select count(distinct(task_id)) as task_number, meta_name from task_view where meta_type_name = ? and task_status != ? and task_status != ? group by meta_name";
