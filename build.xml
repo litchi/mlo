@@ -33,7 +33,7 @@
     <property name = "env.ripple.remote.ip"           value    = "172.16.177.134"/>
     <property name = "env.ripple.remote.folder"       value    = "/var/www/gtd"/>
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.138"/>
-    <property name = "env.bb10.device.ip"             value    = "192.168.11.2"/>
+    <property name = "env.bb10.device.ip"             value    = "192.168.11.6"/>
     <!--
        -<property name = "env.bb10.device.ip"             value    = "192.168.51.39"/>
        -<property name = "env.bb10.device.ip"             value    = "172.20.10.14"/>
@@ -46,7 +46,7 @@
     <property name = "tools.jslint.taskdef.classpath"      location = "${tools.jslint.installation}/jslint4java.jar"/>
 
     <property name = "tools.JsTestDriver.installation"     location = "${build.tools}/JsTestDriver"/>
-    <property name = "tools.JsTestDriver.executeable"      location = "${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
+    <property name = "tools.JsTestDriver.executeable"      location = "${tools.JsTestDriver.installation}/runJsTestDriver.bat"/>
 
     <!--jgenhtml is used to generate local unit test code coverage report-->
     <!--For Bamboo in the CI server, Sonar is used-->
@@ -158,7 +158,7 @@
             </fileset>
         </copy>
         <!-- 2. Run the test cases -->
-        <exec executable="/bin/bash" dir="${tools.JsTestDriver.installation}" osfamily="unix">
+        <exec executable="cmd" dir="${tools.JsTestDriver.installation}" osfamily="windows">
             <arg value="${tools.JsTestDriver.executeable}" />
         </exec>
         <junitreport todir="${qa.JsTestDriver.target.report.html}">
@@ -184,7 +184,7 @@
     </target>
 
     <target name="qa.test.report.ci" depends="qa.init, pre.process.copy">
-        <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.sh.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.sh" verbose="true"/>
+        <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.bat.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.bat" verbose="true"/>
         <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"  tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf" verbose="true"/>
         <antcall target='qa.test.report'/>
     </target>
@@ -235,6 +235,10 @@
     </target>
 
     <target name="dd" depends="package">
+        <!-- Request token -->
+        <!-- blackberry-debugtokenrequest -storepass <KeystorePassword> -devicepin <device PIN> <debug_token_file_name.bar> -->
+        <!-- Deploy debug token -->
+        <!-- ./blackberry-deploy -installDebugToken token_2013_02_23.bar -device 192.168.11.6 -password hetaolxq --> 
         <!-- Deploy to simulator-->
         <exec executable="${env.webworks.installation.dir}/dependencies/tools/bin/blackberry-deploy" dir="${build.target}">
             <arg line='-installApp -password ${env.bb10.device.password} -device ${env.bb10.device.ip} -package "${build.target.output.device.bar}"'/>
