@@ -1,7 +1,6 @@
 set OUTPUT_DIR="../../target/qa/JsTestDriver/report/xml"
 set BROWSER="C:/opt/Google/Chrome/Application/chrome.exe"
 
-# run the tests
 java -jar JsTestDriver.jar --raiseOnFailure true --runnerMode DEBUG --port 4224 --config jsTestDriver.conf --browser %BROWSER% --tests all --testOutput %OUTPUT_DIR%
 
 echo "Done."

@@ -45,9 +45,9 @@
     <property name = "tools.jslint.report.template"        location = "${tools.jslint.installation}/checkstyle-noframes-severity-sorted.xsl"/>
     <property name = "tools.jslint.taskdef.classpath"      location = "${tools.jslint.installation}/jslint4java.jar"/>
 
-    <property name = "tools.JsTestDriver.installation"       location = "${build.tools}/JsTestDriver"/>
-    <property name = "tools.dev.JsTestDriver.executable"    location = "${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
-    <property name = "tools.ci.JsTestDriver.executable" location = "${tools.JsTestDriver.installation}/runJsTestDriver.bat"/>
+    <property name = "tools.JsTestDriver.installation"     location = "${build.tools}/JsTestDriver"/>
+    <property name = "tools.dev.JsTestDriver.executable"   location = "${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
+    <property name = "tools.ci.JsTestDriver.executable"    location = "${tools.JsTestDriver.installation}/runJsTestDriver.bat"/>
 
     <!--jgenhtml is used to generate local unit test code coverage report-->
     <!--For Bamboo in the CI server, Sonar is used-->
@@ -203,11 +203,11 @@
 
     <target name="qa.test.report.ci" depends="qa.init, pre.process.copy">
         <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.bat.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.bat" verbose="true"/>
-        <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"  tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf" verbose="true"/>
+        <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"   tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf" verbose="true"/>
         <antcall target='qa.test.internal.report'>
             <param name='executable'   value='cmd'/>
             <param name='osfamily'     value='windows'/>
-            <param name='test.runner'  value="${tools.ci.JsTestDriver.executable}"/>
+            <param name='test.runner'  value="/c ${tools.ci.JsTestDriver.executable}"/>
         </antcall>
     </target>
 
