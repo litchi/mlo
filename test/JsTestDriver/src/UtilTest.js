@@ -74,8 +74,10 @@ var UtilTestCase = (function () {
         myDate.setDate(now.getDate() + 1);
         assertEquals('pretty date str for tomorrow', 'Tomorrow ' + t, Util.getPrettyDateStr(myDate));
         myDate.setYear(1970);
+        myDate.setDate(21);
+        myDate.setMonth(2);
         assertEquals('Pretty date str for past date', "Mar 21, 1970 " + t, Util.getPrettyDateStr(myDate));
-        myDate.setMonth(now.getMonth() + 1);
+        myDate.setMonth(3);
         myDate.setFullYear(now.getFullYear());
         assertEquals('Pretty date str for future date with different month', "Apr 21 " + t, Util.getPrettyDateStr(myDate));
         myDate.setHours(1);
