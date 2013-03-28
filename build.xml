@@ -30,8 +30,10 @@
     <property name = "build.target.output.simulator.bar" location = "${build.target.output.simulator}/${build.app.name}.bar"/>
 
     <property name = "env.webworks.installation.dir"  location = "/Users/larry/bin/WebWorks_SDK"/>
-    <property name = "env.ripple.remote.ip"           value    = "172.16.177.134"/>
-    <property name = "env.ripple.remote.folder"       value    = "/var/www/gtd"/>
+    <property name = "env.ripple.remote.user"         value    = "xqliu"/>
+    <property name = "env.ripple.remote.password"     value    = "password"/>
+    <property name = "env.ripple.remote.ip"           value    = "172.16.177.139"/>
+    <property name = "env.ripple.remote.folder"       value    = "/www/gtd"/>
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.138"/>
     <property name = "env.bb10.device.ip"             value    = "192.168.11.6"/>
     <!--
@@ -213,7 +215,7 @@
 
     <target name="ws" depends="pre.process.copy">
         <echo>Remote: ${env.ripple.remote.ip}, Source: ${build.target.code}, Remote folder: ${env.ripple.remote.folder}</echo>
-        <scp todir="root:password@${env.ripple.remote.ip}:${env.ripple.remote.folder}">
+        <scp todir="${env.ripple.remote.user}:${env.ripple.remote.password}@${env.ripple.remote.ip}:${env.ripple.remote.folder}">
             <fileset dir="${build.target.code}" excludes="**/*.swp,.git,**/*.bak,.DS_Store"/>
         </scp>                 
     </target>
@@ -258,9 +260,10 @@
 
     <target name="dd" depends="package">
         <!-- Request token -->
+        <!-- ./blackberry-debugtokenrequest -storepass hetaolxq -devicepin 24CB235E token_2013_03_25.bar -->
         <!-- blackberry-debugtokenrequest -storepass <KeystorePassword> -devicepin <device PIN> <debug_token_file_name.bar> -->
         <!-- Deploy debug token -->
-        <!-- ./blackberry-deploy -installDebugToken token_2013_02_23.bar -device 192.168.11.6 -password hetaolxq --> 
+        <!-- ./blackberry-deploy -installDebugToken token_2013_03_25.bar -device 192.168.11.6 -password hetaolxq -->
         <!-- Deploy to simulator-->
         <exec executable="${env.webworks.installation.dir}/dependencies/tools/bin/blackberry-deploy" dir="${build.target}">
             <arg line='-installApp -password ${env.bb10.device.password} -device ${env.bb10.device.ip} -package "${build.target.output.device.bar}"'/>
