@@ -67,24 +67,23 @@ var UIFragments = (function () {
     "use strict";
     return {
         singleTaskList       : '<div data-bb-images="none" data-bb-type="image-list" id="detail-list"> </div>',
-        masterDetailTaskList : '\
-         <div id="group">\
-             <div data-bb-type="scroll-panel" id="group-list-panel">\
-                 <div id="group-list" data-bb-type="image-list" data-bb-images="none" ></div>\
-             </div>\
-             <div id="group-space" onclick="Util.togglePanelWidth();"></div>\
-         </div>\
-         <div id="create-task-shortcut">\
-             <img id="create-task-shortcut-add" src="resources/image/bullet_add.png" onclick="Util.toggleCreateTaskShortcutDisplay();"/>\
-             <img id="create-task-shortcut-search" src="resources/image/search.png" onclick="Util.toggleSearchTaskTaskShortcutDisplay();"/>\
-         </div>\
-         <div id="detail" onclick="Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">\
-             <div id="search-result-title"></div>\
-             <div data-bb-type="scroll-panel" id="detail-list-panel">\
-                 <div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">\
-                 </div>\
-             </div>\
-         </div>'
+        masterDetailTaskList : '<div id="group">' +
+                '<div data-bb-type="scroll-panel" id="group-list-panel">' +
+                    '<div id="group-list" data-bb-type="image-list" data-bb-images="none" ></div>' +
+                '</div>' +
+                '<div id="group-space" onclick="Util.togglePanelWidth();"></div>' +
+            '</div>' +
+            '<div id="create-task-shortcut">' +
+                '<img id="create-task-shortcut-add" src="resources/image/bullet_add.png" onclick="Util.toggleCreateTaskShortcutDisplay();"/>' +
+                '<img id="create-task-shortcut-search" src="resources/image/search.png" onclick="Util.toggleSearchTaskTaskShortcutDisplay();"/>' +
+            '</div>' +
+            '<div id="detail" onclick="Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">' +
+                '<div id="search-result-title"></div>' +
+                '<div data-bb-type="scroll-panel" id="detail-list-panel">' +
+                    '<div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">' +
+                    '</div>' +
+                '</div>' +
+            '</div>',
     };
 }());
 
