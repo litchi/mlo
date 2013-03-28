@@ -32,7 +32,7 @@
     <property name = "env.webworks.installation.dir"  location = "/Users/larry/bin/WebWorks_SDK"/>
     <property name = "env.ripple.remote.user"         value    = "xqliu"/>
     <property name = "env.ripple.remote.password"     value    = "password"/>
-    <property name = "env.ripple.remote.ip"           value    = "172.16.177.139"/>
+    <property name = "env.ripple.remote.ip"           value    = "172.16.177.141"/>
     <property name = "env.ripple.remote.folder"       value    = "/www/gtd"/>
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.138"/>
     <property name = "env.bb10.device.ip"             value    = "192.168.11.6"/>
@@ -215,7 +215,7 @@
 
     <target name="ws" depends="pre.process.copy">
         <echo>Remote: ${env.ripple.remote.ip}, Source: ${build.target.code}, Remote folder: ${env.ripple.remote.folder}</echo>
-        <scp todir="${env.ripple.remote.user}:${env.ripple.remote.password}@${env.ripple.remote.ip}:${env.ripple.remote.folder}">
+        <scp todir="${env.ripple.remote.user}:${env.ripple.remote.password}@${env.ripple.remote.ip}:${env.ripple.remote.folder}" trust="true">
             <fileset dir="${build.target.code}" excludes="**/*.swp,.git,**/*.bak,.DS_Store"/>
         </scp>                 
     </target>
