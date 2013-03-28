@@ -107,6 +107,8 @@ var Util = (function () {
                     } else if ((0 === monthDiff && dayDiff <= 7 && dayDiff >= -7)) {
                         weekPrefix = (dayDiff < 0) ? 'Last' : 'Next';
                         d = myDate.getDate() + '/' + (myDate.getMonth() + 1) + ' (' + weekPrefix + sep + Util.getNameOfWeekday(myDate) + ')';
+                    } else {
+                        d = Util.getNameOfMonth(myDate) + sep + (myDate.getDate());
                     }
                 } else {
                     if ((myDate.getMonth === 2 && monthDiff === -1 && dayDiff < 21 && dayDiff > 15) &&
@@ -277,15 +279,32 @@ var Util = (function () {
             if (Util.notEmpty(toastMsg)) {
                 localToastMsg = toastMsg;
             }
-            if (metaName === SeedData.NextActionMetaName ||
-                    metaName === SeedData.BasketMetaName ||
-                    metaName === SeedData.SomedayMetaName) {
-                bb.pushScreen('task-list.html', metaName, {'toastMsg' : localToastMsg});
+            if ((metaName === SeedData.NextActionMetaName && metaTypeName  === SeedData.GtdMetaTypeName) ||
+                    (metaName === SeedData.BasketMetaName && metaTypeName  === SeedData.GtdMetaTypeName) ||
+                    (metaName === SeedData.SomedayMetaName && metaTypeName === SeedData.GtdMetaTypeName)) {
+                bb.pushScreen('task-list.html', metaName, {
+                    'metaTypeName' : metaTypeName,
+                    'metaName'     : metaName,
+                    'toastMsg'     : localToastMsg,
+                    'actionbarId'  : UIConfig.taskByPagePrefix + '-' + metaTypeName
+                });
             } else {
-                if (Util.notEmpty(metaName)) {
-                    bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {'metaTypeName' : metaTypeName, 'metaName' : metaName, 'toastMsg' : localToastMsg});
+                if (Util.notEmpty(metaName) &&
+                        metaName !== SeedData.NextActionMetaName &&
+                        metaName !== SeedData.BasketMetaName &&
+                        metaName !== SeedData.SomedayMetaName) {
+                    bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {
+                        'metaTypeName' : metaTypeName,
+                        'metaName'     : metaName,
+                        'toastMsg'     : localToastMsg,
+                        'actionbarId'  : UIConfig.taskByPagePrefix + '-' + metaTypeName
+                    });
                 } else {
-                    bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {'metaTypeName' : metaTypeName, 'toastMsg' : localToastMsg});
+                    bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {
+                        'metaTypeName' : metaTypeName,
+                        'toastMsg'     : localToastMsg,
+                        'actionbarId'  : UIConfig.taskByPagePrefix + '-' + metaTypeName
+                    });
                 }
             }
         },

@@ -1327,10 +1327,10 @@ bb.actionBar = {
 		actionBar.setBackCaption = actionBar.setBackCaption.bind(actionBar);  
 		
 		// Add setSelectedTab function
-		actionBar.setSelectedTab = function(tab) {
+		actionBar.setSelectedTab = function(tab, invokeOnClick) {
 					if (tab.getAttribute('data-bb-style') != 'tab') return;
 					bb.actionBar.highlightAction(tab);
-					if (tab.onclick) {
+					if (tab.onclick && false !== invokeOnClick) {
 						tab.onclick();
 					}
 				};
@@ -3663,7 +3663,21 @@ bb.titleBar = {
 				button.innerHTML = titleBar.getAttribute('data-bb-back-caption');
 				topTitleArea.appendChild(button);
 				titleBar.backButton = button;
-				button.onclick = bb.popScreen;
+
+                if (titleBar.hasAttribute('onbackclick')) {
+                    button.onbackclick = titleBar.getAttribute('onbackclick');
+                    titleBar.onbackclick = function() {
+                        eval(this.backButton.onbackclick);
+                    };
+                } 
+                button.onclick = function() {
+                    if (titleBar.onbackclick) {
+                        titleBar.onbackclick();
+                    } else {
+                        bb.popScreen();
+                    } 
+                };
+
 				bb.titleBar.styleBB10Button(button);
 				button.style.left = '0px';
 			}

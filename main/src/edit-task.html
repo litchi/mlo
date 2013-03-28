@@ -3,6 +3,7 @@
     <input type="hidden" value="" id="task-id">
     <script type="text/javascript" id='edit-task-js' src="js/app/UIEditFormController.js"></script>
     <div id="foo" data-bb-type="title" data-bb-caption="Edit Task" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
+        onbackclick="UIEditFormController.cancelTaskEdit();"
         onactionclick="UIEditFormController.updateTask(Util.valueOf('task-id'), Util.valueOf('task-name'), Util.valueOf(SeedData.ProjectMetaTypeName))"></div>
     <div data-bb-type="round-panel" id='edit-page-sub-panel-01'>
         <div data-bb-type="panel-header">Title</div>

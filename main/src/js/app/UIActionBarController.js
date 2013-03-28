@@ -3,17 +3,6 @@
 var UIActionBarController = (function () {
     "use strict";
     return {
-        openTaskByMetaPage : function (metaName, toastMsg) {
-            UITaskUtil.setTaskDetailPanelDisplay('none');
-            UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
-            UIListController.fillMetaListToPanelByTypeName(SeedData.GtdMetaTypeName, UIConfig.taskByPagePrefix, function () {
-                UIListController.fillTaskAndMarkGroupNoId(SeedData.GtdMetaTypeName, metaName);
-                if (Util.notEmpty) {
-                    Util.showToast(toastMsg);
-                }
-            });
-            $("[id^=add-meta-link-]").remove();
-        },
 
         openTaskByStatusPage : function (statusKey) {
             UITaskUtil.setTaskDetailPanelDisplay('none');
@@ -26,7 +15,7 @@ var UIActionBarController = (function () {
             UITaskUtil.setTaskDetailPanelDisplay('none');
             UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
             UIListController.fillMetaListToPanelByTypeName(metaTypeName, UIConfig.taskByPagePrefix, function () {
-                if (Util.isEmpty(metaName)) {
+                if (Util.isEmpty(metaName) || Sql.FilterAllMeta === metaName) {
                     UIListController.fillTaskAndMarkGroup(metaTypeName, metaTypeName, Sql.FilterAllMeta);
                 } else {
                     UIListController.fillTaskAndMarkGroupNoId(metaTypeName, metaName);
@@ -41,7 +30,7 @@ var UIActionBarController = (function () {
         openMetaGroupByTypePage : function (metaTypeId) {
             UITaskUtil.setTaskDetailPanelDisplay('none');
             UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
-            UIListController.fillMetaTypeToPanel();
+            UIListController.fillMetaTypeToPanel(metaTypeId);
             if (Util.isEmpty(metaTypeId)) {
                 UIListController.fillAllMetaToPanel(UIConfig.metaByPagePrefix);
             } else {

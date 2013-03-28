@@ -282,9 +282,11 @@ var UITaskUtil = (function () {
             var container, taskListContainer;
             if (Util.isEmpty(data) || (data.type === 'Task')) {
                 container = document.getElementById(UIConfig.viewTaskDetailElementId);
-                if (container.style.display !== display) {
-                    container.style.display = display;
-                    $('#main-content-overlay').css('display', display);
+                if (Util.notEmpty(container)) {
+                    if (container.style.display !== display) {
+                        container.style.display = display;
+                        $('#main-content-overlay').css('display', display);
+                    }
                 }
             }
             if (display === 'block') {

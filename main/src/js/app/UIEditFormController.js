@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController, UIActionBarController*/
 var UIEditFormController = (function () {
     "use strict";
     var selectedContextIds = {};
@@ -198,6 +198,18 @@ var UIEditFormController = (function () {
     }
 
     return {
+    
+        cancelTaskEdit : function () {
+            Util.refreshCurrentPage(null);
+        },
+
+        cancelMetaEdit : function () {
+            var metaTypeId = Util.valueOf('meta_type_id');
+            bb.pushScreen('task-list.html', UIConfig.metaByPagePrefix, {
+                'metaTypeId'   : metaTypeId,
+                'actionbarId'  : UIConfig.screenIdField
+            });
+        },
 
         updateTask : function (id, name, projectId) {
             if (UIConfig.emptyString === name) {

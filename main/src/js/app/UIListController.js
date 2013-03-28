@@ -210,7 +210,7 @@ var UIListController = (function () {
             });
         },
 
-        fillMetaTypeToPanel : function () {
+        fillMetaTypeToPanel : function (metaTypeId) {
             var item, name,
                 metaTypeListTitle  = document.getElementById('group-title-text'),
                 metaTypeList       = document.getElementById('group-list');
@@ -269,6 +269,7 @@ var UIListController = (function () {
                 }
                 setCreateTaskInputPlaceHolder(UIConfig.emptyString, UIConfig.emptyString);
                 setGroupPanelEmptyHeight();
+                UIListController.fillMetaListMarkTypeAsSelected(metaTypeId);
             }, function (tx, error) {
                 log.logSqlError("Error getting all meta type", error);
             });

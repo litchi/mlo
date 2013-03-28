@@ -1,10 +1,22 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, $, JQuery*/
 var webworksreadyFired = false;
 var EventCallback = (function () {
     "use strict";
 
-    function hideDevTab() {
+    function setActionBarSelected(actionBarId) {
+        var actionBarDiv = document.getElementById(UIConfig.actionBarElementId),
+            actionBarItem = document.getElementById(actionBarId);
+        if (Util.notEmpty(actionBarId)) {
+            if (actionBarId === UIConfig.screenIdField) {
+                actionBarDiv.setSelectedTab(actionBarItem);
+            } else {
+                actionBarDiv.setSelectedTab(actionBarItem, false);
+            }
+        }
+    }
+
+    function setDevTabVisible() {
         var devTab = document.getElementById('development');
         if (!AppConfig.debugMode && Util.notEmpty(devTab)) {
             devTab.style.display = 'none';
@@ -25,7 +37,7 @@ var EventCallback = (function () {
     }
 
     function onDomReadyCallback(element, id, params) {
-        var taskId, metaTypeName, metaId, metaTypeId, defaultMetaName, toastMsg;
+        var taskId, metaTypeName, metaId, metaTypeId, metaName, toastMsg, actionBarId;
         console.debug("Element: [%s], ID: [%s]", element, id);
         log.logObjectData("Parameters:", params, true);
         if (Util.notEmpty(params)) {
@@ -39,9 +51,9 @@ var EventCallback = (function () {
                 metaTypeName = params[UIConfig.paramMetaTypeName];
             }
             if (Util.notEmpty(params[UIConfig.paramMetaName])) {
-                defaultMetaName = params[UIConfig.paramMetaName];
+                metaName = params[UIConfig.paramMetaName];
             } else {
-                defaultMetaName = Sql.FilterAllMeta;
+                metaName = Sql.FilterAllMeta;
             }
             if (Util.notEmpty(params[UIConfig.paramMetaId])) {
                 metaId = params[UIConfig.paramMetaId];
@@ -49,16 +61,19 @@ var EventCallback = (function () {
             if (Util.notEmpty(params[UIConfig.paramToastMsg])) {
                 toastMsg = params[UIConfig.paramToastMsg];
             }
+            if (Util.notEmpty(params[UIConfig.paramActionbarId])) {
+                actionBarId = params[UIConfig.paramActionbarId];
+            }
         }
         if (id !== null) {
             if (id === SeedData.BasketMetaName ||
                     id === SeedData.NextActionMetaName ||
                     id === SeedData.SomedayMetaName) {
-                UIActionBarController.openTaskByMetaPage(id);
+                UIActionBarController.openTaskGroupByMetaPage(SeedData.GtdMetaTypeName, id);
             } else if (id === UIConfig.editTaskPagePrefix) {
                 UIEditFormController.fillTaskToEditForm(taskId, params);
             } else if (id === UIConfig.taskByPagePrefix) {
-                UIActionBarController.openTaskGroupByMetaPage(metaTypeName, defaultMetaName);
+                UIActionBarController.openTaskGroupByMetaPage(metaTypeName, metaName);
             } else if ((id === UIConfig.screenIdField) || (id === UIConfig.metaByPagePrefix)) {
                 UIActionBarController.openMetaGroupByTypePage(metaTypeId);
             } else if (id === UIConfig.editMetaPagePrefix) {
@@ -68,7 +83,8 @@ var EventCallback = (function () {
             } else if (id === SeedData.TaskDeletedStatus) {
                 UIListController.fillTasksToGroupByStatusKey(id);
             }
-            hideDevTab();
+            setActionBarSelected(actionBarId);
+            setDevTabVisible();
             showAndClearToastMsg(toastMsg, params);
         }
     }
@@ -88,7 +104,11 @@ var EventCallback = (function () {
                 onscreenready: onScreenReadyCallback,
                 ondomready: onDomReadyCallback
             });
-            bb.pushScreen('task-list.html', SeedData.BasketMetaName);
+            bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {
+                'metaTypeName' : SeedData.GtdMetaTypeName,
+                'metaName'     : SeedData.BasketMetaName,
+                'actionbarId'  : UIConfig.taskByPagePrefix + "-GTD"
+            });
         },
 
         loadCallback : function () {

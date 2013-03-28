@@ -197,15 +197,21 @@ var UIContextMenuController = (function () {
                             } else {
                                 if (id !== null && id !== undefined && id !== UIConfig.emptyString) {
                                     DataAccess.meta.update(id, name, description, function (tx, result, rows) {
-                                        bb.pushScreen('task-list.html', UIConfig.metaByPagePrefix,
-                                            { 'metaTypeId' : meta_type_id, 'toastMsg' : metaTypeName + " " + name + " updated"});
+                                        bb.pushScreen('task-list.html', UIConfig.metaByPagePrefix, {
+                                            'metaTypeId'  : meta_type_id,
+                                            'actionbarId' : UIConfig.screenIdField,
+                                            'toastMsg'    : metaTypeName + " " + name + " updated"
+                                        });
                                     }, function (tx, error) {
                                         log.logSqlError("Failed to update meta[" + id + "][" + name + "][" + meta_type_id + "][" + description + "]", error);
                                     });
                                 } else {
                                     DataAccess.meta.create(name, meta_type_id, description, function (tx, result, rows) {
-                                        bb.pushScreen('task-list.html', UIConfig.metaByPagePrefix,
-                                            { 'metaTypeId' : meta_type_id, 'toastMsg' : metaTypeName + " " + name + " created"});
+                                        bb.pushScreen('task-list.html', UIConfig.metaByPagePrefix, {
+                                            'metaTypeId'  : meta_type_id,
+                                            'actionbarId' : UIConfig.screenIdField,
+                                            'toastMsg'    : metaTypeName + " " + name + " created"
+                                        });
                                     }, function (tx, error) {
                                         log.logSqlError("Failed to create meta[" + id + "][" + name + "][" + meta_type_id + "][" + description + "]", error);
                                     });
