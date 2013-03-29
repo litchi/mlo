@@ -129,12 +129,14 @@ var DataAccess = (function () {
                 DataAccess.runSqlForMigrate(t, 'CREATE VIEW task_view AS select task.id as task_id, task.name as task_name, task.status as task_status, task.reminder_on as task_reminder_on, task.due_date as task_due_date, meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from task join task_meta on task_meta.task_id = task.id join meta on task_meta.meta_id = meta.id join meta_type on meta_type.id = meta.meta_type_id');
                 DataAccess.runSqlForMigrate(t, 'CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta.description as meta_description, meta.ui_rank as meta_ui_rank, meta_type.id as meta_type_id, meta_type.name as meta_type_name, meta_type.description as meta_type_description, meta_type.internal as meta_type_internal from meta join meta_type on meta_type.id = meta.meta_type_id');
             });
-            if (DataAccess.dbFirstTimeCreate === true) {
-                m.migration(5, function (t) {
-                    DataAccess.dbFirstTimeCreate = false;
-                    SeedSampleDataProvider.loadSampleData(t);
-                });
-            }
+            m.migration(5, function (t) {
+                SeedSampleDataProvider.m5InsertReminderSeedData(t);
+                DataAccess.runSqlForMigrate(t, 'alter table task add column reminder_date integer');
+                DataAccess.runSqlForMigrate(t, 'drop view if exists task_view');
+                DataAccess.runSqlForMigrate(t, 'drop view if exists meta_view');
+                DataAccess.runSqlForMigrate(t, 'CREATE VIEW task_view AS select task.id as task_id, task.name as task_name, task.status as task_status, task.reminder_date as task_reminder_date, task.due_date as task_due_date, meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from task join task_meta on task_meta.task_id = task.id join meta on task_meta.meta_id = meta.id join meta_type on meta_type.id = meta.meta_type_id');
+                DataAccess.runSqlForMigrate(t, 'CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta.description as meta_description, meta.ui_rank as meta_ui_rank, meta_type.id as meta_type_id, meta_type.name as meta_type_name, meta_type.description as meta_type_description, meta_type.internal as meta_type_internal from meta join meta_type on meta_type.id = meta.meta_type_id');
+            });
             m.execute();
         },
 

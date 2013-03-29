@@ -9,6 +9,12 @@ var SeedSampleDataProvider = (function () {
 
     function insertContextSeedData(tx) {
         DataAccess.runSqlForMigrate(tx, "insert into meta_type (name, description) values ('Context', 'Predefined Context field for task')");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'online'     , 'Internet context' from meta_type where name = 'Context'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'errands'    , 'Waiting for others' from meta_type where name = 'Context'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'call'       , 'Call others' from meta_type where name = 'Context'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'home'       , 'At home' from meta_type where name = 'Context'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'email'      , 'Need to email others' from meta_type where name = 'Context'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , '< 10 Mins'  , 'Tasks take less than 10 minutes' from meta_type where name = 'Context'");
     }
 
     function insertGtdSeedData(tx) {
@@ -29,20 +35,6 @@ var SeedSampleDataProvider = (function () {
         DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Done Yesterday'   , 'Yesterday''s finished tasks' from meta_type where name = 'Due'");
     }
 
-    function insertSampleProjects(tx) {
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'App Use' , 'Introduction of Mind like Water App features' from meta_type where name = 'Project'");
-    }
-
-    function insertSampleContexts(tx) {
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'online'     , 'Internet context' from meta_type where name = 'Context'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'blackberry' , 'Actions related to bank' from meta_type where name = 'Context'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'errands'    , 'Waiting for others' from meta_type where name = 'Context'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'call'       , 'Call others' from meta_type where name = 'Context'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'home'       , 'At home' from meta_type where name = 'Context'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'office'     , 'In the Office' from meta_type where name = 'Context'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'subway'     , 'When taking subway' from meta_type where name = 'Context'");
-    }
-
     function insertSampleTask(tx, taskName, metas, dueDate) {
         DataAccess.runSqlForMigrate(tx, "insert into task (name) values (?)", [taskName], function (tx, result) {
             var i, id = result.insertId;
@@ -59,18 +51,6 @@ var SeedSampleDataProvider = (function () {
         });
     }
 
-    function insertSampleTasks(tx) {
-        insertSampleTask(tx, 'Use the create task input below to add task', ['App Use', 'Next Action', 'blackberry']);
-        insertSampleTask(tx, 'Tap this item to show task operate menu', ['App Use', 'Next Action', 'office', 'blackberry']);
-        insertSampleTask(tx, 'Swipe task operate menu left to show description', ['App Use', 'Next Action', 'blackberry']);
-        insertSampleTask(tx, 'Tap leftmost actionbar item to show all available lists', ['App Use', 'Next Action', 'blackberry']);
-        insertSampleTask(tx, 'Create project and context on Fields list page', ['App Use', 'Next Action', 'office']);
-        insertSampleTask(tx, 'Tap a context to assign it to task on editing task page', ['App Use', 'Next Action', 'blackberry']);
-        insertSampleTask(tx, 'Sample: Call my friend and say happy birthday', ['call', 'Basket'], new Date());
-        insertSampleTask(tx, 'Sample: Read the book "Getting things Done"', ['subway', 'Basket', 'home'], new Date());
-        insertSampleTask(tx, 'Sample: Travel to Tibet with Honny, next spring', ['Someday', 'online']);
-    }
-
     return {
         loadSeedData : function (tx) {
             insertProjectSeedData(tx);
@@ -79,10 +59,28 @@ var SeedSampleDataProvider = (function () {
             insertDueSeedData(tx);
         },
 
-        loadSampleData : function (tx) {
-            insertSampleProjects(tx);
-            insertSampleContexts(tx);
-            insertSampleTasks(tx);
+        m5InsertReminderSeedData : function (tx) {
+            DataAccess.runSqlForMigrate(tx, "insert into meta_type (name, description, internal) values ('Reminder', 'Predefined reminder time for task with due date', 1)");
+            DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Off'      , 'No reminder' from meta_type where name                = 'Reminder'");
+            DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'When Due' , 'Same as due date' from meta_type where name           = 'Reminder'");
+            DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , '1 min'    , '1 minute before due date' from meta_type where name   = 'Reminder'");
+            DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , '5 mins'   , '5 minutes before due date' from meta_type where name  = 'Reminder'");
+            DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , '15 mins'  , '15 minutes before due date' from meta_type where name = 'Reminder'");
+            DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , '30 mins'  , '30 minutes before due date' from meta_type where name = 'Reminder'");
+            DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , '1 hour'   , '1 hour before due date' from meta_type where name     = 'Reminder'");
+            DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , '2 hours'  , '2 hours before due date' from meta_type where name    = 'Reminder'");
+            DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , '1 day'    , '1 day before due date' from meta_type where name      = 'Reminder'");
+            DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Custom'   , 'Custom reminder date' from meta_type where name       = 'Reminder'");
+            DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 50 where name = 'Off'");
+            DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 48 where name = 'When Due'");
+            DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 46 where name = '1 min'");
+            DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 40 where name = '5 mins'");
+            DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 30 where name = '15 mins'");
+            DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 25 where name = '30 mins'");
+            DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 20 where name = '1 hour'");
+            DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 15 where name = '2 hours'");
+            DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 08 where name = '1 day'");
+            DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 03 where name = 'Custom'");
         }
     };
 }());

@@ -1,29 +1,23 @@
 ﻿<div data-bb-type="screen" data-bb-effect="slide-left">
     @meta-fields@
     <input type="hidden" value="" id="task-id">
-    <script type="text/javascript" id='edit-task-js' src="js/app/UIEditFormController.js"></script>
     <div id="foo" data-bb-type="title" data-bb-caption="Edit Task" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
         onbackclick="UIEditFormController.cancelTaskEdit();"
         onactionclick="UIEditFormController.updateTask(Util.valueOf('task-id'), Util.valueOf('task-name'), Util.valueOf(SeedData.ProjectMetaTypeName))"></div>
     <div data-bb-type="round-panel" id='edit-page-sub-panel-01'>
-        <div data-bb-type="panel-header">Title</div>
+        <div data-bb-type="panel-header"><div class="round-panel-title">Title</div></div>
         <div data-bb-type="label-control-container">
             <table>
                 <tr>
                     <td colspan="3" class='edit-page-sub-panel-01-td'>
-                        <textarea id="task-name"
-                            onkeyup="Util.resizeTextarea(this, 27)" 
-                            onmouseup="Util.resizeTextarea(this, 27)">
-                        </textarea>
+                        <textarea id="task-name" oninput="Util.resizeTextarea(this, 27)" ontextinput="Util.resizeTextarea(this, 27)" onkeyup="Util.resizeTextarea(this, 27)"></textarea>
                     </td>
                 </tr>
             </table>
         </div>
     </div>
     <div data-bb-type="round-panel" id='edit-page-sub-panel-02'>
-        <div data-bb-type="panel-header">
-            Project/Due Date
-        </div>
+        <div data-bb-type="panel-header"><div class="round-panel-title">Project/Due Date</div></div>
         <div data-bb-type="label-control-container">
             <table>
                 <tr>
@@ -35,23 +29,34 @@
                 </tr>
                 <tr>
                     <td class="td-label">Due</td>
-                    <td class="edit-page-sub-panel-02-td" colspan=2><input type="datetime-local" value="" id="due-date"/></td>
-                </tr>
-                <tr id="edit-page-sub-panel-02-reminder-tr"> 
-                    <td class="td-label">Reminder?</td>
-                    <td colspan=2><div data-bb-type="toggle" data-bb-on="Yes" data-bb-off="No" id="is-reminder-on"></div> </td>
+                    <td class="edit-page-sub-panel-02-td" colspan=2><input type="datetime-local" value="" id="due-date" onchange="UITaskReminderUtil.switchReminderPanelDisplay(this.value);"/></td>
                 </tr>
             </table>
         </div>
     </div>
-    <div data-bb-type="round-panel" id='edit-page-sub-panel-03'>
-        <div data-bb-type="panel-header">
-            Context
+    <div data-bb-type="round-panel" id='edit-page-sub-panel-reminder'>
+        <div data-bb-type="panel-header"><div class="round-panel-title">Remind before Due Date</div></div>
+        <div data-bb-type="label-control-container">
+            <div id='reminderContainer'>
+                <!--
+                   - This is a sample of program generated tag
+                   -<span class='reminder' id='reminder-xxx'>Off</span>
+                   -->
+            </div>
         </div>
+    </div>
+    <div data-bb-type="round-panel" id='edit-page-sub-panel-03'>
+        <div data-bb-type="panel-header"><div class="round-panel-title">Contexts</div></div>
         <div data-bb-type="label-control-container">
             <table>
                 <tr>
                     <td id='contextContainer'>
+                        <!--
+                           - This is a sample of program generated tag
+                           -<span id="15" class="selectedContext" onclick="UIEditFormController.unSelectContext(xxx)">
+                           -    call<img id="15_img" class="deleteIcon" src="./resources/image/remove-context.png" style="display: inline-block;">
+                           -</span>
+                           -->
                     </td>
                 </tr>
             </table>

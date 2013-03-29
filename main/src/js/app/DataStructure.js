@@ -19,7 +19,7 @@ CommonSql = {
 };
 
 SeedData = {
-    BasketMetaName         : 'Basket',
+    BasketMetaName           : 'Basket',
     NextActionMetaName       : 'Next Action',
     SomedayMetaName          : 'Someday',
     GtdMetaTypeName          : 'GTD',
@@ -28,6 +28,7 @@ SeedData = {
     TaskDeletedStatus        : 'Deleted',
     ProjectMetaTypeName      : 'Project',
     ContextMetaTypeName      : 'Context',
+    ReminderMetaTypeName     : 'Reminder',
     DueMetaTypeName          : 'Due',
     TodayMetaName            : 'Today',
     TomorrowMetaName         : 'Tomorrow',
@@ -49,7 +50,7 @@ Sql = {
             TaskId : 'task_id',
             MetaId : 'meta_id'
         },
-        FirstVersionTable          : 'CREATE TABLE IF NOT EXISTS task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_id int)',
+        FirstVersionTable    : 'CREATE TABLE IF NOT EXISTS task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_id int)',
         Insert               : 'INSERT INTO task_meta (id, task_id, meta_id) VALUES (null, ?, ?)',
         ThrowTaskToList      : 'INSERT INTO task_meta (id, task_id, meta_id) select null, ?, id from meta where name = ? and meta_type_id = (select id from meta_type where name = ?)',
         SelectByIds          : 'SELECT id, task_id, meta_id from task_meta where task_id = ? and meta_id = ?',
@@ -75,6 +76,7 @@ Sql = {
         SelectByName       : 'select id, meta_type_id, name, description from meta where name = ?',
         SelectByIdName     : 'select id, meta_type_id, name, description from meta where id = ? and name = ?',
         SelectByTypeId     : 'select id, meta_type_id, name, description from meta where meta_type_id = ? order by ui_rank desc',
+        //FIXME This is not correct!!!
         SelectByTypeName   : 'select id, meta_type_id, name, description from meta where meta_type_name = ? order by ui_rank desc',
         SelectByNameTypeId : 'select id from meta where meta_type_id = ? and name = ?',
         UpdateNameById     : 'update meta set name = ? where id = ?',
@@ -112,16 +114,17 @@ Sql = {
     Task : {
         TableName : 'task',
         Cols : {
-            Id         : CommonSql.IdCol,
-            Name       : 'name',
-            ReminderOn : "reminder_on",
-            DueDate    : 'due_date'
+            Id           : CommonSql.IdCol,
+            Name         : 'name',
+            ReminderDate : "reminder_date",
+            DueDate      : 'due_date',
+            Status       : 'status'
         },
         FirstVersionTable : "create table if not exists task (id integer primary key autoincrement, name text, status text default 'New')",
         InsertByName      : 'insert into task (id, name) values (null, ?)',
         InsertByIdName    : 'insert into task(id, name) values (?, ?)',
         FilterByStatus    : 'select id, name from task where status != ? and status != ?',
-        SelectById        : "select id, name, reminder_on, status, due_date from task where id = ?",
+        SelectById        : "select id, name, status, due_date from task where id = ?",
         SelectByName      : 'select id, name from task where name = ?',
         SelectByIdName    : 'select id, name from task where id = ? and name = ?',
         SelectByStatus    : 'select distinct task_id as id, task_name as name, task_status as status from task_view where task_status = ? order by case when task_due_date is null then 1 else 0 end, task_due_date',

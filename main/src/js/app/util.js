@@ -350,6 +350,19 @@ var Util = (function () {
             $("#detail-list-panel").css('height', '1130px');
             $('#stsi').val(UIConfig.emptyString);
             $("#stsi").blur();
+        },
+
+        genSelectedMetaMarkIconId : function (metaId) {
+            return metaId + "_img";
+        },
+
+        copyInnerHTMLAndShowContainer : function (container, tempDiv) {
+            Util.copyInnerHTML(container, tempDiv);
+            container.style.display = 'block';
+        },
+
+        copyInnerHTML : function (container, tempDiv) {
+            container.innerHTML = tempDiv.innerHTML;
         }
     };
 
