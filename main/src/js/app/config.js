@@ -85,7 +85,7 @@ var UIFragments = (function () {
                     '<div data-bb-images="none" data-bb-type="image-list" id="detail-list" data-bb-image-effect="fade">' +
                     '</div>' +
                 '</div>' +
-            '</div>',
+            '</div>'
     };
 }());
 
