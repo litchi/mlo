@@ -1,51 +1,8 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController, UIActionBarController*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController, UIActionBarController, UIMetaUtil*/
 var UITaskReminderUtil = (function () {
     "use strict";
     var selectedReminderIds = {};
-
-    function createReminderSelectedIcon(metaId) {
-        var icon = document.createElement('img');
-        icon.setAttribute('id', Util.genSelectedMetaMarkIconId(metaId));
-        icon.setAttribute('class', 'selectedIcon');
-        icon.setAttribute('src', './resources/image/remove-context.png');
-        icon.setAttribute('width', '32px');
-        icon.setAttribute('height', '32px');
-        return icon;
-    }
-
-    function createReminderSpan(container, tx, tempDiv, taskId, metaId, metaName, callback) {
-        var span, count, icon;
-        DataAccess.runSqlDirectly(
-            tx,
-            'select count(*) as c from task_view where task_id = ? and meta_id = ?',
-            [taskId, metaId],
-            function (tx, result, objs) {
-                if (null !== result && null !== result.rows && null !== result.rows.item) {
-                    span = document.createElement('span');
-                    span.setAttribute('id', metaId);
-                    count = result.rows.item(0).c;
-                    if (count >= 1) {
-                        span.setAttribute('class', 'selectedReminder');
-                        span.setAttribute('onclick', 'UITaskReminderUtil.unSelectReminder("' + metaId + '", "' + metaName + '")');
-                        selectedReminderIds[metaId] = metaName;
-                        icon = createReminderSelectedIcon(metaId);
-                    } else {
-                        span.setAttribute('class', 'reminder');
-                        span.setAttribute('onclick', 'UITaskReminderUtil.selectReminder("' + metaId + '", "' + metaName + '")');
-                    }
-                    span.innerText = metaName;
-                    if (Util.notEmpty(icon)) {
-                        span.appendChild(icon);
-                    }
-                    tempDiv.appendChild(span);
-                    if (Util.isFunction(callback)) {
-                        callback(container, tempDiv);
-                    }
-                }
-            }
-        );
-    }
 
     function removeExistingSelected() {
         var key, pElem, cElem;
@@ -57,7 +14,7 @@ var UITaskReminderUtil = (function () {
                     if (Util.notEmpty(cElem)) {
                         pElem.removeChild(cElem);
                     }
-                    pElem.setAttribute('class', 'reminder');
+                    pElem.setAttribute('class', 'meta reminder');
                     pElem.setAttribute('onclick', 'UITaskReminderUtil.selectReminder("' + key + '", "' + pElem.innerText + '")');
                 }
             }
@@ -66,15 +23,23 @@ var UITaskReminderUtil = (function () {
 
     return {
 
+        unSelectClickCallback : function (metaId, metaName) {
+            return 'UITaskReminderUtil.unSelectReminder("' + metaId + '", "' + metaName + '")';
+        },
+
+        selectClickCallback : function (metaId, metaName) {
+            return 'UITaskReminderUtil.selectReminder("' + metaId + '", "' + metaName + '")';
+        },
+
         selectReminder : function (metaId, metaName) {
             var icon = document.getElementById(Util.genSelectedMetaMarkIconId(metaId)),
                 span = document.getElementById(metaId);
             removeExistingSelected();
             selectedReminderIds[metaId] = metaName;
-            span.setAttribute('class', 'selectedReminder');
-            span.setAttribute('onclick', 'UITaskReminderUtil.unSelectReminder("' + metaId + '", "' + metaName + '")');
+            span.setAttribute('class', 'selectedMeta selectedReminder');
+            span.setAttribute('onclick', UITaskReminderUtil.unSelectClickCallback(metaId, metaName));
             if (Util.isEmpty(icon)) {
-                icon = createReminderSelectedIcon(metaId);
+                icon = Util.createMetaSelectedIcon(metaId, 'deleteIcon');
             } else {
                 icon.style.display = 'inline-block';
             }
@@ -88,8 +53,8 @@ var UITaskReminderUtil = (function () {
             if (Util.notEmpty(icon)) {
                 icon.style.display = 'none';
             }
-            span.setAttribute('class', 'reminder');
-            span.setAttribute('onclick', 'UITaskReminderUtil.selectReminder("' + metaId + '", "' + metaName + '")');
+            span.setAttribute('class', 'meta reminder');
+            span.setAttribute('onclick', UITaskReminderUtil.selectClickCallback(metaId, metaName));
         },
 
         prepareReminderData : function (taskId, due) {
@@ -108,13 +73,19 @@ var UITaskReminderUtil = (function () {
                             if (null !== result && null !== result.rows && null !== result.rows.item) {
                                 for (i = 0, max = result.rows.length; i < max; i += 1) {
                                     if (i !== max - 1) {
-                                        createReminderSpan(reminderContainer, tx, tempDiv, taskId, result.rows.item(i).meta_id, result.rows.item(i).meta_name);
+                                        UIMetaUtil.createMetaSpan(reminderContainer, tx, tempDiv, taskId,
+                                            result.rows.item(i).meta_id, result.rows.item(i).meta_name, selectedReminderIds,
+                                            UITaskReminderUtil.unSelectClickCallback, UITaskReminderUtil.selectClickCallback);
                                     } else {
                                         if (Util.notEmpty(due)) {
-                                            createReminderSpan(reminderContainer, tx, tempDiv, taskId, result.rows.item(i).meta_id, result.rows.item(i).meta_name, Util.copyInnerHTMLAndShowContainer);
+                                            UIMetaUtil.createMetaSpan(reminderContainer, tx, tempDiv, taskId,
+                                                result.rows.item(i).meta_id, result.rows.item(i).meta_name, selectedReminderIds,
+                                                UITaskReminderUtil.unSelectClickCallback, UITaskReminderUtil.selectClickCallback, Util.copyInnerHTMLAndShowContainer);
                                             reminderPanel.style.display = 'block';
                                         } else {
-                                            createReminderSpan(reminderContainer, tx, tempDiv, taskId, result.rows.item(i).meta_id, result.rows.item(i).meta_name, Util.copyInnerHTML);
+                                            UIMetaUtil.createMetaSpan(reminderContainer, tx, tempDiv, taskId,
+                                                result.rows.item(i).meta_id, result.rows.item(i).meta_name, selectedReminderIds,
+                                                UITaskReminderUtil.unSelectClickCallback, UITaskReminderUtil.selectClickCallback, Util.copyInnerHTML);
                                         }
                                     }
                                 }
@@ -127,8 +98,8 @@ var UITaskReminderUtil = (function () {
             }
         },
 
-        //FIXME To be implemented!!!
         saveReminderInfo : function (tx, taskId) {
+            DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteByMetaTypeName, [taskId, SeedData.ReminderMetaTypeName]);
         },
 
         switchReminderPanelDisplay : function (dueDate) {

@@ -7,7 +7,7 @@
     vertical-align:middle;
     padding-right:20px;
 }
-.selectedReminder, .selectedContext {
+.selectedMeta {
     -webkit-border-radius:10px;
     background-color:#E1E6E5;
     margin:15px;
@@ -18,7 +18,7 @@
     font-size: 24px;
     position:relative;
 }
-.reminder, .context {
+.meta {
     -webkit-border-radius:10px;
     background: -webkit-gradient(linear, left top, left bottom, from(#E5E5E5), to(#D4C7C7)) !important;
     background: -moz-linear-gradient(top, #E5E5E5, #D4C7C7) !important;
@@ -38,7 +38,7 @@
     margin-bottom: -20px;
 }
 
-.deleteIcon, .selectedIcon {
+.deleteIcon {
     position:absolute; top:-10px; right:-10px;
     background-color:transparent;
 }

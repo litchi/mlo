@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController, UIActionBarController*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController, UIActionBarController, UIMetaUtil*/
 var UITaskContextUtil = (function () {
     "use strict";
     var selectedContextIds = {};
@@ -16,57 +16,24 @@ var UITaskContextUtil = (function () {
         }
     }
 
-    function createContextDeleteIcon(metaId) {
-        var icon = document.createElement('img');
-        icon.setAttribute('id', Util.genSelectedMetaMarkIconId(metaId));
-        icon.setAttribute('class', 'deleteIcon');
-        icon.setAttribute('src', './resources/image/remove-context.png');
-        return icon;
-    }
-
-
-    function createContextSpan(container, tx, tempDiv, taskId, metaId, metaName, callback) {
-        var span, count, icon;
-        DataAccess.runSqlDirectly(
-            tx,
-            'select count(*) as c from task_view where task_id = ? and meta_id = ?',
-            [taskId, metaId],
-            function (tx, result, objs) {
-                if (null !== result && null !== result.rows && null !== result.rows.item) {
-                    span = document.createElement('span');
-                    span.setAttribute('id', metaId);
-                    count = result.rows.item(0).c;
-                    if (count >= 1) {
-                        span.setAttribute('class', 'selectedContext');
-                        span.setAttribute('onclick', 'UITaskContextUtil.unSelectContext("' + metaId + '", "' + metaName + '")');
-                        selectedContextIds[metaId] = metaName;
-                        icon = createContextDeleteIcon(metaId);
-                    } else {
-                        span.setAttribute('class', 'context');
-                        span.setAttribute('onclick', 'UITaskContextUtil.selectContext("' + metaId + '", "' + metaName + '")');
-                    }
-                    span.innerText = metaName;
-                    if (Util.notEmpty(icon)) {
-                        span.appendChild(icon);
-                    }
-                    tempDiv.appendChild(span);
-                    if (Util.isFunction(callback)) {
-                        callback(container, tempDiv);
-                    }
-                }
-            }
-        );
-    }
-
     return {
+
+        unSelectClickCallback : function (metaId, metaName) {
+            return 'UITaskContextUtil.unSelectContext("' + metaId + '", "' + metaName + '")';
+        },
+
+        selectClickCallback : function (metaId, metaName) {
+            return 'UITaskContextUtil.selectContext("' + metaId + '", "' + metaName + '")';
+        },
+
         selectContext : function (metaId, metaName) {
             var icon = document.getElementById(Util.genSelectedMetaMarkIconId(metaId)),
                 span = document.getElementById(metaId);
             selectedContextIds[metaId] = metaName;
-            span.setAttribute('class', 'selectedContext');
-            span.setAttribute('onclick', 'UITaskContextUtil.unSelectContext("' + metaId + '", "' + metaName + '")');
+            span.setAttribute('class', 'selectedMeta selectedContext');
+            span.setAttribute('onclick', UITaskContextUtil.unSelectClickCallback(metaId, metaName));
             if (Util.isEmpty(icon)) {
-                icon = createContextDeleteIcon(metaId);
+                icon = Util.createMetaSelectedIcon(metaId, 'deleteIcon');
             } else {
                 icon.style.display = 'inline-block';
             }
@@ -80,8 +47,8 @@ var UITaskContextUtil = (function () {
             if (Util.notEmpty(icon)) {
                 icon.style.display = 'none';
             }
-            span.setAttribute('class', 'context');
-            span.setAttribute('onclick', 'UITaskContextUtil.selectContext("' + metaId + '", "' + metaName + '")');
+            span.setAttribute('class', 'meta context');
+            span.setAttribute('onclick', UITaskContextUtil.selectClickCallback(metaId, metaName));
         },
 
         prepareContextData : function (taskId) {
@@ -96,9 +63,13 @@ var UITaskContextUtil = (function () {
                         if (null !== result && null !== result.rows && null !== result.rows.item) {
                             for (i = 0, max = result.rows.length; i < max; i += 1) {
                                 if (i !== max - 1) {
-                                    createContextSpan(contextContainer, tx, tempDiv, taskId, result.rows.item(i).meta_id, result.rows.item(i).meta_name);
+                                    UIMetaUtil.createMetaSpan(contextContainer, tx, tempDiv, taskId,
+                                        result.rows.item(i).meta_id, result.rows.item(i).meta_name, selectedContextIds,
+                                        UITaskContextUtil.unSelectClickCallback, UITaskContextUtil.selectClickCallback);
                                 } else {
-                                    createContextSpan(contextContainer, tx, tempDiv, taskId, result.rows.item(i).meta_id, result.rows.item(i).meta_name, Util.copyInnerHTMLAndShowContainer);
+                                    UIMetaUtil.createMetaSpan(contextContainer, tx, tempDiv, taskId,
+                                        result.rows.item(i).meta_id, result.rows.item(i).meta_name, selectedContextIds,
+                                        UITaskContextUtil.unSelectClickCallback, UITaskContextUtil.selectClickCallback, Util.copyInnerHTMLAndShowContainer);
                                 }
                             }
                         }
@@ -112,6 +83,7 @@ var UITaskContextUtil = (function () {
             saveContextToDb(tx, taskId);
             Util.refreshCurrentPage(UIConfig.msgForSuccessfulTaskUpdate);
         }
+
     };
 
 }());

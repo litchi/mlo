@@ -83,6 +83,40 @@ var UIMetaUtil = (function () {
 
         getMetaUiId : function (id) {
             return 'meta-' + id;
+        },
+
+        createMetaSpan : function (container, tx, tempDiv, taskId, metaId, metaName, selectedMetaIds,
+            unSelectClickCallback, selectClickCallback, finalCallback) {
+            var span, count, icon;
+            DataAccess.runSqlDirectly(
+                tx,
+                'select count(*) as c from task_view where task_id = ? and meta_id = ?',
+                [taskId, metaId],
+                function (tx, result, objs) {
+                    if (null !== result && null !== result.rows && null !== result.rows.item) {
+                        span = document.createElement('span');
+                        span.setAttribute('id', metaId);
+                        count = result.rows.item(0).c;
+                        if (count >= 1) {
+                            span.setAttribute('class', 'selectedMeta');
+                            span.setAttribute('onclick', unSelectClickCallback(metaId, metaName));
+                            selectedMetaIds[metaId] = metaName;
+                            icon = Util.createMetaSelectedIcon(metaId, 'deleteIcon');
+                        } else {
+                            span.setAttribute('class', 'meta');
+                            span.setAttribute('onclick', selectClickCallback(metaId, metaName));
+                        }
+                        span.innerText = metaName;
+                        if (Util.notEmpty(icon)) {
+                            span.appendChild(icon);
+                        }
+                        tempDiv.appendChild(span);
+                        if (Util.isFunction(finalCallback)) {
+                            finalCallback(container, tempDiv);
+                        }
+                    }
+                }
+            );
         }
 
     };

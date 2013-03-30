@@ -352,6 +352,16 @@ var Util = (function () {
             $("#stsi").blur();
         },
 
+        createMetaSelectedIcon : function (metaId, iconClass) {
+            var icon = document.createElement('img');
+            icon.setAttribute('id', Util.genSelectedMetaMarkIconId(metaId));
+            icon.setAttribute('class', iconClass);
+            icon.setAttribute('src', './resources/image/remove-context.png');
+            icon.setAttribute('width', '32px');
+            icon.setAttribute('height', '32px');
+            return icon;
+        },
+
         genSelectedMetaMarkIconId : function (metaId) {
             return metaId + "_img";
         },
