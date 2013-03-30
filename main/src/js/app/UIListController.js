@@ -69,8 +69,6 @@ var UIListController = (function () {
 
     function setCreateTaskInputPlaceHolder(metaName, metaTypeName) {
         var placeholder = 'New task';
-            //ctf = document.getElementById('ctsi');
-        //if (Util.notEmpty(ctf)) {
         if (Util.notEmpty(metaName) &&
                 Sql.FilterAllMeta !== metaName &&
                 SeedData.DueMetaTypeName !== metaTypeName) {
@@ -82,9 +80,7 @@ var UIListController = (function () {
         } else {
             placeholder = placeholder + ' (Goes to Basket list)';
         }
-        //ctf.setAttribute('placeholder', placeholder);
         $("#create-task-placeholder").text(placeholder);
-        //}
     }
 
     return {

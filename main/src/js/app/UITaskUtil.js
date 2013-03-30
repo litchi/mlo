@@ -278,11 +278,11 @@ var UITaskUtil = (function () {
         setTaskDetailPanelDisplay : function (display, data) {
             var taskListContainer,
                 container = document.getElementById(UIConfig.viewTaskDetailElementId);
-            if ((Util.isEmpty(data) || (data.type === 'Task')) && Util.notEmpty(container)) {
-                if (container.style.display !== display) {
-                    container.style.display = display;
-                    $('#main-content-overlay').css('display', display);
-                }
+            if ((Util.isEmpty(data) || (data.type === 'Task'))
+                    && Util.notEmpty(container)
+                    && container.style.display !== display) {
+                container.style.display = display;
+                $('#main-content-overlay').css('display', display);
             }
             if (display === 'block') {
                 $('#create-task-input-container').css('display', 'none');

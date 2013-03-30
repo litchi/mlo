@@ -1,16 +1,6 @@
 /*jslint browser: true, white: true */
 /*global CommonSql:true, SeedData:true, Sql:true, AppSql:true */
 
-/*
-* SQL for clean up testing
-* drop table meta;
-* drop table meta_type;
-* drop table task;
-* drop table task_meta;
-* drop table task_note;
-* drop table __WebKitDatabaseInfoTable__;
-*
-*/
 var CommonSql, SeedData, Sql;
 
 CommonSql = {
