@@ -175,21 +175,18 @@ var UITaskUtil = (function () {
                 if (project !== null) {
                     innerContent = "\n<span class='list-project'>p:" + project + "</span>";
                 }
-                if (contexts !== null) {
+                if (contexts !== null && contexts.length > 0) {
                     contextCount = contexts.length;
-                    if (contextCount > 0) {
-                        for (i = 0; i < contextCount; i += 1) {
-                            if (i === contextCount - 1) {
-                                contextClass = 'list-context-last';
-                            } else {
-                                contextClass = 'list-context';
-                            }
-                            innerContent = innerContent + "\n<span class='" + contextClass + "'>" + contexts[i] + "</span>";
+                    for (i = 0; i < contextCount; i += 1) {
+                        if (i === contextCount - 1) {
+                            contextClass = 'list-context-last';
+                        } else {
+                            contextClass = 'list-context';
                         }
+                        innerContent = innerContent + "\n<span class='" + contextClass + "'>" + contexts[i] + "</span>";
                     }
                 }
                 if (dueDate !== null) {
-                    //localDueDate = Util.timeToDateWithZone(dueDate);
                     localDueDate = new Date(dueDate * 1000);
                     dueClass = (localDueDate.getTime() > new Date().getTime()) ? 'list-due' : 'list-overdue';
                     innerContent = innerContent + "\n<span class='" + dueClass + "'>" + Util.getPrettyDateStr(localDueDate) + "</span>";
@@ -279,14 +276,12 @@ var UITaskUtil = (function () {
         },
 
         setTaskDetailPanelDisplay : function (display, data) {
-            var container, taskListContainer;
-            if (Util.isEmpty(data) || (data.type === 'Task')) {
+            var taskListContainer,
                 container = document.getElementById(UIConfig.viewTaskDetailElementId);
-                if (Util.notEmpty(container)) {
-                    if (container.style.display !== display) {
-                        container.style.display = display;
-                        $('#main-content-overlay').css('display', display);
-                    }
+            if ((Util.isEmpty(data) || (data.type === 'Task')) && Util.notEmpty(container)) {
+                if (container.style.display !== display) {
+                    container.style.display = display;
+                    $('#main-content-overlay').css('display', display);
                 }
             }
             if (display === 'block') {
@@ -312,7 +307,6 @@ var UITaskUtil = (function () {
                 metaContent = project + " project";
             }
             if (Util.notEmpty(taskDueDate)) {
-                //localDueDate = Util.timeToDateWithZone(dueDate);
                 localDueDate = new Date(taskDueDate * 1000);
                 dueClass = (localDueDate.getTime() > new Date().getTime()) ? 'task-detail-list-due' : 'task-detail-list-overdue';
                 if (Util.notEmpty(metaContent)) {
