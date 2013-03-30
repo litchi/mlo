@@ -70,7 +70,7 @@ var SeedSampleDataProvider = (function () {
             DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , '1 hour'   , '1 hour before due date' from meta_type where name     = 'Reminder'");
             DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , '2 hours'  , '2 hours before due date' from meta_type where name    = 'Reminder'");
             DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , '1 day'    , '1 day before due date' from meta_type where name      = 'Reminder'");
-            DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Custom'   , 'Custom reminder date' from meta_type where name       = 'Reminder'");
+            //DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Custom'   , 'Custom reminder date' from meta_type where name       = 'Reminder'");
             DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 50 where name = 'Off'");
             DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 48 where name = 'When Due'");
             DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 46 where name = '1 min'");
@@ -80,7 +80,7 @@ var SeedSampleDataProvider = (function () {
             DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 20 where name = '1 hour'");
             DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 15 where name = '2 hours'");
             DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 08 where name = '1 day'");
-            DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 03 where name = 'Custom'");
+            //DataAccess.runSqlForMigrate(tx, "update meta set ui_rank = 03 where name = 'Custom'");
         }
     };
 }());

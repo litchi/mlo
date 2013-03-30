@@ -161,7 +161,7 @@ var UITaskUtil = (function () {
             });
         },
 
-        createTaskItemElement : function (id, name, project, contexts, dueDate) {
+        createTaskItemElement : function (id, name, project, contexts, dueDate, displayReminderIcon) {
             var innerContent = UIConfig.emptyString, item = document.createElement('div'),
                 contextCount, i, dueClass, localDueDate, contextClass;
             item.setAttribute('data-bb-type', 'item');
@@ -191,6 +191,9 @@ var UITaskUtil = (function () {
                     dueClass = (localDueDate.getTime() > new Date().getTime()) ? 'list-due' : 'list-overdue';
                     innerContent = innerContent + "\n<span class='" + dueClass + "'>" + Util.getPrettyDateStr(localDueDate) + "</span>";
                 }
+                if (displayReminderIcon === true) {
+                    innerContent = Util.getReminderIconStr() + innerContent;
+                }
                 item.innerHTML = innerContent;
                 item.onclick = function () {
                     var taskDetailHtml, container = document.getElementById(UIConfig.viewTaskDetailElementId);
@@ -215,7 +218,8 @@ var UITaskUtil = (function () {
                     'select meta_name, meta_type_name, task_due_date from task_view where task_id = ?',
                     [id],
                     function (tx, result, objs) {
-                        var metaCount, metaIndex, contexts = [], project = null, metaTypeName = null, taskDueDate = null, obj, item;
+                        var metaCount, metaIndex, contexts = [], project = null, metaTypeName = null,
+                            taskDueDate = null, obj, item, displayReminderIcon = false;
                         metaCount = result.rows.length;
                         for (metaIndex = 0; metaIndex < metaCount; metaIndex += 1) {
                             obj = result.rows.item(metaIndex);
@@ -225,6 +229,9 @@ var UITaskUtil = (function () {
                                 contexts.push(obj.meta_name);
                             } else if (SeedData.ProjectMetaTypeName === metaTypeName) {
                                 project = obj.meta_name;
+                            } else if (SeedData.ReminderMetaTypeName === metaTypeName
+                                    && obj.meta_name !== SeedData.OffMetaName) {
+                                displayReminderIcon = true;
                             }
                             //Only get once task due date since it's the same for all the result set 
                             if (null === taskDueDate) {
@@ -236,14 +243,16 @@ var UITaskUtil = (function () {
                                 'select due_date from task where id = ?', [id],
                                 function (tx, result, objs) {
                                     taskDueDate = result.rows.item(0).due_date;
-                                    item = UITaskUtil.createTaskItemElement(id, name, project, contexts, taskDueDate);
+                                    item = UITaskUtil.createTaskItemElement(id, name, project,
+                                        contexts, taskDueDate, displayReminderIcon);
                                     items.push(item);
                                     if (taskIndex === taskCount - 1) {
                                         taskList.refresh(items);
                                     }
                                 });
                         } else {
-                            item = UITaskUtil.createTaskItemElement(id, name, project, contexts, taskDueDate);
+                            item = UITaskUtil.createTaskItemElement(id, name, project,
+                                contexts, taskDueDate, displayReminderIcon);
                             items.push(item);
                             if (taskIndex === taskCount - 1) {
                                 taskList.refresh(items);

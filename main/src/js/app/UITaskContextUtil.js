@@ -4,18 +4,6 @@ var UITaskContextUtil = (function () {
     "use strict";
     var selectedContextIds = {};
 
-    function saveContextToDb(tx, taskId) {
-        var id, val, data;
-        for (id in selectedContextIds) {
-            if (selectedContextIds.hasOwnProperty(id)) {
-                val = selectedContextIds[id];
-                data = [taskId, id];
-                log.logSqlStatement(Sql.TaskMeta.Insert, data, DataAccess.logQuerySql);
-                DataAccess.runSqlDirectly(tx, Sql.TaskMeta.Insert, data);
-            }
-        }
-    }
-
     return {
 
         unSelectClickCallback : function (metaId, metaName) {
@@ -52,7 +40,8 @@ var UITaskContextUtil = (function () {
         },
 
         prepareContextData : function (taskId) {
-            var contextContainer = document.getElementById('contextContainer'), i, max, tempDiv = document.createElement('div');
+            var i, max, contextContainer = document.getElementById('contextContainer'),
+                tempDiv = document.createElement('div');
             contextContainer.style.display = 'none';
             DataAccess.appDb.transaction(function (tx) {
                 DataAccess.runSqlDirectly(
@@ -60,17 +49,17 @@ var UITaskContextUtil = (function () {
                     'select meta_id, meta_name from meta_view where meta_type_name = ?',
                     [SeedData.ContextMetaTypeName],
                     function (tx, result, obj) {
+                        var metaId, metaName, finalCallback;
                         if (null !== result && null !== result.rows && null !== result.rows.item) {
                             for (i = 0, max = result.rows.length; i < max; i += 1) {
-                                if (i !== max - 1) {
-                                    UIMetaUtil.createMetaSpan(contextContainer, tx, tempDiv, taskId,
-                                        result.rows.item(i).meta_id, result.rows.item(i).meta_name, selectedContextIds,
-                                        UITaskContextUtil.unSelectClickCallback, UITaskContextUtil.selectClickCallback);
-                                } else {
-                                    UIMetaUtil.createMetaSpan(contextContainer, tx, tempDiv, taskId,
-                                        result.rows.item(i).meta_id, result.rows.item(i).meta_name, selectedContextIds,
-                                        UITaskContextUtil.unSelectClickCallback, UITaskContextUtil.selectClickCallback, Util.copyInnerHTMLAndShowContainer);
-                                }
+                                metaId = result.rows.item(i).meta_id;
+                                metaName = result.rows.item(i).meta_name;
+                                finalCallback = (i !== max - 1) ? null :  Util.copyInnerHTMLAndShowContainer;
+                                UIMetaUtil.createMetaSpan(contextContainer, tx, tempDiv, taskId,
+                                    metaId, metaName, selectedContextIds,
+                                    UITaskContextUtil.unSelectClickCallback,
+                                    UITaskContextUtil.selectClickCallback,
+                                    finalCallback);
                             }
                         }
                     }
@@ -80,7 +69,7 @@ var UITaskContextUtil = (function () {
 
         saveContextPopScreen : function (tx, taskId) {
             DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteByMetaTypeName, [taskId, SeedData.ContextMetaTypeName]);
-            saveContextToDb(tx, taskId);
+            UIMetaUtil.saveTaskMetaToDb(tx, taskId, selectedContextIds);
             Util.refreshCurrentPage(UIConfig.msgForSuccessfulTaskUpdate);
         }
 

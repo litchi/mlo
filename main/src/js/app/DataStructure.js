@@ -9,23 +9,37 @@ CommonSql = {
 };
 
 SeedData = {
-    BasketMetaName           : 'Basket',
-    NextActionMetaName       : 'Next Action',
-    SomedayMetaName          : 'Someday',
-    GtdMetaTypeName          : 'GTD',
     TaskDoneStatus           : 'Done',
     TaskNewStatus            : 'New',
     TaskDeletedStatus        : 'Deleted',
+
+    GtdMetaTypeName          : 'GTD',
     ProjectMetaTypeName      : 'Project',
     ContextMetaTypeName      : 'Context',
     ReminderMetaTypeName     : 'Reminder',
     DueMetaTypeName          : 'Due',
+
+    BasketMetaName           : 'Basket',
+    NextActionMetaName       : 'Next Action',
+    SomedayMetaName          : 'Someday',
+
     TodayMetaName            : 'Today',
     TomorrowMetaName         : 'Tomorrow',
     ThisWeekMetaName         : 'This Week',
     NextWeekMetaName         : 'Next Week',
     YesterdayDoneMetaName    : 'Yesterday Done',
-    YesterdayOverDueMetaName : 'Yesterday Overdue'
+    YesterdayOverDueMetaName : 'Yesterday Overdue',
+
+    OffMetaName              : 'Off',
+    WhenDueMetaName          : 'When Due',
+    OneMinMetaName           : '1 min',
+    FiveMinsMetaName         : '5 mins',
+    FifteenMinsMetaName      : '15 mins',
+    ThirtyMinsMetaName       : '30 mins',
+    OneHourMetaName          : '1 hour',
+    TwoHoursMetaName         : '2 hours',
+    OneDayMetaName           : '1 day'
+
 };
 
 Sql = {

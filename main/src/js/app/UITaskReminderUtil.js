@@ -4,6 +4,30 @@ var UITaskReminderUtil = (function () {
     "use strict";
     var selectedReminderIds = {};
 
+    function getReminderDate(metaId, metaName, dueDate) {
+        var result;
+        if (metaName === SeedData.OffMetaName) {
+            result = null;
+        } else if (metaName === SeedData.WhenDueMetaName) {
+            result = dueDate;
+        } else if (metaName === SeedData.OneMinMetaName) {
+            result = new Date(dueDate.getTime() - 60000);
+        } else if (metaName === SeedData.FiveMinsMetaName) {
+            result = new Date(dueDate.getTime() - 300000);
+        } else if (metaName === SeedData.FifteenMinsMetaName) {
+            result = new Date(dueDate.getTime() - 900000);
+        } else if (metaName === SeedData.ThirtyMinsMetaName) {
+            result = new Date(dueDate.getTime() - 1800000);
+        } else if (metaName === SeedData.OneHourMetaName) {
+            result = new Date(dueDate.getTime() - 3600000);
+        } else if (metaName === SeedData.TwoHoursMetaName) {
+            result = new Date(dueDate.getTime() - 7200000);
+        } else if (metaName === SeedData.OneDayMetaName) {
+            result = new Date(dueDate.getTime() - 86400000);
+        }
+        return result;
+    }
+
     function removeExistingSelected() {
         var key, pElem, cElem;
         for (key in selectedReminderIds) {
@@ -17,6 +41,16 @@ var UITaskReminderUtil = (function () {
                     pElem.setAttribute('class', 'meta reminder');
                     pElem.setAttribute('onclick', 'UITaskReminderUtil.selectReminder("' + key + '", "' + pElem.innerText + '")');
                 }
+            }
+        }
+        selectedReminderIds = {};
+    }
+
+    function getCurrentReminderMetaId() {
+        var key;
+        for (key in selectedReminderIds) {
+            if (selectedReminderIds.hasOwnProperty(key)) {
+                return key;
             }
         }
     }
@@ -70,24 +104,26 @@ var UITaskReminderUtil = (function () {
                         'select meta_id, meta_name from meta_view where meta_type_name = ? order by meta_ui_rank desc',
                         [SeedData.ReminderMetaTypeName],
                         function (tx, result, obj) {
+                            var metaId, metaName, finalCallback;
                             if (null !== result && null !== result.rows && null !== result.rows.item) {
                                 for (i = 0, max = result.rows.length; i < max; i += 1) {
+                                    metaId = result.rows.item(i).meta_id;
+                                    metaName = result.rows.item(i).meta_name;
                                     if (i !== max - 1) {
-                                        UIMetaUtil.createMetaSpan(reminderContainer, tx, tempDiv, taskId,
-                                            result.rows.item(i).meta_id, result.rows.item(i).meta_name, selectedReminderIds,
-                                            UITaskReminderUtil.unSelectClickCallback, UITaskReminderUtil.selectClickCallback);
+                                        finalCallback = null;
                                     } else {
                                         if (Util.notEmpty(due)) {
-                                            UIMetaUtil.createMetaSpan(reminderContainer, tx, tempDiv, taskId,
-                                                result.rows.item(i).meta_id, result.rows.item(i).meta_name, selectedReminderIds,
-                                                UITaskReminderUtil.unSelectClickCallback, UITaskReminderUtil.selectClickCallback, Util.copyInnerHTMLAndShowContainer);
+                                            finalCallback = Util.copyInnerHTMLAndShowContainer;
                                             reminderPanel.style.display = 'block';
                                         } else {
-                                            UIMetaUtil.createMetaSpan(reminderContainer, tx, tempDiv, taskId,
-                                                result.rows.item(i).meta_id, result.rows.item(i).meta_name, selectedReminderIds,
-                                                UITaskReminderUtil.unSelectClickCallback, UITaskReminderUtil.selectClickCallback, Util.copyInnerHTML);
+                                            finalCallback = Util.copyInnerHTML;
                                         }
                                     }
+                                    UIMetaUtil.createMetaSpan(reminderContainer, tx, tempDiv, taskId,
+                                        metaId, metaName, selectedReminderIds,
+                                        UITaskReminderUtil.unSelectClickCallback,
+                                        UITaskReminderUtil.selectClickCallback,
+                                        finalCallback);
                                 }
                             }
                         }
@@ -99,7 +135,23 @@ var UITaskReminderUtil = (function () {
         },
 
         saveReminderInfo : function (tx, taskId) {
-            DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteByMetaTypeName, [taskId, SeedData.ReminderMetaTypeName]);
+            var metaName, reminderDate,
+                metaId = getCurrentReminderMetaId(),
+                dueDate = Util.valueOf('due-date'),
+                myDate = Util.timeToDateWithZone(new Date(dueDate).getTime() / 1000);
+            DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteByMetaTypeName,
+                [taskId, SeedData.ReminderMetaTypeName]);
+            UIMetaUtil.saveTaskMetaToDb(tx, taskId, selectedReminderIds);
+            if (Util.notEmpty(dueDate)) {
+                if (Util.notEmpty(metaId)) {
+                    metaName = selectedReminderIds[metaId];
+                    reminderDate = getReminderDate(metaId, metaName, myDate);
+                }
+                if (Util.notEmpty(reminderDate)) {
+                    DataAccess.runSqlDirectly(tx, "update task set reminder_date = ? where id = ?",
+                        [reminderDate.getTime() / 1000, taskId]);
+                }
+            }
         },
 
         switchReminderPanelDisplay : function (dueDate) {

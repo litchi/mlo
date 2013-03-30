@@ -98,11 +98,13 @@ var UIMetaUtil = (function () {
                         span.setAttribute('id', metaId);
                         count = result.rows.item(0).c;
                         if (count >= 1) {
+                            //FIXME The meta type name should also be set as class to enable custom UI for differnt meta type. 
                             span.setAttribute('class', 'selectedMeta');
                             span.setAttribute('onclick', unSelectClickCallback(metaId, metaName));
                             selectedMetaIds[metaId] = metaName;
                             icon = Util.createMetaSelectedIcon(metaId, 'deleteIcon');
                         } else {
+                            //FIXME The meta type name should also be set as class to enable custom UI for differnt meta type. 
                             span.setAttribute('class', 'meta');
                             span.setAttribute('onclick', selectClickCallback(metaId, metaName));
                         }
@@ -117,6 +119,18 @@ var UIMetaUtil = (function () {
                     }
                 }
             );
+        },
+
+        saveTaskMetaToDb : function (tx, taskId, metas) {
+            var id, val, data;
+            for (id in metas) {
+                if (metas.hasOwnProperty(id)) {
+                    val = metas[id];
+                    data = [taskId, id];
+                    log.logSqlStatement(Sql.TaskMeta.Insert, data, DataAccess.logQuerySql);
+                    DataAccess.runSqlDirectly(tx, Sql.TaskMeta.Insert, data);
+                }
+            }
         }
 
     };
