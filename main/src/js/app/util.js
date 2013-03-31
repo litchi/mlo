@@ -364,7 +364,7 @@ var Util = (function () {
 
         getReminderIconStr : function () {
             //inline style should be used since class="xxx" will be overrided by bbui
-            return '<img src="./resources/image/reminder-on.png" style="width:32px;height:32px;margin-top:13px"/>';
+            return '<img src="./resources/image/reminder-on.png" style="width:32px;height:32px;margin-top:13px;margin-right:5px"/>';
         },
 
         genSelectedMetaMarkIconId : function (metaId) {
