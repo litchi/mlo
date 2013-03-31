@@ -161,7 +161,7 @@ var UITaskUtil = (function () {
             });
         },
 
-        createTaskItemElement : function (id, name, project, contexts, dueDate, displayReminderIcon) {
+        createTaskItemElement : function (id, name, project, contexts, dueDate, reminderMetaName, displayReminderIcon) {
             var innerContent = UIConfig.emptyString, item = document.createElement('div'),
                 contextCount, i, dueClass, localDueDate, contextClass;
             item.setAttribute('data-bb-type', 'item');
@@ -201,7 +201,15 @@ var UITaskUtil = (function () {
                         title : UIConfig.msgTaskContextMenuTitle,
                         description : name,
                         //FIXME: Make this parameter pass all the fetched data and avoid querying from DB again
-                        selected : id,
+                        selected : {
+                            'id'                  : id,
+                            'name'                : name,
+                            'project'             : project,
+                            'contexts'            : contexts,
+                            'dueDate'             : dueDate,
+                            'displayReminderIcon' : displayReminderIcon,
+                            'reminderMetaName'    : reminderMetaName
+                        },
                         type : 'Task'
                     });
                     taskDetailHtml = UITaskUtil.createTaskDetailView(container, id, name, project, contexts, dueDate);
@@ -219,7 +227,7 @@ var UITaskUtil = (function () {
                     [id],
                     function (tx, result, objs) {
                         var metaCount, metaIndex, contexts = [], project = null, metaTypeName = null,
-                            taskDueDate = null, obj, item, displayReminderIcon = false;
+                            taskDueDate = null, obj, item, displayReminderIcon = false, reminderMetaName;
                         metaCount = result.rows.length;
                         for (metaIndex = 0; metaIndex < metaCount; metaIndex += 1) {
                             obj = result.rows.item(metaIndex);
@@ -232,6 +240,7 @@ var UITaskUtil = (function () {
                             } else if (SeedData.ReminderMetaTypeName === metaTypeName
                                     && obj.meta_name !== SeedData.OffMetaName) {
                                 displayReminderIcon = true;
+                                reminderMetaName = obj.meta_name;
                             }
                             //Only get once task due date since it's the same for all the result set 
                             if (null === taskDueDate) {
@@ -244,7 +253,7 @@ var UITaskUtil = (function () {
                                 function (tx, result, objs) {
                                     taskDueDate = result.rows.item(0).due_date;
                                     item = UITaskUtil.createTaskItemElement(id, name, project,
-                                        contexts, taskDueDate, displayReminderIcon);
+                                        contexts, taskDueDate, reminderMetaName, displayReminderIcon);
                                     items.push(item);
                                     if (taskIndex === taskCount - 1) {
                                         taskList.refresh(items);
@@ -252,7 +261,7 @@ var UITaskUtil = (function () {
                                 });
                         } else {
                             item = UITaskUtil.createTaskItemElement(id, name, project,
-                                contexts, taskDueDate, displayReminderIcon);
+                                contexts, taskDueDate, reminderMetaName, displayReminderIcon);
                             items.push(item);
                             if (taskIndex === taskCount - 1) {
                                 taskList.refresh(items);
@@ -299,18 +308,17 @@ var UITaskUtil = (function () {
         },
 
         createTaskDetailView : function (container, id, name, project, contexts, taskDueDate) {
-            console.log("paramers: container = %s, id = %s, name = %s, project = %s, contexts = %s, taskDueDate = %s", container, id, name, project, contexts, taskDueDate);
             var contextCount, contextIndex, dueClass, localDueDate,
-                comma = UIConfig.emptyString,
-                metaContent = UIConfig.emptyString,
+                comma          = UIConfig.emptyString,
+                metaContent    = UIConfig.emptyString,
                 contextContent = UIConfig.emptyString,
-                dueContent = UIConfig.emptyString,
-                titleDiv = document.getElementById(UIConfig.viewTaskTitleElementId),
-                projectDiv = document.getElementById(UIConfig.viewTaskProjectElementId),
-                dueDiv = document.getElementById(UIConfig.viewTaskDueElementId),
-                contextDiv = document.getElementById(UIConfig.viewTaskContextElementId),
-                notesDiv = document.getElementById(UIConfig.viewTaskNotesElementId),
-                metaDiv = document.getElementById('view-task-detail-meta');
+                dueContent     = UIConfig.emptyString,
+                titleDiv       = document.getElementById(UIConfig.viewTaskTitleElementId),
+                projectDiv     = document.getElementById(UIConfig.viewTaskProjectElementId),
+                dueDiv         = document.getElementById(UIConfig.viewTaskDueElementId),
+                contextDiv     = document.getElementById(UIConfig.viewTaskContextElementId),
+                notesDiv       = document.getElementById(UIConfig.viewTaskNotesElementId),
+                metaDiv        = document.getElementById('view-task-detail-meta');
             setFieldInTaskDetailPopup(name, titleDiv);
             if (Util.notEmpty(project)) {
                 metaContent = project + " project";

@@ -91,44 +91,43 @@ var UITaskReminderUtil = (function () {
             span.setAttribute('onclick', UITaskReminderUtil.selectClickCallback(metaId, metaName));
         },
 
-        prepareReminderData : function (taskId, due) {
+        prepareReminderData : function (tx, taskId, reminderMetaName, due) {
             var i, max,
                 reminderPanel = document.getElementById('edit-page-sub-panel-reminder'),
                 reminderContainer = document.getElementById('reminderContainer'),
                 tempDiv = document.createElement('div');
             if (Util.notEmpty(reminderContainer)) {
                 reminderContainer.style.display = 'none';
-                DataAccess.appDb.transaction(function (tx) {
-                    DataAccess.runSqlDirectly(
-                        tx,
-                        'select meta_id, meta_name from meta_view where meta_type_name = ? order by meta_ui_rank desc',
-                        [SeedData.ReminderMetaTypeName],
-                        function (tx, result, obj) {
-                            var metaId, metaName, finalCallback;
-                            if (null !== result && null !== result.rows && null !== result.rows.item) {
-                                for (i = 0, max = result.rows.length; i < max; i += 1) {
-                                    metaId = result.rows.item(i).meta_id;
-                                    metaName = result.rows.item(i).meta_name;
-                                    if (i !== max - 1) {
-                                        finalCallback = null;
+                if (Util.isEmpty(reminderMetaName)) {
+                    reminderMetaName = SeedData.OffMetaName;
+                }
+                DataAccess.runSqlDirectly(tx,
+                    'select meta_id, meta_name from meta_view where meta_type_name = ? order by meta_ui_rank desc',
+                    [SeedData.ReminderMetaTypeName],
+                    function (tx, result, obj) {
+                        var metaId, metaName, finalCallback;
+                        if (null !== result && null !== result.rows && null !== result.rows.item) {
+                            for (i = 0, max = result.rows.length; i < max; i += 1) {
+                                metaId = result.rows.item(i).meta_id;
+                                metaName = result.rows.item(i).meta_name;
+                                if (i !== max - 1) {
+                                    finalCallback = null;
+                                } else {
+                                    if (Util.notEmpty(due)) {
+                                        finalCallback = Util.copyInnerHTMLAndShowContainer;
+                                        reminderPanel.style.display = 'block';
                                     } else {
-                                        if (Util.notEmpty(due)) {
-                                            finalCallback = Util.copyInnerHTMLAndShowContainer;
-                                            reminderPanel.style.display = 'block';
-                                        } else {
-                                            finalCallback = Util.copyInnerHTML;
-                                        }
+                                        finalCallback = Util.copyInnerHTML;
                                     }
-                                    UIMetaUtil.createMetaSpan(reminderContainer, tx, tempDiv, taskId,
-                                        metaId, metaName, selectedReminderIds,
-                                        UITaskReminderUtil.unSelectClickCallback,
-                                        UITaskReminderUtil.selectClickCallback,
-                                        finalCallback);
                                 }
+                                UIMetaUtil.createMetaSpan(reminderContainer, tempDiv,
+                                    metaId, metaName, [reminderMetaName], selectedReminderIds,
+                                    UITaskReminderUtil.unSelectClickCallback,
+                                    UITaskReminderUtil.selectClickCallback,
+                                    finalCallback);
                             }
                         }
-                    );
-                });
+                    });
             } else {
                 console.warn("Reminder Container is null");
             }

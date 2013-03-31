@@ -39,32 +39,28 @@ var UITaskContextUtil = (function () {
             span.setAttribute('onclick', UITaskContextUtil.selectClickCallback(metaId, metaName));
         },
 
-        prepareContextData : function (taskId) {
+        prepareContextData : function (tx, taskId, contexts) {
             var i, max, contextContainer = document.getElementById('contextContainer'),
                 tempDiv = document.createElement('div');
             contextContainer.style.display = 'none';
-            DataAccess.appDb.transaction(function (tx) {
-                DataAccess.runSqlDirectly(
-                    tx,
-                    'select meta_id, meta_name from meta_view where meta_type_name = ?',
-                    [SeedData.ContextMetaTypeName],
-                    function (tx, result, obj) {
-                        var metaId, metaName, finalCallback;
-                        if (null !== result && null !== result.rows && null !== result.rows.item) {
-                            for (i = 0, max = result.rows.length; i < max; i += 1) {
-                                metaId = result.rows.item(i).meta_id;
-                                metaName = result.rows.item(i).meta_name;
-                                finalCallback = (i !== max - 1) ? null :  Util.copyInnerHTMLAndShowContainer;
-                                UIMetaUtil.createMetaSpan(contextContainer, tx, tempDiv, taskId,
-                                    metaId, metaName, selectedContextIds,
-                                    UITaskContextUtil.unSelectClickCallback,
-                                    UITaskContextUtil.selectClickCallback,
-                                    finalCallback);
-                            }
+            DataAccess.runSqlDirectly(tx,
+                'select meta_id, meta_name from meta_view where meta_type_name = ?',
+                [SeedData.ContextMetaTypeName],
+                function (tx, result, obj) {
+                    var metaId, metaName, finalCallback;
+                    if (null !== result && null !== result.rows && null !== result.rows.item) {
+                        for (i = 0, max = result.rows.length; i < max; i += 1) {
+                            metaId = result.rows.item(i).meta_id;
+                            metaName = result.rows.item(i).meta_name;
+                            finalCallback = (i !== max - 1) ? null :  Util.copyInnerHTMLAndShowContainer;
+                            UIMetaUtil.createMetaSpan(contextContainer, tempDiv,
+                                metaId, metaName, contexts, selectedContextIds,
+                                UITaskContextUtil.unSelectClickCallback,
+                                UITaskContextUtil.selectClickCallback,
+                                finalCallback);
                         }
                     }
-                );
-            });
+                });
         },
 
         saveContextPopScreen : function (tx, taskId) {

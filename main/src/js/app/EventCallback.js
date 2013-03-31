@@ -37,15 +37,15 @@ var EventCallback = (function () {
     }
 
     function onDomReadyCallback(element, id, params) {
-        var taskId, metaTypeName, metaId, metaTypeId, metaName, toastMsg, actionBarId;
+        var taskInfo, metaTypeName, metaId, metaTypeId, metaName, toastMsg, actionBarId;
         console.debug("Element: [%s], ID: [%s]", element, id);
         log.logObjectData("Parameters:", params, true);
         if (Util.notEmpty(params)) {
             if (Util.notEmpty(params[UIConfig.paramMetaTypeId])) {
                 metaTypeId = params[UIConfig.paramMetaTypeId];
             }
-            if (Util.notEmpty(params[UIConfig.paramTaskId])) {
-                taskId = params[UIConfig.paramTaskId];
+            if (Util.notEmpty(params[UIConfig.paramTaskInfo])) {
+                taskInfo = params[UIConfig.paramTaskInfo];
             }
             if (Util.notEmpty(params[UIConfig.paramMetaTypeName])) {
                 metaTypeName = params[UIConfig.paramMetaTypeName];
@@ -71,7 +71,7 @@ var EventCallback = (function () {
                     id === SeedData.SomedayMetaName) {
                 UIActionBarController.openTaskGroupByMetaPage(SeedData.GtdMetaTypeName, id);
             } else if (id === UIConfig.editTaskPagePrefix) {
-                UIEditFormController.fillTaskToEditForm(taskId, params);
+                UIEditFormController.fillTaskToEditForm(taskInfo, params);
             } else if (id === UIConfig.taskByPagePrefix) {
                 UIActionBarController.openTaskGroupByMetaPage(metaTypeName, metaName);
             } else if ((id === UIConfig.screenIdField) || (id === UIConfig.metaByPagePrefix)) {

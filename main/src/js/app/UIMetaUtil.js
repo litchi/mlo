@@ -85,40 +85,32 @@ var UIMetaUtil = (function () {
             return 'meta-' + id;
         },
 
-        createMetaSpan : function (container, tx, tempDiv, taskId, metaId, metaName, selectedMetaIds,
+        createMetaSpan : function (container, tempDiv, metaId, metaName,
+            selectedMetaNames, currentSelectedContainer,
             unSelectClickCallback, selectClickCallback, finalCallback) {
-            var span, count, icon;
-            DataAccess.runSqlDirectly(
-                tx,
-                'select count(*) as c from task_view where task_id = ? and meta_id = ?',
-                [taskId, metaId],
-                function (tx, result, objs) {
-                    if (null !== result && null !== result.rows && null !== result.rows.item) {
-                        span = document.createElement('span');
-                        span.setAttribute('id', metaId);
-                        count = result.rows.item(0).c;
-                        if (count >= 1) {
-                            //FIXME The meta type name should also be set as class to enable custom UI for differnt meta type. 
-                            span.setAttribute('class', 'selectedMeta');
-                            span.setAttribute('onclick', unSelectClickCallback(metaId, metaName));
-                            selectedMetaIds[metaId] = metaName;
-                            icon = Util.createMetaSelectedIcon(metaId, 'deleteIcon');
-                        } else {
-                            //FIXME The meta type name should also be set as class to enable custom UI for differnt meta type. 
-                            span.setAttribute('class', 'meta');
-                            span.setAttribute('onclick', selectClickCallback(metaId, metaName));
-                        }
-                        span.innerText = metaName;
-                        if (Util.notEmpty(icon)) {
-                            span.appendChild(icon);
-                        }
-                        tempDiv.appendChild(span);
-                        if (Util.isFunction(finalCallback)) {
-                            finalCallback(container, tempDiv);
-                        }
-                    }
-                }
-            );
+            var span, selected, icon;
+            span = document.createElement('span');
+            span.setAttribute('id', metaId);
+            selected = (selectedMetaNames.indexOf(metaName) !== -1);
+            if (selected) {
+                //FIXME The meta type name should also be set as class to enable custom UI for differnt meta type. 
+                span.setAttribute('class', 'selectedMeta');
+                span.setAttribute('onclick', unSelectClickCallback(metaId, metaName));
+                currentSelectedContainer[metaId] = metaName;
+                icon = Util.createMetaSelectedIcon(metaId, 'deleteIcon');
+            } else {
+                //FIXME The meta type name should also be set as class to enable custom UI for differnt meta type. 
+                span.setAttribute('class', 'meta');
+                span.setAttribute('onclick', selectClickCallback(metaId, metaName));
+            }
+            span.innerText = metaName;
+            if (Util.notEmpty(icon)) {
+                span.appendChild(icon);
+            }
+            tempDiv.appendChild(span);
+            if (Util.isFunction(finalCallback)) {
+                finalCallback(container, tempDiv);
+            }
         },
 
         saveTaskMetaToDb : function (tx, taskId, metas) {

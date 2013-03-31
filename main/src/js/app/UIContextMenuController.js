@@ -146,15 +146,17 @@ var UIContextMenuController = (function () {
         },
 
         editTask : function () {
-            var selectedItem, selectedId,
+            var selectedItem, selectedTaskInfo,
                 context = document.getElementById('task-operation-context-menu');
             selectedItem  = context.menu.selected;
+            console.log(selectedItem);
             if (selectedItem) {
-                selectedId = selectedItem.selected;
-                if (selectedId !== null) {
+                selectedTaskInfo = selectedItem.selected;
+                console.log(selectedTaskInfo);
+                if (selectedTaskInfo !== null) {
                     bb.pushScreen('edit-task.html', UIConfig.editTaskPagePrefix,
                         {
-                            'taskId'       : selectedId,
+                            'taskInfo'     : selectedTaskInfo,
                             'metaTypeId'   : Util.valueOf('v_meta_type_id'),
                             'metaTypeName' : Util.valueOf('v_meta_type_name'),
                             'metaId'       : Util.valueOf('v_meta_id'),

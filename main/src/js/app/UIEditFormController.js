@@ -81,22 +81,31 @@ var UIEditFormController = (function () {
             });
         },
 
-        fillTaskToEditForm : function (id, params) {
-            var obj, option, due;
-            DataAccess.task.getById(id, function (tx, result, arrays) {
-                var taskName = arrays[0][Sql.Task.Cols.Name];
-                UITaskUtil.setTaskNameTextarea(id, taskName);
-                UITaskProjectUtil.prepareProjectData();
-                UITaskProjectUtil.setDefaultProjectForTask(id);
-                due = arrays[0][Sql.Task.Cols.DueDate];
-                UITaskDueUtil.prepareDueData(id, due);
-                UITaskContextUtil.prepareContextData(id);
-                UITaskReminderUtil.prepareReminderData(id, due);
-                Util.setCommonMetaFieldsOnPage(params);
-                Util.setValue('task-id', id);
-                bb.refresh();
-            }, function (tx, error) {
-                log.logSqlError("Error filling task[" + id + "] to edit form", error);
+        //TODO Write docs for all the public methods.
+        fillTaskToEditForm : function (taskInfo, params) {
+            var obj, option, due,
+                taskId           = taskInfo.id,
+                taskName         = taskInfo.name,
+                taskProject      = taskInfo.project,
+                taskContexts     = taskInfo.contexts,
+                dueDate          = taskInfo.dueDate,
+                reminderMetaName = taskInfo.reminderMetaName;
+            //This transaction is created here to make all the methods 
+            //share the same transaction for performance consideration
+            DataAccess.appDb.transaction(function (tx) {
+                DataAccess.runSqlDirectly(tx,
+                    "select meta_id, meta_name from meta_view where meta_type_name = ?",
+                    [SeedData.ProjectMetaTypeName],
+                    function (tx, result, allProjects) {
+                        UITaskUtil.setTaskNameTextarea(taskId, taskName);
+                        UITaskProjectUtil.prepareProjectData(tx, taskId, taskProject, allProjects);
+                        UITaskDueUtil.prepareDueData(tx, taskId, dueDate);
+                        UITaskContextUtil.prepareContextData(tx, taskId, taskContexts);
+                        UITaskReminderUtil.prepareReminderData(tx, taskId, reminderMetaName, dueDate);
+                        Util.setCommonMetaFieldsOnPage(params);
+                        Util.setValue('task-id', taskId);
+                        bb.refresh();
+                    });
             });
         },
 

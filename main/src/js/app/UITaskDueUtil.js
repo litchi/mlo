@@ -3,10 +3,10 @@
 var UITaskDueUtil = (function () {
     "use strict";
     return {
-        prepareDueData : function (taskId, due) {
+        prepareDueData : function (tx, taskId, dueDate) {
             var dateStr;
-            if (null !== due) {
-                dateStr = Util.getFullDateTimeStr(new Date(due * 1000));
+            if (null !== dueDate) {
+                dateStr = Util.getFullDateTimeStr(new Date(dueDate * 1000));
                 Util.setValue('due-date', dateStr);
             }
         },
