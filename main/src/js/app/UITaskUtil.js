@@ -1,5 +1,5 @@
 /*jslint browser: true es5: true*/
-/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, $, jQuery, UIListController, UIMetaUtil*/
+/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, $, jQuery, UIListController, UIMetaUtil, TaskModel*/
 var UITaskUtil = (function () {
     "use strict";
 
@@ -70,7 +70,7 @@ var UITaskUtil = (function () {
         if (Util.notEmpty(value)) {
             if (mode === 'html') {
                 element.innerHTML = value;
-            } else {
+            } else if (mode === 'text') {
                 element.innerText = value;
             }
             element.className = 'view-task-detail-sub-field';
@@ -125,12 +125,12 @@ var UITaskUtil = (function () {
             if (SeedData.DueMetaTypeName === metaTypeName) {
                 sql =  "select" +
                     "(select count(distinct(id)) from task as Today where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now') and status != 'Done' and status != 'Deleted') as 'Today'," +
-                    "(select count(distinct(id)) from task as Tomorrow where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','+1 day') and status != 'Done' and status != 'Deleted') as 'Tomorrow'," +
-                    "(select count(distinct(id)) from task as 'This Week' where strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now') and status != 'Done' and status != 'Deleted') as 'This Week'," +
-                    "(select count(distinct(id)) from task as 'Next Week' where strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now', '+7 days') and status != 'Done' and status != 'Deleted') as 'Next Week'," +
-                    "(select count(distinct(id)) from task as 'Done Yesterday' where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = 'Done') as 'Done Yesterday'," +
-                    "(select count(distinct(id)) from task as 'Overdue Yesterday' where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != 'Done' and status != 'Deleted') as 'Overdue Yesterday'," +
-                    "(select count(distinct(id)) from task as 'Overdue' where strftime('%Y-%m-%d %H:%M:%S', due_date, 'unixepoch') < datetime('now') and status != 'Done' and status != 'Deleted') as 'Overdue'";
+                    "(select count(distinct(id)) from task as Tomorrow where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','+1 day') and status != 'Done' and status != 'Deleted') as 'Tmr'," +
+                    "(select count(distinct(id)) from task as 'This Week' where strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now') and status != 'Done' and status != 'Deleted') as 'This WK'," +
+                    "(select count(distinct(id)) from task as 'Next Week' where strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now', '+7 days') and status != 'Done' and status != 'Deleted') as 'Next WK'," +
+                    "(select count(distinct(id)) from task as 'Done Yesterday' where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = 'Done') as 'Done Yday'," +
+                    "(select count(distinct(id)) from task as 'Overdue Yesterday' where strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != 'Done' and status != 'Deleted') as 'OD Yday'," +
+                    "(select count(distinct(id)) from task as 'Overdue' where strftime('%Y-%m-%d %H:%M:%S', due_date, 'unixepoch') < datetime('now') and status != 'Done' and status != 'Deleted') as 'OD'";
                 params = [];
             } else {
                 sql = "select count(distinct(task_id)) as task_number, meta_name from task_view where meta_type_name = ? and task_status != ? and task_status != ? group by meta_name";
@@ -161,73 +161,74 @@ var UITaskUtil = (function () {
             });
         },
 
-        createTaskItemElement : function (id, name, project, contexts, dueDate, reminderMetaName, displayReminderIcon) {
-            var innerContent = UIConfig.emptyString, item = document.createElement('div'),
-                contextCount, i, dueClass, localDueDate, contextClass;
+        createTaskItemElement : function (taskObj) {
+            var contextCount, i, dueClass, localDueDate, isOverdue,
+                localReminderDate, contextClass, overDueIcon,
+                currentTime         = new Date().getTime(),
+                innerContent        = UIConfig.emptyString,
+                item                = document.createElement('div'),
+                id                  = taskObj.id,
+                name                = taskObj.name,
+                project             = taskObj.project,
+                contexts            = taskObj.contexts,
+                dueDate             = taskObj.dueDate,
+                reminderDate        = taskObj.reminderDate,
+                reminderMetaName    = taskObj.reminderMetaName,
+                displayReminderIcon = taskObj.displayReminderIcon;
             item.setAttribute('data-bb-type', 'item');
             item.setAttribute('data-bb-style', 'stretch');
-            if (id !== null) {
+            if (Util.notEmpty(id)) {
                 item.setAttribute('id', 'task-' + id);
-                if (name !== null) {
+                if (Util.notEmpty(name)) {
                     item.setAttribute('title', '<span class="detail-title">' + name + '</span>');
                     item.setAttribute('data-bb-title', '<span class="detail-title">' + name + '</span>');
                 }
-                if (project !== null) {
-                    innerContent = "\n<span class='list-project'>p:" + project + "</span>";
+                if (Util.notEmpty(project)) {
+                    innerContent = "\n<span class='list-project'>" + project + "</span>";
                 }
-                if (contexts !== null && contexts.length > 0) {
+                if (Util.notEmpty(dueDate)) {
+                    localDueDate = new Date(dueDate * 1000);
+                    isOverdue = localDueDate.getTime() < currentTime;
+                    dueClass = isOverdue ? 'list-overdue' : 'list-due';
+                    overDueIcon = Util.getOverdueIconStr(isOverdue);
+                    innerContent = innerContent + overDueIcon + "\n<span class='" + dueClass + "'>" + Util.getPrettyDateStr(localDueDate) + "</span>";
+                }
+                if (Util.notEmpty(reminderDate) && (displayReminderIcon === true)) {
+                    localReminderDate = new Date(reminderDate * 1000);
+                    innerContent = Util.getReminderIconStr(localReminderDate.getTime() > new Date().getTime()) + innerContent;
+                }
+                if (Util.notEmpty(contexts) && contexts.length > 0) {
                     contextCount = contexts.length;
                     for (i = 0; i < contextCount; i += 1) {
-                        if (i === contextCount - 1) {
-                            contextClass = 'list-context-last';
-                        } else {
-                            contextClass = 'list-context';
-                        }
+                        contextClass = (i === contextCount - 1) ? 'list-context-last' : 'list-context';
                         innerContent = innerContent + "\n<span class='" + contextClass + "'>" + contexts[i] + "</span>";
                     }
                 }
-                if (dueDate !== null) {
-                    localDueDate = new Date(dueDate * 1000);
-                    dueClass = (localDueDate.getTime() > new Date().getTime()) ? 'list-due' : 'list-overdue';
-                    innerContent = innerContent + "\n<span class='" + dueClass + "'>" + Util.getPrettyDateStr(localDueDate) + "</span>";
-                }
-                if (displayReminderIcon === true) {
-                    innerContent = Util.getReminderIconStr() + innerContent;
-                }
                 item.innerHTML = innerContent;
                 item.onclick = function () {
-                    var taskDetailHtml, container = document.getElementById(UIConfig.viewTaskDetailElementId);
+                    var container = document.getElementById(UIConfig.viewTaskDetailElementId);
                     document.getElementById('task-operation-context-menu').menu.peek({
-                        title : UIConfig.msgTaskContextMenuTitle,
+                        title       : UIConfig.msgTaskContextMenuTitle,
                         description : name,
-                        //FIXME: Make this parameter pass all the fetched data and avoid querying from DB again
-                        selected : {
-                            'id'                  : id,
-                            'name'                : name,
-                            'project'             : project,
-                            'contexts'            : contexts,
-                            'dueDate'             : dueDate,
-                            'displayReminderIcon' : displayReminderIcon,
-                            'reminderMetaName'    : reminderMetaName
-                        },
-                        type : 'Task'
+                        selected    : taskObj,
+                        type        : 'Task'
                     });
-                    taskDetailHtml = UITaskUtil.createTaskDetailView(container, id, name, project, contexts, dueDate);
+                    UITaskUtil.createTaskDetailView(container, taskObj);
                 };
             }
             return item;
         },
 
-        //TODO Put project/contexts/dueDate to an array to avoid changing the method definition all the time.
         taskFromDbToUIFunc : function (id, name, taskIndex, taskCount, taskList, items) {
             return function (tx) {
                 DataAccess.runSqlDirectly(
                     tx,
-                    'select meta_name, meta_type_name, task_due_date from task_view where task_id = ?',
+                    'select meta_name, meta_type_name, task_reminder_date, task_due_date from task_view where task_id = ?',
                     [id],
                     function (tx, result, objs) {
-                        var metaCount, metaIndex, contexts = [], project = null, metaTypeName = null,
-                            taskDueDate = null, obj, item, displayReminderIcon = false, reminderMetaName;
+                        var metaCount, metaIndex, contexts = [], project = null,
+                            metaTypeName = null, taskDueDate = null, obj, item,
+                            displayReminderIcon = false, reminderMetaName, taskReminderDate;
                         metaCount = result.rows.length;
                         for (metaIndex = 0; metaIndex < metaCount; metaIndex += 1) {
                             obj = result.rows.item(metaIndex);
@@ -246,22 +247,32 @@ var UITaskUtil = (function () {
                             if (null === taskDueDate) {
                                 taskDueDate = obj.task_due_date;
                             }
+                            if (Util.isEmpty(taskReminderDate)) {
+                                taskReminderDate = obj.task_reminder_date;
+                            }
                         }
                         if (null === taskDueDate) {
                             DataAccess.runSqlDirectly(tx,
                                 'select due_date from task where id = ?', [id],
                                 function (tx, result, objs) {
                                     taskDueDate = result.rows.item(0).due_date;
-                                    item = UITaskUtil.createTaskItemElement(id, name, project,
-                                        contexts, taskDueDate, reminderMetaName, displayReminderIcon);
+                                    item = UITaskUtil.createTaskItemElement(
+                                        TaskModel.constructTaskObj(id, name, project, contexts,
+                                            taskDueDate, reminderMetaName, taskReminderDate,
+                                            displayReminderIcon)
+                                    );
                                     items.push(item);
                                     if (taskIndex === taskCount - 1) {
                                         taskList.refresh(items);
                                     }
                                 });
                         } else {
-                            item = UITaskUtil.createTaskItemElement(id, name, project,
-                                contexts, taskDueDate, reminderMetaName, displayReminderIcon);
+                            //FIXME Move those codes to TaskMode and only returns a taskObj for a database query.
+                            item = UITaskUtil.createTaskItemElement(
+                                TaskModel.constructTaskObj(id, name, project, contexts,
+                                    taskDueDate, reminderMetaName, taskReminderDate,
+                                    displayReminderIcon)
+                            );
                             items.push(item);
                             if (taskIndex === taskCount - 1) {
                                 taskList.refresh(items);
@@ -307,9 +318,10 @@ var UITaskUtil = (function () {
             }
         },
 
-        createTaskDetailView : function (container, id, name, project, contexts, taskDueDate) {
-            var contextCount, contextIndex, dueClass, localDueDate,
-                comma          = UIConfig.emptyString,
+        createTaskDetailView : function (container, taskObj) {
+            var contextCount, contextIndex, dueClass, isOverdue,
+                localDueDate, localReminderDate, isFutureReminder,
+                currentTime    = new Date().getTime(),
                 metaContent    = UIConfig.emptyString,
                 contextContent = UIConfig.emptyString,
                 dueContent     = UIConfig.emptyString,
@@ -318,26 +330,38 @@ var UITaskUtil = (function () {
                 dueDiv         = document.getElementById(UIConfig.viewTaskDueElementId),
                 contextDiv     = document.getElementById(UIConfig.viewTaskContextElementId),
                 notesDiv       = document.getElementById(UIConfig.viewTaskNotesElementId),
+                groupSep       = "<br/><div style='float:clear;height:18px'>&nbsp;</div>",
                 metaDiv        = document.getElementById('view-task-detail-meta');
-            setFieldInTaskDetailPopup(name, titleDiv);
-            if (Util.notEmpty(project)) {
-                metaContent = project + " project";
-            }
-            if (Util.notEmpty(taskDueDate)) {
-                localDueDate = new Date(taskDueDate * 1000);
-                dueClass = (localDueDate.getTime() > new Date().getTime()) ? 'task-detail-list-due' : 'task-detail-list-overdue';
-                if (Util.notEmpty(metaContent)) {
-                    comma = ",";
-                }
-                metaContent = metaContent + comma + " Due on <span class='" + dueClass + "'>" + Util.getPrettyDateStr(localDueDate) + "</span>";
-            }
-            if (contexts !== null) {
-                contextCount = contexts.length;
-                if (contextCount > 0) {
-                    metaContent += '<div class="view-task-detail-meta-separator"></div>';
-                    for (contextIndex = 0; contextIndex < contextCount; contextIndex += 1) {
-                        metaContent = metaContent + "\n<span class='task-detail-list-context'>" + contexts[contextIndex] + "</span>";
+            setFieldInTaskDetailPopup(taskObj.name, titleDiv, 'text');
+            if (true === taskObj.displayReminderIcon) {
+                localReminderDate = new Date(taskObj.reminderDate * 1000);
+                isFutureReminder = localReminderDate.getTime() > new Date().getTime();
+                metaContent = Util.getReminderIconStr(isFutureReminder);
+                if (Util.notEmpty(taskObj.reminderDate)) {
+                    if (isFutureReminder) {
+                        metaContent = metaContent + "<span class='future-alarm'>" + Util.getPrettyDateStr(localReminderDate) + " (Future)</span>" + groupSep;
+                    } else {
+                        metaContent = metaContent + "<span class='past-alarm'>" + Util.getPrettyDateStr(localReminderDate) + " (Past)</span>" + groupSep;
                     }
+                }
+            }
+            if (Util.notEmpty(taskObj.project)) {
+                metaContent = metaContent + Util.getProjectIconStr() + "<span class='task-detail-list-project'>" + taskObj.project + "</span>" + groupSep;
+            }
+            if (Util.notEmpty(taskObj.dueDate)) {
+                localDueDate = new Date(taskObj.dueDate * 1000);
+                isOverdue = localDueDate.getTime() < currentTime;
+                dueClass = isOverdue ? 'task-detail-list-overdue' : 'task-detail-list-due';
+                metaContent = metaContent + Util.getDueIconStr() + "<span class='" + dueClass + "'>" + Util.getPrettyDateStr(localDueDate) + "</span>" + Util.getOverdueIconStr(isOverdue) + groupSep;
+            }
+            if (Util.notEmpty(taskObj.contexts)) {
+                contextCount = taskObj.contexts.length;
+                if (contextCount > 0) {
+                    metaContent += Util.getContextIconStr() + "<span class='task-detail-list-context-container'>";
+                    for (contextIndex = 0; contextIndex < contextCount; contextIndex += 1) {
+                        metaContent = metaContent + "\n<span class='task-detail-list-context'>" + taskObj.contexts[contextIndex] + "</span>";
+                    }
+                    metaContent += '</span>';
                 }
             }
 

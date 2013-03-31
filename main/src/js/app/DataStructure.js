@@ -24,11 +24,11 @@ SeedData = {
     SomedayMetaName          : 'Someday',
 
     TodayMetaName            : 'Today',
-    TomorrowMetaName         : 'Tomorrow',
-    ThisWeekMetaName         : 'This Week',
-    NextWeekMetaName         : 'Next Week',
-    YesterdayDoneMetaName    : 'Yesterday Done',
-    YesterdayOverDueMetaName : 'Yesterday Overdue',
+    TomorrowMetaName         : 'Tmr',
+    ThisWeekMetaName         : 'This WK',
+    NextWeekMetaName         : 'Next WK',
+    YesterdayDoneMetaName    : 'Done Yday',
+    YesterdayOverDueMetaName : 'OD Yday',
 
     OffMetaName              : 'Off',
     WhenDueMetaName          : 'When Due',
@@ -144,14 +144,14 @@ Sql = {
         DueFilterCountSql : 'select count(distinct(id)) from task where %DueFilter%',
         DueFilterKey      : 'DueFilter',
         DueFilter : {
-            'All'               : "due_date is not null and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
-            'Today'             : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'", 
-            'Tomorrow'          : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','+1 day') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
-            'This Week'         : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
-            'Next Week'         : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now', '+7 days') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
-            'Done Yesterday'    : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
-            'Overdue Yesterday' : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
-            'Overdue'           : "strftime('%Y-%m-%d %H:%M:%S', due_date, 'unixepoch') < datetime('now') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'"
+            'All'       : "due_date is not null and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
+            'Today'     : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
+            'Tmr'       : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','+1 day') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
+            'This WK'   : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
+            'Next WK'   : "strftime('%Y-%W', due_date, 'unixepoch') = strftime('%Y-%W', 'now', '+7 days') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
+            'Done Yday' : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status = '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
+            'OD Yday'   : "strftime('%Y-%m-%d', due_date, 'unixepoch') = date('now','-1 day') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'",
+            'OD'        : "strftime('%Y-%m-%d %H:%M:%S', due_date, 'unixepoch') < datetime('now') and status != '" + SeedData.TaskDoneStatus + "' and status != '" + SeedData.TaskDeletedStatus + "'"
         }
     }
 };

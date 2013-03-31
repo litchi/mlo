@@ -3,6 +3,10 @@
 var Util = (function () {
     "use strict";
 
+    function getDetailPageIcon(iconResource) {
+        return '<img src="./resources/image/' + iconResource + '" style="width:32px;height:32px;margin-top:13px;margin-right:5px;padding-left:4px;display:inline-block;float:left"/>';
+    }
+
     function thirtyOneDayMonth(myDate) {
         return myDate.getMonth % 2 === 0;
     }
@@ -101,9 +105,9 @@ var Util = (function () {
                     if (now.getDate() === myDate.getDate()) {
                         d = 'Today';
                     } else if (1 === dayDiff) {
-                        d = 'Tomorrow';
+                        d = 'Tmr';
                     } else if (-1 === dayDiff) {
-                        d = 'Yesterday';
+                        d = 'Yday';
                     } else if ((0 === monthDiff && dayDiff <= 7 && dayDiff >= -7)) {
                         weekPrefix = (dayDiff < 0) ? 'Last' : 'Next';
                         d = myDate.getDate() + '/' + (myDate.getMonth() + 1) + ' (' + weekPrefix + sep + Util.getNameOfWeekday(myDate) + ')';
@@ -362,9 +366,26 @@ var Util = (function () {
             return icon;
         },
 
-        getReminderIconStr : function () {
+        //TODO Display different icon based on whether it's an further alarm
+        getReminderIconStr : function (isFurtherAlarm) {
             //inline style should be used since class="xxx" will be overrided by bbui
-            return '<img src="./resources/image/reminder-on.png" style="width:32px;height:32px;margin-top:13px;margin-right:5px"/>';
+            return getDetailPageIcon('reminder-on.png');
+        },
+
+        getOverdueIconStr : function (isOverdue) {
+            return isOverdue ? getDetailPageIcon('overdue-alert.png') : '';
+        },
+
+        getProjectIconStr: function () {
+            return getDetailPageIcon('task-detail-project-icon.png');
+        },
+
+        getDueIconStr: function () {
+            return getDetailPageIcon('task-detail-calendar-icon.png');
+        },
+
+        getContextIconStr: function () {
+            return getDetailPageIcon('task-detail-context-icon.png');
         },
 
         genSelectedMetaMarkIconId : function (metaId) {

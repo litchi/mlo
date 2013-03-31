@@ -26,13 +26,13 @@ var SeedSampleDataProvider = (function () {
 
     function insertDueSeedData(tx) {
         DataAccess.runSqlForMigrate(tx, "insert into meta_type (name, description, internal) values ('Due', 'Predefined Due lists for items, includes today/tomorrow/this week etc', 1)");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Today'            , 'Today''s due tasks' from meta_type where name          = 'Due'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Tomorrow'         , 'Tomorrow''s due tasks' from meta_type where name       = 'Due'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Overdue'          , 'Overdue tasks' from meta_type where name               = 'Due'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Overdue Yesterday', 'Yesterday''s overdue tasks' from meta_type where name  = 'Due'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'This Week'        , 'This week''s due tasks' from meta_type where name      = 'Due'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Next Week'        , 'Next week''s Due Tasks' from meta_type where name      = 'Due'");
-        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Done Yesterday'   , 'Yesterday''s finished tasks' from meta_type where name = 'Due'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Today'             , 'Today''s due tasks' from meta_type where name          = 'Due'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Tomorrow'          , 'Tomorrow''s due tasks' from meta_type where name       = 'Due'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Overdue'           , 'Overdue tasks' from meta_type where name               = 'Due'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Overdue Yesterday' , 'Yesterday''s overdue tasks' from meta_type where name  = 'Due'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'This Week'         , 'This week''s due tasks' from meta_type where name      = 'Due'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Next Week'         , 'Next week''s Due Tasks' from meta_type where name      = 'Due'");
+        DataAccess.runSqlForMigrate(tx, "insert into meta (meta_type_id , name , description) select id , 'Done Yesterday'    , 'Yesterday''s finished tasks' from meta_type where name = 'Due'");
     }
 
     function insertSampleTask(tx, taskName, metas, dueDate) {

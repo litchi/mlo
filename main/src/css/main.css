@@ -43,12 +43,7 @@
     background-color:transparent;
 }
 
-.list-project {
-    margin-right:10px;
-    font-size:24px;
-}
-
-.list-context, .list-context-last {
+.list-overdue, .list-due, .list-project, .list-context, .list-context-last {
     -webkit-border-radius:10px ;
     margin: 5px;
     /** Please notice the behaivor of ripple and the actual device is not exactly the same here so we put different number here */
@@ -60,24 +55,21 @@
     font-size:24px;
     line-height:24px;
     background: -webkit-gradient(linear, 0 0, 0 bottom, from(#E0E5E4), to(rgba(204, 204, 204, 0.5)));
+    float:left;
+}
+
+.list-project {
+    margin-right:10px;
 }
 
 .list-context-last {
-    margin-right: 10px;
+    float:left;
 }
 
-.list-due {
-    font-size:24px;
-    border-bottom: 1px solid #000;
-    padding-bottom: 2px;
-}
+.list-due {}
 
 .list-overdue {
-    margin-left: 10px; 
-    font-size:24px;
-    color: red !important;
-    border-bottom: 1px solid red;
-    padding-bottom: 2px;
+    margin-left: -5px;
 }
 
 #group-detail-container {
@@ -243,7 +235,8 @@
     top: 80px; 
     width: 570px; 
     height: 970px; 
-    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(255, 255, 255, 0.8)), to(rgba(163, 163, 163, 0)));
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(255, 255, 255, 0.6)), to(rgba(163, 163, 163, 0.8)));
+    /*background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(255, 255, 255, 0.8)), to(rgba(163, 163, 163, 0)));*/
     -webkit-border-top-left-radius: 40px;
     -webkit-border-top-right-radius: 40px;
     -webkit-border-bottom-left-radius: 40px;
@@ -256,7 +249,9 @@
     font-size: 48px;
     line-height: 60px;
     padding-top: 35px;
+    border-bottom: 1px solid rgba(102, 102, 102, 0.6);
 }
+
 #view-task-detail-meta{
     font-size: 30px;
     line-height: 48px;
@@ -267,29 +262,40 @@
 .task-detail-list-context {
     -webkit-border-radius:20px ; 
     background-color:lightgray;
-    margin: 10px 20px 10px -10px;
+    margin: 8px 20px 10px -10px;
     /** Please notice the behaivor of ripple and the actual device is not exactly the same here so we put different number here */
     padding:0 10px 0 10px;
     border-radius:20px;
-    color:#CCC;
-    display:-moz-inline-box;
+    color:#333333;
     display:inline-block;
-    border: 1px solid #77777;
-    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(128, 128, 128, 0.5)), to(rgba(46, 46, 46, 0.9)));
+    border: solid 1px #555555;
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgb(168, 168, 168)), to(rgba(180, 180, 180, 0.5)));
+    /*background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(128, 128, 128, 0.5)), to(rgba(46, 46, 46, 0.9)));*/
+    float:left;
+    text-align:left;
 }
-.task-detail-list-due {
-    border-bottom: 1px solid #000;
-    padding-bottom: 2px;
+
+.task-detail-list-context-container, .task-detail-list-project, 
+.task-detail-list-due, .task-detail-list-overdue,
+.past-alarm, .future-alarm {
+    float:left;
+    text-align:left;
+    margin-left:30px;
+    margin-top:3px;
 }
 .task-detail-list-overdue {
-    color: red !important;
-    border-bottom: 1px solid red;
-    padding-bottom: 2px;
+    margin-right:10px;
 }
+
+.task-detail-list-context-container {
+    margin-top:0px;
+    width:400px;
+    margin-left:38px;
+    max-width:400px;
+}
+
 .view-task-detail-sub-field {
     padding: 20px;
-    border-bottom: 1px solid #777;
-    border-style: none none solid none;
     margin: 0 20px 0 20px;
 }
 

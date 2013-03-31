@@ -143,6 +143,14 @@ var DataAccess = (function () {
                 DataAccess.runSqlForMigrate(t, 'CREATE VIEW task_view AS select task.id as task_id, task.name as task_name, task.status as task_status, task.reminder_date as task_reminder_date, task.due_date as task_due_date, meta.id as meta_id, meta.name as meta_name, meta_type.id as meta_type_id, meta_type.name as meta_type_name from task join task_meta on task_meta.task_id = task.id join meta on task_meta.meta_id = meta.id join meta_type on meta_type.id = meta.meta_type_id');
                 DataAccess.runSqlForMigrate(t, 'CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta.description as meta_description, meta.ui_rank as meta_ui_rank, meta_type.id as meta_type_id, meta_type.name as meta_type_name, meta_type.description as meta_type_description, meta_type.internal as meta_type_internal from meta join meta_type on meta_type.id = meta.meta_type_id');
             });
+            m.migration(8, function (t) {
+                DataAccess.runSqlForMigrate(t, "update meta set name='Tmr' where name ='Tomorrow'");
+                DataAccess.runSqlForMigrate(t, "update meta set name='OD' where name ='Overdue'");
+                DataAccess.runSqlForMigrate(t, "update meta set name='OD Yday' where name ='Overdue Yesterday'");
+                DataAccess.runSqlForMigrate(t, "update meta set name='This WK' where name ='This Week'");
+                DataAccess.runSqlForMigrate(t, "update meta set name='Next WK' where name ='Next Week'");
+                DataAccess.runSqlForMigrate(t, "update meta set name='Done Yday' where name ='Done Yesterday'");
+            });
             m.execute();
         },
 

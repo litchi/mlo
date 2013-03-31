@@ -37,7 +37,7 @@ var UIContextMenuController = (function () {
             console.warn("Selected Item is null");
             return;
         }
-        selectedId = selectedItem.selected;
+        selectedId = selectedItem.selected.id;
         if (null === selectedId) {
             console.warn("Selected Id is null");
             return;
@@ -97,7 +97,7 @@ var UIContextMenuController = (function () {
             context = document.getElementById('task-operation-context-menu');
         selectedItem  = context.menu.selected;
         if (selectedItem) {
-            selectedId = selectedItem.selected;
+            selectedId = selectedItem.selected.id;
             if (selectedId !== null) {
                 DataAccess.taskMeta.moveTaskToGtdList(selectedId, metaName,
                     function (tx3, result3, rows3) {
@@ -121,7 +121,7 @@ var UIContextMenuController = (function () {
                 context = document.getElementById('task-operation-context-menu');
             selectedItem  = context.menu.selected;
             if (selectedItem) {
-                selectedId = selectedItem.selected;
+                selectedId = selectedItem.selected.id;
                 if (selectedId !== null) {
                     DataAccess.task.updateStatus(selectedId, SeedData.TaskDeletedStatus,
                         function (tx, result, rows) {
