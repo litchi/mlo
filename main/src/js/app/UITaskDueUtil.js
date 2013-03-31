@@ -20,7 +20,6 @@ var UITaskDueUtil = (function () {
                     "update task set due_date = ? where id = ?", [myDate.getTime() / 1000, taskId],
                     function (tx, result, objs) {
                     });
-                DataAccess.runSqlDirectly(tx, 'delete from task_meta where task_id = ? and meta_id = (select id from meta where name = ?)', [taskId, SeedData.BasketMetaName]);
             }
         }
     };
