@@ -388,6 +388,10 @@ var Util = (function () {
             return getDetailPageIcon('task-detail-context-icon.png');
         },
 
+        getGTDListIconStr: function () {
+            return getDetailPageIcon('task-detail-gtd-icon.png');
+        },
+
         genSelectedMetaMarkIconId : function (metaId) {
             return metaId + "_img";
         },

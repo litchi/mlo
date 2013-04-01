@@ -164,12 +164,14 @@ var UITaskUtil = (function () {
         createTaskItemElement : function (taskObj) {
             var contextCount, i, dueClass, localDueDate, isOverdue,
                 localReminderDate, contextClass, overDueIcon,
+                titleSpanClass      = 'detail-title',
                 currentTime         = new Date().getTime(),
                 innerContent        = UIConfig.emptyString,
                 item                = document.createElement('div'),
                 id                  = taskObj.id,
                 name                = taskObj.name,
                 project             = taskObj.project,
+                gtdList             = taskObj.gtdList,
                 contexts            = taskObj.contexts,
                 dueDate             = taskObj.dueDate,
                 reminderDate        = taskObj.reminderDate,
@@ -180,8 +182,17 @@ var UITaskUtil = (function () {
             if (Util.notEmpty(id)) {
                 item.setAttribute('id', 'task-' + id);
                 if (Util.notEmpty(name)) {
-                    item.setAttribute('title', '<span class="detail-title">' + name + '</span>');
-                    item.setAttribute('data-bb-title', '<span class="detail-title">' + name + '</span>');
+                    if (Util.notEmpty(gtdList)) {
+                        if (SeedData.BasketMetaName === gtdList) {
+                            titleSpanClass += ' title-basket';
+                        } else if (SeedData.NextActionMetaName === gtdList) {
+                            titleSpanClass += ' title-next-action';
+                        } else if (SeedData.SomedayMetaName === gtdList) {
+                            titleSpanClass += ' title-someday';
+                        }
+                    }
+                    item.setAttribute('title', '<span class="' + titleSpanClass + '">' + name + '</span>');
+                    item.setAttribute('data-bb-title', '<span class="' + titleSpanClass + '">' + name + '</span>');
                 }
                 if (Util.notEmpty(project)) {
                     innerContent = "\n<span class='list-project'>" + project + "</span>";
@@ -227,7 +238,7 @@ var UITaskUtil = (function () {
                     [id],
                     function (tx, result, objs) {
                         var metaCount, metaIndex, contexts = [], project = null,
-                            metaTypeName = null, taskDueDate = null, obj, item,
+                            metaTypeName = null, taskDueDate = null, obj, item, gtdList,
                             displayReminderIcon = false, reminderMetaName, taskReminderDate;
                         metaCount = result.rows.length;
                         for (metaIndex = 0; metaIndex < metaCount; metaIndex += 1) {
@@ -242,6 +253,8 @@ var UITaskUtil = (function () {
                                     && obj.meta_name !== SeedData.OffMetaName) {
                                 displayReminderIcon = true;
                                 reminderMetaName = obj.meta_name;
+                            } else if ((Util.isEmpty(gtdList)) && SeedData.GtdMetaTypeName === metaTypeName) {
+                                gtdList = obj.meta_name;
                             }
                             //Only get once task due date since it's the same for all the result set 
                             if (null === taskDueDate) {
@@ -257,7 +270,7 @@ var UITaskUtil = (function () {
                                 function (tx, result, objs) {
                                     taskDueDate = result.rows.item(0).due_date;
                                     item = UITaskUtil.createTaskItemElement(
-                                        TaskModel.constructTaskObj(id, name, project, contexts,
+                                        TaskModel.constructTaskObj(id, name, gtdList, project, contexts,
                                             taskDueDate, reminderMetaName, taskReminderDate,
                                             displayReminderIcon)
                                     );
@@ -269,7 +282,7 @@ var UITaskUtil = (function () {
                         } else {
                             //FIXME Move those codes to TaskMode and only returns a taskObj for a database query.
                             item = UITaskUtil.createTaskItemElement(
-                                TaskModel.constructTaskObj(id, name, project, contexts,
+                                TaskModel.constructTaskObj(id, name, gtdList, project, contexts,
                                     taskDueDate, reminderMetaName, taskReminderDate,
                                     displayReminderIcon)
                             );
@@ -321,6 +334,7 @@ var UITaskUtil = (function () {
         createTaskDetailView : function (container, taskObj) {
             var contextCount, contextIndex, dueClass, isOverdue,
                 localDueDate, localReminderDate, isFutureReminder,
+                gtdList, gtdListDisplay, gtdListClass,
                 currentTime    = new Date().getTime(),
                 metaContent    = UIConfig.emptyString,
                 contextContent = UIConfig.emptyString,
@@ -330,18 +344,32 @@ var UITaskUtil = (function () {
                 dueDiv         = document.getElementById(UIConfig.viewTaskDueElementId),
                 contextDiv     = document.getElementById(UIConfig.viewTaskContextElementId),
                 notesDiv       = document.getElementById(UIConfig.viewTaskNotesElementId),
-                groupSep       = "<br/><div style='float:clear;height:18px'>&nbsp;</div>",
+                groupSep       = "<br/><div style='float:clear;height:8px'>&nbsp;</div>",
                 metaDiv        = document.getElementById('view-task-detail-meta');
-            setFieldInTaskDetailPopup(taskObj.name, titleDiv, 'text');
+            setFieldInTaskDetailPopup(taskObj.name, titleDiv, 'html');
+            if (Util.notEmpty(taskObj.gtdList)) {
+                gtdList = taskObj.gtdList;
+                if (gtdList === SeedData.BasketMetaName) {
+                    gtdListDisplay = 'Basket';
+                    gtdListClass = 'task-detail-basket';
+                } else if (gtdList === SeedData.NextActionMetaName) {
+                    gtdListDisplay = 'Next Action';
+                    gtdListClass = 'task-detail-next-action';
+                } else if (gtdList === SeedData.SomedayMetaName) {
+                    gtdListDisplay = 'Someday/Maybe';
+                    gtdListClass = 'task-detail-someday';
+                }
+                metaContent = metaContent + Util.getGTDListIconStr() + "<span class='" + gtdListClass + "'>" + gtdListDisplay + "</span>" + groupSep;
+            }
             if (true === taskObj.displayReminderIcon) {
                 localReminderDate = new Date(taskObj.reminderDate * 1000);
                 isFutureReminder = localReminderDate.getTime() > new Date().getTime();
-                metaContent = Util.getReminderIconStr(isFutureReminder);
+                metaContent = metaContent + Util.getReminderIconStr(isFutureReminder);
                 if (Util.notEmpty(taskObj.reminderDate)) {
                     if (isFutureReminder) {
-                        metaContent = metaContent + "<span class='future-alarm'>" + Util.getPrettyDateStr(localReminderDate) + " (Future)</span>" + groupSep;
+                        metaContent = metaContent + "<span class='task-detail-future-alarm'>" + Util.getPrettyDateStr(localReminderDate) + " (Future)</span>" + groupSep;
                     } else {
-                        metaContent = metaContent + "<span class='past-alarm'>" + Util.getPrettyDateStr(localReminderDate) + " (Past)</span>" + groupSep;
+                        metaContent = metaContent + "<span class='task-detail-past-alarm'>" + Util.getPrettyDateStr(localReminderDate) + " (Past)</span>" + groupSep;
                     }
                 }
             }

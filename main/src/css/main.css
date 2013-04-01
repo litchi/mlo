@@ -246,10 +246,14 @@
 
 #view-task-detail-title {
     font-family: 'monospaceTextarea';
-    font-size: 48px;
-    line-height: 60px;
+    font-size: 40px;
+    line-height: 50px;
     padding-top: 35px;
     border-bottom: 1px solid rgba(102, 102, 102, 0.6);
+}
+
+#view-task-detail-title:first-letter {
+    font-size:64px;
 }
 
 #view-task-detail-meta{
@@ -275,9 +279,10 @@
     text-align:left;
 }
 
+.task-detail-basket, .task-detail-next-action, .task-detail-someday,
 .task-detail-list-context-container, .task-detail-list-project, 
 .task-detail-list-due, .task-detail-list-overdue,
-.past-alarm, .future-alarm {
+.task-detail-past-alarm, .task-detail-future-alarm {
     float:left;
     text-align:left;
     margin-left:30px;
@@ -400,4 +405,21 @@
 
 .round-panel-title {
     margin-top: 10px;
+}
+
+.title-basket {
+    color:#6767676;
+}
+
+.title-next-action {
+    color: rgb(77, 58, 41);
+    font-family: 'monospaceTextarea';
+    font-weight:bolder;
+    font-size:30px;
+    padding: 5px 20px 5px 5px;
+    background: #EEE;
+}
+
+.title-someday {
+    color:rgba(165, 165, 165, 0.7);
 }

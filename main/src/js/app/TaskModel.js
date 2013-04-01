@@ -4,11 +4,12 @@ var TaskModel = (function () {
     "use strict";
 
     return {
-        constructTaskObj : function (id, name, project, contexts,
+        constructTaskObj : function (id, name, gtdList, project, contexts,
             dueDate, reminderMetaName, reminderDate, displayReminderIcon) {
             return {
                 'id'                  : id,
                 'name'                : name,
+                'gtdList'             : gtdList,
                 'project'             : project,
                 'contexts'            : contexts,
                 'dueDate'             : dueDate,
