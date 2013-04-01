@@ -61,6 +61,7 @@ var UIConfig = (function () {
             'restore_task',
             'empty_trash'
         ],
+        smiles : [':-)', '^_^', ':o)', ':c)', ':^)', ':>'],
         nothing : function () {}
     };
 

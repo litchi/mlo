@@ -156,10 +156,14 @@ var UITaskReminderUtil = (function () {
         switchReminderPanelDisplay : function (dueDate) {
             var reminderContainer = document.getElementById('reminderContainer'),
                 reminderPanel = document.getElementById('edit-page-sub-panel-reminder');
-            if (Util.notEmpty(dueDate) && Util.notEmpty(reminderPanel) && Util.notEmpty(reminderContainer)) {
+            if (Util.notEmpty(dueDate)
+                    && Util.notEmpty(reminderPanel)
+                    && Util.notEmpty(reminderContainer)
+                    && (reminderPanel.style.display !== 'block' || reminderContainer.style.display !== 'block')) {
                 reminderPanel.style.display = 'block';
                 reminderContainer.style.display = 'block';
-            } else if (Util.isEmpty(dueDate)) {
+            } else if (Util.isEmpty(dueDate)
+                    && (reminderPanel.style.display !== 'none' || reminderContainer.style.display !== 'none')) {
                 reminderPanel.style.display = 'none';
                 reminderContainer.style.display = 'none';
             }

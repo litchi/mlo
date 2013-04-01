@@ -77,7 +77,7 @@ var UIContextMenuController = (function () {
             context = document.getElementById('task-operation-context-menu');
         selectedItem  = context.menu.selected;
         if (selectedItem) {
-            selectedId = selectedItem.selected;
+            selectedId = selectedItem.selected.id;
             if (selectedId !== null) {
                 DataAccess.task.updateStatus(selectedId, statusKey,
                     function (tx, result, rows) {

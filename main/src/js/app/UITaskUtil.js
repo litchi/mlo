@@ -1,5 +1,5 @@
 /*jslint browser: true es5: true*/
-/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, $, jQuery, UIListController, UIMetaUtil, TaskModel*/
+/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, $, jQuery, UIListController, UIMetaUtil, TaskModel, UITaskReminderUtil*/
 var UITaskUtil = (function () {
     "use strict";
 
@@ -89,7 +89,7 @@ var UITaskUtil = (function () {
                 taskNumber = list[key];
             }
             if (Util.isEmpty(taskNumber) || (0 === taskNumber)) {
-                return '<span class="list-task-number-zero">:-)</span>';
+                return '<span class="list-task-number-zero">' + Util.getRandomSmailFace() + '</span>';
             }
             return '<span class="list-task-number">' + taskNumber + '</span>';
         },
@@ -456,6 +456,11 @@ var UITaskUtil = (function () {
             } else {
                 console.warn('Task Name for [%s] is [%s](empty ?)', id, taskName);
             }
+        },
+
+        clearDueDateField : function () {
+            $('#due-date').val(UIConfig.emptyString);
+            UITaskReminderUtil.switchReminderPanelDisplay(UIConfig.emptyString);
         }
     };
 

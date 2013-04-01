@@ -8,19 +8,21 @@ var UITaskDueUtil = (function () {
             if (null !== dueDate) {
                 dateStr = Util.getFullDateTimeStr(new Date(dueDate * 1000));
                 Util.setValue('due-date', dateStr);
+            } else {
+                Util.setValue('due-date', null);
             }
         },
 
         saveDueInfo : function (tx, taskId) {
             var dueDate = Util.valueOf('due-date'),
+                dueToSave = null,
                 myDate = Util.timeToDateWithZone(new Date(dueDate).getTime() / 1000);
             if (Util.notEmpty(dueDate)) {
-                DataAccess.runSqlDirectly(tx,
-                    //FIXME Should also save the reminder date into database.
-                    "update task set due_date = ? where id = ?", [myDate.getTime() / 1000, taskId],
-                    function (tx, result, objs) {
-                    });
+                dueToSave = myDate.getTime() / 1000;
+            } else {
+                DataAccess.runSqlDirectly(tx, "update task set reminder_date = ? where id = ?", [null, taskId]);
             }
+            DataAccess.runSqlDirectly(tx, "update task set due_date = ? where id = ?", [dueToSave, taskId]);
         }
     };
 }());

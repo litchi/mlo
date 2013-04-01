@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController, UIActionBarController, UITaskReminderUtil, UITaskContextUtil, UITaskProjectUtil, UITaskDueUtil, UITaskUtil*/
+/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController, UIActionBarController, UITaskReminderUtil, UITaskContextUtil, UITaskProjectUtil, UITaskDueUtil, UITaskUtil, $, JQuery*/
 var UIEditFormController = (function () {
     "use strict";
 
@@ -104,6 +104,10 @@ var UIEditFormController = (function () {
                         UITaskReminderUtil.prepareReminderData(tx, taskId, reminderMetaName, dueDate);
                         Util.setCommonMetaFieldsOnPage(params);
                         Util.setValue('task-id', taskId);
+                        $('#due-date').parent().append(Util.getClearDateTimeInputIcon());
+                        $('#due-date').parent().blur(function () {
+                            UITaskReminderUtil.switchReminderPanelDisplay(this.value);
+                        });
                         bb.refresh();
                     });
             });

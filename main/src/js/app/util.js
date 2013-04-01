@@ -403,6 +403,19 @@ var Util = (function () {
 
         copyInnerHTML : function (container, tempDiv) {
             container.innerHTML = tempDiv.innerHTML;
+        },
+
+        getRandomSmailFace : function () {
+            var vNum = Math.round(Math.random() * (UIConfig.smiles.length - 1));
+            return UIConfig.smiles[vNum];
+        },
+
+        getClearDateTimeInputIcon : function () {
+            var img = document.createElement('img');
+            img.setAttribute('src', "./resources/image/bullet_deny.png");
+            img.setAttribute('class', 'inline-operation-icon');
+            img.setAttribute('onclick', 'UITaskUtil.clearDueDateField()');
+            return img;
         }
     };
 
