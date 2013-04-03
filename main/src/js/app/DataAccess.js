@@ -151,6 +151,9 @@ var DataAccess = (function () {
                 DataAccess.runSqlForMigrate(t, "update meta set name='Next WK' where name ='Next Week'");
                 DataAccess.runSqlForMigrate(t, "update meta set name='Done Yday' where name ='Done Yesterday'");
             });
+            m.migration(9, function (t) {
+                DataAccess.runSqlForMigrate(t, 'create table if not exists preference(id integer primary key autoincrement, key text not null, value text not null, unique(key))');
+            });
             m.execute();
         },
 
