@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget xmlns:rim="http://www.blackberry.com/ns/widgets" id="MindLikeWater" version="0.0.1" rim:header="RIM-Widget:rim/widget" xmlns="http://www.w3.org/ns/widgets">
+<widget xmlns:rim="http://www.blackberry.com/ns/widgets" id="MindLikeWater" version="0.0.2" rim:header="RIM-Widget:rim/widget" xmlns="http://www.w3.org/ns/widgets">
     <rim:navigation mode="focus" />
     <rim:permit>post_notification</rim:permit> 
     <rim:permit system = 'true'>_sys_use_consumer_push</rim:permit> 
@@ -16,6 +16,24 @@
     <feature id="blackberry.ui.toast" />    
     <feature id="blackberry.push" />    
     <feature id="blackberry.app"/>
-    <feature id="blackberry.app.event"/>
     <feature id="blackberry.ui.contextmenu" />
+    <feature id="blackberry.invoked" version="1.0.0"   required="true" />
+    <feature id="blackberry.invoke"  version="1.0.0.0" required="true" />
+    <feature id="blackberry.invoke.card" />
+
+    <rim:permissions>
+        <rim:permit>post_notification</rim:permit>
+        <!-- This permission is needed for a consumer (public) push application only (not enterprise push)! -->
+        <rim:permit system="true">_sys_use_consumer_push</rim:permit>
+    </rim:permissions>
+
+    <!-- Have an invoke entry here for when a notification is clicked on in the BlackBerry Hub -->
+    <!-- This will cause the application to be opened -->
+    <rim:invoke-target id="cc.mindlikewater.invoke.open">
+        <type>APPLICATION</type>
+        <filter>
+            <action>bb.action.OPEN</action>
+            <mime-type>text/plain</mime-type>
+        </filter>
+    </rim:invoke-target>  
 </widget>
