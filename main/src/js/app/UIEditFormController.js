@@ -62,15 +62,20 @@ var UIEditFormController = (function () {
             }
         },
 
-        updateTask : function (id, name, projectId) {
+        updateTask : function () {
+            var id = Util.valueOf('task-id'),
+                name = Util.valueOf('task-name'),
+                projectId = $("#Project option:selected").val(),
+                projectName = $("#Project option:selected").text(),
+                dueDate = Util.valueOf('due-date');
             if (UIConfig.emptyString === name) {
                 document.getElementById('task-name').setAttribute('placeholder', 'Please fill in task name');
                 return;
             }
             DataAccess.appDb.transaction(function (tx) {
                 DataAccess.runSqlDirectly(tx, Sql.Task.UpdateById, [name, id]);
-                UITaskDueUtil.saveDueInfo(tx, id);
-                UITaskReminderUtil.saveReminderInfo(tx, id);
+                UITaskDueUtil.saveDueInfo(tx, id, dueDate);
+                UITaskReminderUtil.saveReminderInfo(tx, id, name, dueDate, projectName);
                 //FIXME If project id is zero, then we should delete the task-project link in task_meta table.
                 if (projectId !== '0') {
                     UITaskProjectUtil.saveProjectInfo(tx, id, projectId);
@@ -130,6 +135,23 @@ var UIEditFormController = (function () {
                     log.logSqlError("Error getting meta with id[" + id + "]", error);
                 });
             }
+        },
+
+        saveSetting : function () {
+            Util.showToast("Settings saved successfully");
+            bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {
+                       'metaTypeName' : SeedData.GtdMetaTypeName,
+                       'metaName'     : SeedData.BasketMetaName,
+                       'actionbarId'  : UIConfig.taskByPagePrefix + "-GTD"
+            });
+        },
+
+        cancelSaveSetting : function () {
+            bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {
+                'metaTypeName' : SeedData.GtdMetaTypeName,
+                'metaName'     : SeedData.BasketMetaName,
+                'actionbarId'  : UIConfig.taskByPagePrefix + "-GTD"
+            });
         }
     };
 }());

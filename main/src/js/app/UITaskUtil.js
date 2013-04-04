@@ -250,6 +250,8 @@ var UITaskUtil = (function () {
                             } else if (SeedData.ProjectMetaTypeName === metaTypeName) {
                                 project = obj.meta_name;
                             } else if (SeedData.ReminderMetaTypeName === metaTypeName
+                                    && Util.notEmpty(obj.task_due_date)
+                                    && Util.notEmpty(obj.task_reminder_date)
                                     && obj.meta_name !== SeedData.OffMetaName) {
                                 displayReminderIcon = true;
                                 reminderMetaName = obj.meta_name;
@@ -257,7 +259,7 @@ var UITaskUtil = (function () {
                                 gtdList = obj.meta_name;
                             }
                             //Only get once task due date since it's the same for all the result set 
-                            if (null === taskDueDate) {
+                            if (Util.isEmpty(taskDueDate)) {
                                 taskDueDate = obj.task_due_date;
                             }
                             if (Util.isEmpty(taskReminderDate)) {
@@ -344,7 +346,7 @@ var UITaskUtil = (function () {
                 dueDiv         = document.getElementById(UIConfig.viewTaskDueElementId),
                 contextDiv     = document.getElementById(UIConfig.viewTaskContextElementId),
                 notesDiv       = document.getElementById(UIConfig.viewTaskNotesElementId),
-                groupSep       = "<br/><div style='float:clear;height:8px'>&nbsp;</div>",
+                groupSep       = "<br/><div style='clear:both;height:8px'>&nbsp;</div>",
                 metaDiv        = document.getElementById('view-task-detail-meta');
             setFieldInTaskDetailPopup(taskObj.name, titleDiv, 'html');
             if (Util.notEmpty(taskObj.gtdList)) {

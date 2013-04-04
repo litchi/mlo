@@ -2,6 +2,10 @@
 var UIConfig = (function () {
     "use strict";
     return {
+        notificationPrefix          : 'cc.mindlikewater.',
+        openTaskDetailTarget        : 'cc.mindlikewater.invoke.open.task.detail',
+        openTaskDetailAction        : 'bb.action.OPEN',
+        notificationTitle           : 'Task Due Reminder',
         emptyString                 : '',
         leftPanelWidth              : '205',
         rightPanelWidth             : '563',

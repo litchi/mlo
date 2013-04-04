@@ -1,9 +1,36 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController, UIActionBarController, UIMetaUtil*/
+/*global Notification, UIConfig, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController, UIActionBarController, UIMetaUtil*/
 var UITaskReminderUtil = (function () {
     "use strict";
     var selectedReminderIds = {};
 
+    function createUIBNotification(taskId, taskName, dueDate, reminderDate, projectName) {
+        // Add a notification to the BlackBerry Hub for this push
+        var title = UIConfig.notificationTitle,
+            options = {
+                body         : Util.getNotificationBody(taskId, taskName, dueDate, projectName),
+                tag          : UIConfig.notificationPrefix + 'task.' + taskId,
+                //target       : UIConfig.openTaskDetailTarget,
+                targetAction : UIConfig.openTaskDetailAction,
+                payload      : Util.utf8_to_b64(taskId),
+                onshow       : function () {
+                    console.log("The notification was created successfully!");
+                },
+                onerror     : function () {
+                    console.log("The notification could not be created!");
+                }
+            },
+            offset = reminderDate.getTime() - new Date().getTime();
+        if (offset > 0) {
+            setTimeout(function () {
+                return new Notification(title, options);
+            }, offset);
+        }
+    }
+
+    //TODO change to a mapping table implementation to reduce code size
+    //like this: offset[SeedData.OneMinMetaName] = 60000
+    //And then: new Date(dueDate.getTime(0 - xxx))
     function getReminderDate(metaId, metaName, dueDate) {
         var result;
         if (metaName === SeedData.OffMetaName) {
@@ -133,10 +160,9 @@ var UITaskReminderUtil = (function () {
             }
         },
 
-        saveReminderInfo : function (tx, taskId) {
+        saveReminderInfo : function (tx, taskId, taskName, dueDate, projectName) {
             var metaName, reminderDate,
                 metaId = getCurrentReminderMetaId(),
-                dueDate = Util.valueOf('due-date'),
                 myDate = Util.timeToDateWithZone(new Date(dueDate).getTime() / 1000);
             DataAccess.runSqlDirectly(tx, Sql.TaskMeta.DeleteByMetaTypeName,
                 [taskId, SeedData.ReminderMetaTypeName]);
@@ -149,7 +175,10 @@ var UITaskReminderUtil = (function () {
                 if (Util.notEmpty(reminderDate)) {
                     DataAccess.runSqlDirectly(tx, "update task set reminder_date = ? where id = ?",
                         [reminderDate.getTime() / 1000, taskId]);
+                    createUIBNotification(taskId, taskName, myDate, reminderDate, projectName);
                 }
+            } else {
+                DataAccess.runSqlDirectly(tx, "update task set reminder_date = ? where id = ?", [null, taskId]);
             }
         },
 

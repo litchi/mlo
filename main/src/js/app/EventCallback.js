@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, $, JQuery*/
+/*global blackberry, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, $, JQuery*/
 var webworksreadyFired = false;
 var EventCallback = (function () {
     "use strict";
@@ -11,7 +11,9 @@ var EventCallback = (function () {
             if (actionBarId === UIConfig.screenIdField) {
                 actionBarDiv.setSelectedTab(actionBarItem);
             } else {
-                actionBarDiv.setSelectedTab(actionBarItem, false);
+                if(Util.notEmpty(document.getElementById(actionBarItem))){
+                    actionBarDiv.setSelectedTab(actionBarItem, false);
+                }
             }
         }
     }
@@ -82,6 +84,9 @@ var EventCallback = (function () {
                 UIListController.fillMetaToCreateForm(metaTypeId);
             } else if (id === SeedData.TaskDeletedStatus) {
                 UIListController.fillTasksToGroupByStatusKey(id);
+            } else if (id === 'setting') {
+                actionBarId = 'setting';
+                UIActionBarController.openSettingsPage();
             }
             setActionBarSelected(actionBarId);
             setDevTabVisible();
@@ -97,13 +102,14 @@ var EventCallback = (function () {
             }
             webworksreadyFired = true;
             bb.init({
-                actionBarDark: false,
+                actionBarDark: true,
                 controlsDark: false,
                 listsDark: false,
                 bb10ForPlayBook: false,
                 onscreenready: onScreenReadyCallback,
                 ondomready: onDomReadyCallback
             });
+            blackberry.event.addEventListener("invoked", EventCallback.onInvoke);
             bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {
                 'metaTypeName' : SeedData.GtdMetaTypeName,
                 'metaName'     : SeedData.BasketMetaName,
@@ -118,6 +124,15 @@ var EventCallback = (function () {
                 evt.initEvent('webworksready', true, true);
                 document.dispatchEvent(evt);
             }
+        },
+
+        onInvoke : function (invokeRequest) {
+            var taskId;
+            log.logObjectData("Invoke Request", invokeRequest, true);
+            if (invokeRequest.action === UIConfig.openTaskDetailAction) {
+                taskId = Util.b64_to_utf8(invokeRequest.data);
+            }
         }
+
     };
 }());

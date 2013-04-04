@@ -149,10 +149,8 @@ var UIContextMenuController = (function () {
             var selectedItem, selectedTaskInfo,
                 context = document.getElementById('task-operation-context-menu');
             selectedItem  = context.menu.selected;
-            console.log(selectedItem);
             if (selectedItem) {
                 selectedTaskInfo = selectedItem.selected;
-                console.log(selectedTaskInfo);
                 if (selectedTaskInfo !== null) {
                     bb.pushScreen('edit-task.html', UIConfig.editTaskPagePrefix,
                         {

@@ -11,6 +11,32 @@ var Util = (function () {
         return myDate.getMonth % 2 === 0;
     }
 
+    Date.prototype.format = function (format) {
+        var k, part,
+            o = {
+                "M+" : this.getMonth() + 1,
+                "d+" : this.getDate(),
+                "h+" : this.getHours(),
+                "m+" : this.getMinutes(),
+                "s+" : this.getSeconds(),
+                "q+" : Math.floor((this.getMonth() + 3) / 3),
+                "S"  : this.getMilliseconds()
+            };
+        if (/(y+)/.test(format)) {
+            format = format.replace(RegExp.$1, (this.getFullYear() + UIConfig.emptyString).substr(4 - RegExp.$1.length));
+        }
+        for (k in o) {
+            if (o.hasOwnProperty(k)) {
+                if (new RegExp("(" + k + ")").test(format)) {
+                    //This part is strange, so comment out by now, part = RegExp.$1.length === 1 ? o[k] : o[k];
+                    part = o[k] + UIConfig.emptyString;
+                    format = format.replace(RegExp.$1, part.substr((o[k].valueOf()).length));
+                }
+            }
+        }
+        return format;
+    };
+
     return {
         isEmpty : function (str) {
             return (null === str || undefined === str || '' === str);
@@ -84,6 +110,41 @@ var Util = (function () {
                     + ('0' + myDate.getHours()).slice(-2) + ':'
                     + ('0' + myDate.getMinutes()).slice(-2);
             return resultStr;
+        },
+
+
+        /**
+        * Converts a Unicode/UTF8 string to Base64.
+        * 
+        * This function is a workaround because the atob and btoa browser functions that should convert between a binary string and a
+        * Base64 encoded ASCII string blow up when faced with Unicode with a INVALID_CHARACTER_ERR: DOM Exception 5.
+        * 
+        * http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
+        * http://monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
+        * 
+        * @param str
+        *            the Unicode string to base64 encode
+        * @returns the base64 encoded Unicode string
+        */
+        utf8_to_b64 : function (str) {
+            return window.btoa(unescape(encodeURIComponent(str)));
+        },
+
+        /**
+        * Converts a Base64 string to Unicode/UTF8 string.
+        * 
+        * This function is a workaround because the atob and btoa browser functions that should convert between a binary string and a
+        * Base64 encoded ASCII string blow up when faced with Unicode with a INVALID_CHARACTER_ERR: DOM Exception 5.
+        * 
+        * http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
+        * http://monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
+        * 
+        * @param str
+        *            the base64 Unicode encoded string
+        * @returns the Unicode string
+        */
+        b64_to_utf8 : function (str) {
+            return decodeURIComponent(escape(window.atob(str)));
         },
 
         getNameOfWeekday : function (myDate) {
@@ -279,7 +340,6 @@ var Util = (function () {
                 metaId         = Util.valueOf('v_meta_id'),
                 metaName       = Util.valueOf('v_meta_name'),
                 localToastMsg  = UIConfig.emptyString;
-            console.debug('[%s], [%s], [%s], [%s]', metaTypeId, metaTypeName, metaId, metaName);
             if (Util.notEmpty(toastMsg)) {
                 localToastMsg = toastMsg;
             }
@@ -416,6 +476,14 @@ var Util = (function () {
             img.setAttribute('class', 'inline-operation-icon');
             img.setAttribute('onclick', 'UITaskUtil.clearDueDateField()');
             return img;
+        },
+
+        getNotificationBody : function (taskId, taskName, dueDate, projectName) {
+            var result = UIConfig.emptyString;
+            result += taskName + "\n\n";
+            result += 'Due on: ' + dueDate.format('MM/dd/yyyy hh:mm') + "\n\n";
+            result += 'Project: ' + projectName;
+            return result;
         }
     };
 

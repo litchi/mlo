@@ -13,14 +13,11 @@ var UITaskDueUtil = (function () {
             }
         },
 
-        saveDueInfo : function (tx, taskId) {
-            var dueDate = Util.valueOf('due-date'),
-                dueToSave = null,
+        saveDueInfo : function (tx, taskId, dueDate) {
+            var dueToSave = null,
                 myDate = Util.timeToDateWithZone(new Date(dueDate).getTime() / 1000);
             if (Util.notEmpty(dueDate)) {
                 dueToSave = myDate.getTime() / 1000;
-            } else {
-                DataAccess.runSqlDirectly(tx, "update task set reminder_date = ? where id = ?", [null, taskId]);
             }
             DataAccess.runSqlDirectly(tx, "update task set due_date = ? where id = ?", [dueToSave, taskId]);
         }

@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, UIContextMenuUtil, UITaskUtil, UIMetaUtil, $, JQuery*/
+/*global TaskModel, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, UIContextMenuUtil, UITaskUtil, UIMetaUtil, $, JQuery*/
 var UIListController = (function () {
     "use strict";
 
@@ -282,7 +282,10 @@ var UIListController = (function () {
 
         addTaskToList : function (taskList, id, name, project, contexts, dueDate) {
             var item, items = taskList.getItems();
-            item = UITaskUtil.createTaskItemElement(id, name, project, contexts, dueDate, null, false);
+            item = UITaskUtil.createTaskItemElement(
+                TaskModel.constructTaskObj(id, name, taskList, project, contexts,
+                    dueDate, null, null, false)
+            );
             if (0 === items.length) {
                 taskList.innerHTML = UIConfig.emptyString;
                 taskList.appendItem(item);

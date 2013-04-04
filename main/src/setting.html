@@ -1,0 +1,85 @@
+﻿<div data-bb-type="screen" xmlns="http://www.w3.org/1999/html" data-bb-effect='fade' style="overflow:hidden" data-bb-scroll-effect="off">
+    <div id="edit-settings-title-bar" data-bb-type="title" data-bb-caption="Settings" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
+        onbackclick="UIEditFormController.cancelSaveSetting();"
+        onactionclick="UIEditFormController.saveSetting()"></div>
+    <div data-bb-type="pill-buttons" id='edit-settings-tab'>
+        <div data-bb-type="pill-button" data-bb-selected="true" onclick="UIActionBarController.openSettingsPage()">Setting</div>
+        <div data-bb-type="pill-button" onclick="UIActionBarController.openHelpPage()">Help</div>
+    </div>
+    <div data-bb-type="round-panel" id='setting-page-login-panel'>
+        <div data-bb-type="panel-header"><div class="round-panel-title">User Information</div></div>
+        <div data-bb-type="label-control-container">
+            <img src="./resources/image/bullet_deny.png" class='close-login-signup-panel-icon' onclick='SettingUtil.closeLoginSignupForm()'>
+            <div id='login-info-panel'>
+                <div id='login-info'></div>
+                <div id='logout-link' onclick='SettingUtil.logout();UIActionBarController.openSettingsPage()'>Logout(Reminder will be disabled)</div>
+            </div>
+            <div id='logout-info-panel'>
+                <div id='login-signup-link-panel'>
+                    <div id='login-link' onclick="SettingUtil.showLoginForm()">Login</div>
+                    <div id='signup-link' onclick="SettingUtil.showSignupForm()">Sign up</div>
+                    <div style="clear:both;"></div>
+                </div>
+                <div id='login-form-panel'>
+                    <div class='panel-title'>
+                        Login to Enable Push Reminder
+                    </div>
+                    <div style="clear:both;"></div>
+                    <div id='username-label'>Username</div>
+                    <div id='username-container'>
+                        <input id='username' type="text" value="" placeholder='Email address'/>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <div id='pwd-label'>Password</div>
+                    <div id='pwd-container'>
+                        <input id='pwd' type="password" value="" placeholder='Password'/>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <div id='login-link-inner-1' onclick="SettingUtil.login()">Login</div>
+                    <div id='signup-link-inner-1' onclick="SettingUtil.showSignupForm()">Sign up</div>
+                    <div style="clear:both;"></div>
+                </div>
+                <div id='signup-form-panel'>
+                    <div class='panel-title'>
+                        Sign up to Enable Push Reminder
+                    </div>
+                    <div style="clear:both;"></div>
+                    <div id='signup-username-label'>Username</div>
+                    <div id='signup-username-container'>
+                        <input id='username-signup' type="text" value="" placeholder='Use Email as username'/>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <div id='signup-pwd-label'>Password</div>
+                    <div id='signup-pwd-container'>
+                        <input id='pwd-signup' type="password" value="" placeholder='Choose a password'/>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <div id='signup-confirm-pwd-label'>Confirm</div>
+                    <div id='signup-confirm-pwd-container'>
+                        <input id='pwd-confirm-signup' type="password" value="" placeholder='Password again'/>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <div id='login-link-inner-2' onclick="SettingUtil.showLoginForm()">Login</div>
+                    <div id='signup-link-inner-2' onclick="SettingUtil.signup()">Sign up</div>
+                    <div style="clear:both;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-bb-type="round-panel" id='setting-page-reminder-panel'>
+        <div data-bb-type="panel-header">
+            <div class="round-panel-title">
+                Reminder Setting(Login needed to enable reminder)
+            </div>
+        </div>
+        <div data-bb-type="label-control-container">
+            <div id='setting-page-enable-reminder-label'>Enable Reminder</div>
+            <div id='setting-page-reminder-switch'>
+                <div id='setting-page-reminder-toggle' data-bb-type="toggle"
+                    data-bb-on="On" data-bb-off="Off"
+                    onchange='SettingUtil.toggleReminderFeature(this);'>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
