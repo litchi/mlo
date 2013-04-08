@@ -70,9 +70,9 @@ var UtilTestCase = (function () {
             t = (('0' + now.getHours()).slice(-2)) + ':' + (('0' + now.getMinutes()).slice(-2));
         assertEquals('pretty date str for new Date()', 'Today ' + t, Util.getPrettyDateStr(myDate));
         myDate.setDate(now.getDate() - 1);
-        assertEquals('pretty date str for yesterday', 'Yesterday ' + t, Util.getPrettyDateStr(myDate));
+        assertEquals('pretty date str for yesterday', 'Yday ' + t, Util.getPrettyDateStr(myDate));
         myDate.setDate(now.getDate() + 1);
-        assertEquals('pretty date str for tomorrow', 'Tomorrow ' + t, Util.getPrettyDateStr(myDate));
+        assertEquals('pretty date str for tomorrow', 'Tmr ' + t, Util.getPrettyDateStr(myDate));
         myDate.setYear(1970);
         myDate.setDate(21);
         myDate.setMonth(2);
