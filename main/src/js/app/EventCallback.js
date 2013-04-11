@@ -107,6 +107,8 @@ var EventCallback = (function () {
             } else if (id === 'setting') {
                 actionBarId = 'setting';
                 UIActionBarController.openSettingsPage();
+            } else if (id === UIConfig.taskWithOperPagePrefix) {
+                UIInvokeTarget.pageProcesser(taskInfo);
             }
             setActionBarSelected(actionBarId);
             setDevTabVisible();
@@ -129,13 +131,13 @@ var EventCallback = (function () {
                 onscreenready: onScreenReadyCallback,
                 ondomready: onDomReadyCallback
             });
+            initAllExistingReminders();
             blackberry.event.addEventListener("invoked", EventCallback.onInvoke);
             bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {
                 'metaTypeName' : SeedData.GtdMetaTypeName,
                 'metaName'     : SeedData.BasketMetaName,
                 'actionbarId'  : UIConfig.taskByPagePrefix + "-GTD"
             });
-            initAllExistingReminders();
         },
 
         loadCallback : function () {
@@ -152,6 +154,9 @@ var EventCallback = (function () {
             log.logObjectData("Invoke Request", invokeRequest, true);
             if (invokeRequest.action === UIConfig.openTaskDetailAction) {
                 taskId = Util.b64_to_utf8(invokeRequest.data);
+                bb.pushScreen('invoke-target.html', UIConfig.taskWithOperPagePrefix, {
+                    'taskInfo' : {id: taskId}
+                })
             }
         }
 

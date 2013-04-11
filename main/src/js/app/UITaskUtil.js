@@ -273,9 +273,10 @@ var UITaskUtil = (function () {
                         }
                         if (null === taskDueDate) {
                             DataAccess.runSqlDirectly(tx,
-                                'select due_date from task where id = ?', [id],
+                               'select due_date, reminder_date from task where id = ?', [id],
                                 function (tx, result, objs) {
                                     taskDueDate = result.rows.item(0).due_date;
+                                    taskReminderDate = result.rows.item(0).reminder_date;
                                     item = UITaskUtil.createTaskItemElement(
                                         TaskModel.constructTaskObj(id, name, gtdList, project, contexts,
                                             taskDueDate, reminderMetaName, taskReminderDate,

@@ -15,6 +15,7 @@ var UIConfig = (function () {
         metaByPagePrefix            : 'meta-by',
         taskByPagePrefix            : 'task-by',
         editMetaPagePrefix          : 'edit-meta',
+        taskWithOperPagePrefix      : 'task-detail-with-oper',
         createMetaPagePrefix        : 'create-meta',
         detailListElementId         : 'detail-list',
         actionBarElementId          : 'action-bar',
