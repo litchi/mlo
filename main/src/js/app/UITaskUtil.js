@@ -366,7 +366,9 @@ var UITaskUtil = (function () {
                     gtdListDisplay = 'Someday/Maybe';
                     gtdListClass = 'task-detail-someday';
                 }
-                metaContent = metaContent + Util.getGTDListIconStr() + "<span class='" + gtdListClass + "'>" + gtdListDisplay + "</span>" + groupSep;
+                if (Util.notEmpty(gtdListDisplay)) {
+                    metaContent = metaContent + Util.getGTDListIconStr() + "<span class='" + gtdListClass + "'>" + gtdListDisplay + "</span>" + groupSep;
+                }
             }
             if (true === taskObj.displayReminderIcon) {
                 localReminderDate = new Date(taskObj.reminderDate * 1000);
