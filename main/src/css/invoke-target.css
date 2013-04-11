@@ -1,0 +1,29 @@
+#view-task-detail {
+    display:block;
+    width:100%;height:100%;
+    -webkit-border-radius:0px;
+    left:0;
+    top:0
+}
+
+#view-task-detail-title {
+    font-size: 48px;
+    line-height: 56px;
+}
+
+#view-task-detail-meta {
+    font-size: 36px;
+}
+
+.task-detail-basket, .task-detail-next-action, .task-detail-someday, 
+.task-detail-list-context-container, .task-detail-list-project, 
+.task-detail-list-due, .task-detail-list-overdue, 
+.task-detail-past-alarm, .task-detail-future-alarm {
+    max-width:600px;
+    width:600px;
+}
+
+.task-detail-list-overdue {
+    max-width:400px;
+    width:400px;
+}
