@@ -42,11 +42,11 @@ var UIActionBarController = (function () {
 
 
         openSettingsPage : function () {
-            if (SettingUtil.isLogin()){
+            if (SettingUtil.isLogin()) {
                 $('#login-info-panel').css('display', 'block');
                 $('#logout-info-panel').css('display', 'none');
                 $('#login-info').text('Login as ' + SettingUtil.getCurrentUser());
-            }   else {
+            } else {
                 $('#login-info-panel').css('display', 'none');
                 $('#logout-info-panel').css('display', 'block');
                 $('#login-signup-link-panel').css('display', 'block');

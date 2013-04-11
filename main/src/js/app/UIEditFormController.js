@@ -140,9 +140,9 @@ var UIEditFormController = (function () {
         saveSetting : function () {
             Util.showToast("Settings saved successfully");
             bb.pushScreen('task-list.html', UIConfig.taskByPagePrefix, {
-                       'metaTypeName' : SeedData.GtdMetaTypeName,
-                       'metaName'     : SeedData.BasketMetaName,
-                       'actionbarId'  : UIConfig.taskByPagePrefix + "-GTD"
+                'metaTypeName' : SeedData.GtdMetaTypeName,
+                'metaName'     : SeedData.BasketMetaName,
+                'actionbarId'  : UIConfig.taskByPagePrefix + "-GTD"
             });
         },
 
