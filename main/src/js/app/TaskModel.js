@@ -15,7 +15,7 @@ var TaskModel = (function () {
                 'dueDate'             : dueDate,
                 'reminderDate'        : reminderDate,
                 'reminderMetaName'    : reminderMetaName,
-                'displayReminderIcon' : displayReminderIcon,
+                'displayReminderIcon' : displayReminderIcon
             };
         }
     };

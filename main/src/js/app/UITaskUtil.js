@@ -3,6 +3,17 @@
 var UITaskUtil = (function () {
     "use strict";
 
+    function getGtdListTitleSpanClass(gtdList, titleSpanClass) {
+        if (SeedData.BasketMetaName === gtdList) {
+            titleSpanClass += ' title-basket';
+        } else if (SeedData.NextActionMetaName === gtdList) {
+            titleSpanClass += ' title-next-action';
+        } else if (SeedData.SomedayMetaName === gtdList) {
+            titleSpanClass += ' title-someday';
+        }
+        return titleSpanClass;
+    }
+
     function createSearchMetaElement(keyword) {
         var item = document.createElement('div');
         item.setAttribute('data-bb-type', 'item');
@@ -183,13 +194,7 @@ var UITaskUtil = (function () {
                 item.setAttribute('id', 'task-' + id);
                 if (Util.notEmpty(name)) {
                     if (Util.notEmpty(gtdList)) {
-                        if (SeedData.BasketMetaName === gtdList) {
-                            titleSpanClass += ' title-basket';
-                        } else if (SeedData.NextActionMetaName === gtdList) {
-                            titleSpanClass += ' title-next-action';
-                        } else if (SeedData.SomedayMetaName === gtdList) {
-                            titleSpanClass += ' title-someday';
-                        }
+                        titleSpanClass = getGtdListTitleSpanClass(gtdList, titleSpanClass);
                     }
                     item.setAttribute('title', '<span class="' + titleSpanClass + '">' + name + '</span>');
                     item.setAttribute('data-bb-title', '<span class="' + titleSpanClass + '">' + name + '</span>');
@@ -433,7 +438,6 @@ var UITaskUtil = (function () {
                         log.logObjectData('search result', objs, DataAccess.logDebug);
                         //Switch the highlight of the action bar to GTD List
                         //Add a list to the meta list(below GTD lists), with name set as the keyword typed in the search input box.
-                        //metaList.appendItem(createSearchMetaElement(keyword));
                         //Display the search result(task list) in the detail task list panel.
                         UITaskUtil.tasksFromDbToUI(objs, taskList, keyword);
                         //Display the search condition as the title of the list.
@@ -453,8 +457,8 @@ var UITaskUtil = (function () {
                 elem.innerHTML = taskName;
                 Util.resizeTextarea(elem, 27);
                 //This behaivor is very annoying so comment out at this moment.
-                //elem.focus();
-                //Util.moveCaretToEnd(elem);
+                //Set focus of the textarea(the keyboard will pop us, annoying) elem.focus();
+                //(Move the caret to the end of the text box) Util.moveCaretToEnd(elem);
             } else {
                 console.warn('Task Name for [%s] is [%s](empty ?)', id, taskName);
             }

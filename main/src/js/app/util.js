@@ -26,12 +26,10 @@ var Util = (function () {
             format = format.replace(RegExp.$1, (this.getFullYear() + UIConfig.emptyString).substr(4 - RegExp.$1.length));
         }
         for (k in o) {
-            if (o.hasOwnProperty(k)) {
-                if (new RegExp("(" + k + ")").test(format)) {
-                    //This part is strange, so comment out by now, part = RegExp.$1.length === 1 ? o[k] : o[k];
-                    part = o[k] + UIConfig.emptyString;
-                    format = format.replace(RegExp.$1, part.substr((o[k].valueOf()).length));
-                }
+            if (o.hasOwnProperty(k) && (new RegExp("(" + k + ")").test(format))) {
+                //This part is strange, so comment out by now, part = RegExp.$1.length === 1 ? o[k] : o[k];
+                part = o[k] + UIConfig.emptyString;
+                format = format.replace(RegExp.$1, part.substr((o[k].valueOf()).length));
             }
         }
         return format;
