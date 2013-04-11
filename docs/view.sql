@@ -10,7 +10,7 @@ CREATE TABLE task_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, task_id int, meta_
 
 CREATE TABLE task_note (id integer primary key autoincrement, task_id int, content text, create_date integer);
 
-create TABLE setting(id integer primary key autoincrement, key text not null, value text not null, unique(key))'
+create TABLE setting(id integer primary key autoincrement, key text not null, value text not null, unique(key))
 
 CREATE VIEW meta_view AS select meta.id as meta_id, meta.name as meta_name, meta.description as meta_description, meta.ui_rank as meta_ui_rank, meta_type.id as meta_type_id, meta_type.name as meta_type_name, meta_type.description as meta_type_description, meta_type.internal as meta_type_internal from meta join meta_type on meta_type.id = meta.meta_type_id;
 
