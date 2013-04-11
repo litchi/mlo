@@ -91,7 +91,7 @@ var UIMetaUtil = (function () {
             var span, selected, icon;
             span = document.createElement('span');
             span.setAttribute('id', metaId);
-            selected = (selectedMetaNames.indexOf(metaName) !== -1);
+            selected = Util.notEmpty(selectedMetaNames) && (selectedMetaNames.indexOf(metaName) !== -1);
             if (selected) {
                 //FIXME The meta type name should also be set as class to enable custom UI for differnt meta type. 
                 span.setAttribute('class', 'selectedMeta');

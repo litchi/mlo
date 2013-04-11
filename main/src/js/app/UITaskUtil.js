@@ -44,7 +44,7 @@ var UITaskUtil = (function () {
                                 }
                             }
                             if ((metaTypeName === SeedData.GtdMetaTypeName || metaName !== SeedData.BasketMetaName) && (metaTypeName !== SeedData.DueMetaTypeName)) {
-                                UIListController.addTaskToList(taskList, taskId, name, project, context, null);
+                                UIListController.addTaskToList(taskList, taskId, name, metaName, project, context, null);
                                 metaNameActual = metaName;
                             } else {
                                 metaNameActual = SeedData.BasketMetaName;

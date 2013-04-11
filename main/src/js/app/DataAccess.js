@@ -1,4 +1,4 @@
-﻿/*jslint browser: true*/
+/*jslint browser: true*/
 /*global Util, DataAccess, Sql, SeedData, bb, log, console, uiConfig, openDatabase, AppSql, SeedSampleDataProvider, Migrator*/
 var DataAccess = (function () {
     "use strict";
@@ -37,7 +37,9 @@ var DataAccess = (function () {
                         DataAccess.runSqlDirectly(tx, sql, data, successCallback, failureCallback);
                     });
                 } else {
-                    window.setTimeout(runSQL, dbOpenCheckInterval);
+                    window.setTimeout(function () {
+                        runSQL(sql, data, successCallback, failureCallback);
+                    }, dbOpenCheckInterval);
                     dbOpenCheckCount += 1;
                     console.info("Checked [%d]times, [%d] ms for app db open, still not ready", dbOpenCheckCount, dbOpenCheckCount * dbOpenCheckInterval);
                 }
@@ -289,6 +291,10 @@ var DataAccess = (function () {
             getByDueMeta : function (dueMeta, successCallback, failureCallback) {
                 var sql = Util.applySqlFilter(Sql.Task.DueFilterBaseSql, Sql.Task.DueFilterKey, Sql.Task.DueFilter[dueMeta]);
                 runSQL(sql, [], successCallback, failureCallback);
+            },
+            getAllWithReminder : function (successCallback, failureCallback) {
+                runSQL('select distinct task_id, task_name, task_reminder_date, task_due_date from task_view where task_status = ?',
+                    [SeedData.TaskNewStatus], successCallback, failureCallback);
             }
         },
 
@@ -330,7 +336,7 @@ var DataAccess = (function () {
                     runSQL(Sql.Meta.UpdateById, [name, description, id], successCallback, failureCallback);
                 }
             },
-            getById : function (id, successCallback, failureCallback) {
+            getById : function runSQ(id, successCallback, failureCallback) {
                 runSQL(Sql.Meta.SelectById, [id], successCallback, failureCallback);
             },
             getByName : function (name, successCallback, failureCallback) {

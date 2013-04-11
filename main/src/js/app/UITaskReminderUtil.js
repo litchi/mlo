@@ -1,32 +1,8 @@
 /*jslint browser: true */
-/*global Notification, UIConfig, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController, UIActionBarController, UIMetaUtil*/
+/*global gReminders, Notification, UIConfig, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIEditFormController, UIActionBarController, UIMetaUtil*/
 var UITaskReminderUtil = (function () {
     "use strict";
     var selectedReminderIds = {};
-
-    function createUIBNotification(taskId, taskName, dueDate, reminderDate, projectName) {
-        // Add a notification to the BlackBerry Hub for this push
-        var title = UIConfig.notificationTitle,
-            options = {
-                body         : Util.getNotificationBody(taskId, taskName, dueDate, projectName),
-                tag          : UIConfig.notificationPrefix + 'task.' + taskId,
-                //target       : UIConfig.openTaskDetailTarget,
-                targetAction : UIConfig.openTaskDetailAction,
-                payload      : Util.utf8_to_b64(taskId),
-                onshow       : function () {
-                    console.log("The notification was created successfully!");
-                },
-                onerror     : function () {
-                    console.log("The notification could not be created!");
-                }
-            },
-            offset = reminderDate.getTime() - new Date().getTime();
-        if (offset > 0) {
-            setTimeout(function () {
-                return new Notification(title, options);
-            }, offset);
-        }
-    }
 
     //TODO change to a mapping table implementation to reduce code size
     //like this: offset[SeedData.OneMinMetaName] = 60000
@@ -82,7 +58,50 @@ var UITaskReminderUtil = (function () {
         }
     }
 
+    function getReminderCodeId(taskId) {
+        return 'reminder_' + taskId;
+    }
+
+    function clearExistingReminder(taskId) {
+        var reminderCodeId = getReminderCodeId(taskId),
+            existingReminder = gReminders[reminderCodeId];
+        if (Util.notEmpty(existingReminder)) {
+            clearTimeout(existingReminder);
+            delete gReminders[reminderCodeId];
+        }
+    }
+
     return {
+
+        removeUIBNotification : function (taskId) {
+            clearExistingReminder(taskId);
+        },
+
+        createUIBNotification : function (taskId, taskName, dueDate, reminderDate) {
+            var reminderCodeId = getReminderCodeId(taskId),
+                existingReminder = gReminders[reminderCodeId],
+                title = UIConfig.notificationTitle,
+                options = {
+                    body         : Util.getNotificationBody(taskId, taskName, dueDate),
+                    tag          : UIConfig.notificationPrefix + 'task.' + taskId,
+                  //target       : UIConfig.openTaskDetailTarget,
+                    targetAction : UIConfig.openTaskDetailAction,
+                    payload      : Util.utf8_to_b64(taskId),
+                    onshow       : function () {
+                        console.log("The notification was created successfully!");
+                    },
+                    onerror     : function () {
+                        console.log("The notification could not be created!");
+                    }
+                },
+                offset = reminderDate.getTime() - new Date().getTime();
+            if (offset > 0) {
+                clearExistingReminder(taskId);
+                gReminders[reminderCodeId] = setTimeout(function () {
+                    return new Notification(title, options);
+                }, offset);
+            }
+        },
 
         unSelectClickCallback : function (metaId, metaName) {
             return 'UITaskReminderUtil.unSelectReminder("' + metaId + '", "' + metaName + '")';
@@ -160,7 +179,7 @@ var UITaskReminderUtil = (function () {
             }
         },
 
-        saveReminderInfo : function (tx, taskId, taskName, dueDate, projectName) {
+        saveReminderInfo : function (tx, taskId, taskName, dueDate) {
             var metaName, reminderDate,
                 metaId = getCurrentReminderMetaId(),
                 myDate = Util.timeToDateWithZone(new Date(dueDate).getTime() / 1000);
@@ -175,7 +194,9 @@ var UITaskReminderUtil = (function () {
                 if (Util.notEmpty(reminderDate)) {
                     DataAccess.runSqlDirectly(tx, "update task set reminder_date = ? where id = ?",
                         [reminderDate.getTime() / 1000, taskId]);
-                    createUIBNotification(taskId, taskName, myDate, reminderDate, projectName);
+                    UITaskReminderUtil.createUIBNotification(taskId, taskName, myDate, reminderDate);
+                } else {
+                    UITaskReminderUtil.removeUIBNotification(taskId);
                 }
             } else {
                 DataAccess.runSqlDirectly(tx, "update task set reminder_date = ? where id = ?", [null, taskId]);

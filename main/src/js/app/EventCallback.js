@@ -1,8 +1,28 @@
 /*jslint browser: true */
-/*global blackberry, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, $, JQuery*/
-var webworksreadyFired = false;
+/*global blackberry, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, UITaskReminderUtil, $, JQuery*/
+var gWebworksreadyFired = false, gReminders = {};
 var EventCallback = (function () {
     "use strict";
+
+    function initAllExistingReminders() {
+        var reminderTime;
+        DataAccess.task.getAllWithReminder(function (tx, result, resultObj) {
+            var taskId, taskName, reminderDate, dueDate;
+            if (null !== resultObj) {
+                Object.keys(resultObj).forEach(function (key) {
+                    taskId = resultObj[key].task_id;
+                    taskName = resultObj[key].task_name;
+                    reminderDate = resultObj[key].task_reminder_date;
+                    dueDate = resultObj[key].task_due_date;
+                    UITaskReminderUtil.createUIBNotification(taskId, taskName, new Date(dueDate * 1000), new Date(reminderDate * 1000));
+                });
+            } else {
+                console.warn("There's no task with reminder date exists");
+            }
+        }, function (tx, error) {
+            log.logSqlError("Error to get all tasks with reminder", error);
+        });
+    }
 
     function setActionBarSelected(actionBarId) {
         var actionBarDiv = document.getElementById(UIConfig.actionBarElementId),
@@ -11,7 +31,7 @@ var EventCallback = (function () {
             if (actionBarId === UIConfig.screenIdField) {
                 actionBarDiv.setSelectedTab(actionBarItem);
             } else {
-                if(Util.notEmpty(document.getElementById(actionBarItem))){
+                if (Util.notEmpty(document.getElementById(actionBarItem))) {
                     actionBarDiv.setSelectedTab(actionBarItem, false);
                 }
             }
@@ -97,10 +117,10 @@ var EventCallback = (function () {
     return {
         webworksReadyCallback : function (e) {
             //Init on bbUI should before any other code loads.  
-            if (webworksreadyFired) {
+            if (gWebworksreadyFired) {
                 return;
             }
-            webworksreadyFired = true;
+            gWebworksreadyFired = true;
             bb.init({
                 actionBarDark: true,
                 controlsDark: false,
@@ -115,6 +135,7 @@ var EventCallback = (function () {
                 'metaName'     : SeedData.BasketMetaName,
                 'actionbarId'  : UIConfig.taskByPagePrefix + "-GTD"
             });
+            initAllExistingReminders();
         },
 
         loadCallback : function () {

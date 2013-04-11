@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, UIActionBarController, $, jQuery, UITaskUtil*/
+/*global unescape, escape, blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, UIActionBarController, $, jQuery, UITaskUtil*/
 var Util = (function () {
     "use strict";
 
@@ -324,7 +324,7 @@ var Util = (function () {
         moveCaretToEnd : function (el) {
             if (typeof el.selectionStart === "number") {
                 el.selectionStart = el.selectionEnd = el.value.length;
-            } else if (typeof el.createTextRange !== "undefined") {
+            } else if (Util.notEmpty(el.createTextRange)) {
                 el.focus();
                 var range = el.createTextRange();
                 range.collapse(false);
@@ -478,11 +478,10 @@ var Util = (function () {
             return img;
         },
 
-        getNotificationBody : function (taskId, taskName, dueDate, projectName) {
+        getNotificationBody : function (taskId, taskName, dueDate) {
             var result = UIConfig.emptyString;
             result += taskName + "\n\n";
             result += 'Due on: ' + dueDate.format('MM/dd/yyyy hh:mm') + "\n\n";
-            result += 'Project: ' + projectName;
             return result;
         }
     };

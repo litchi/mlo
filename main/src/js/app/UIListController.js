@@ -280,10 +280,13 @@ var UIListController = (function () {
             });
         },
 
-        addTaskToList : function (taskList, id, name, project, contexts, dueDate) {
-            var item, items = taskList.getItems();
+        addTaskToList : function (taskList, id, name, gtdListName, project, contexts, dueDate) {
+            var item, items = taskList.getItems(), actualGtdListName = Util.emptyString;
+            if (SeedData.BasketMetaName === gtdListName || SeedData.SomedayMetaName === gtdListName || SeedData.NextActionMetaName) {
+                actualGtdListName = gtdListName;
+            }
             item = UITaskUtil.createTaskItemElement(
-                TaskModel.constructTaskObj(id, name, taskList, project, contexts,
+                TaskModel.constructTaskObj(id, name, actualGtdListName, project, contexts,
                     dueDate, null, null, false)
             );
             if (0 === items.length) {
