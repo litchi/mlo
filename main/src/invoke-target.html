@@ -1,7 +1,38 @@
-<div data-bb-type="screen" xmlns="http://www.w3.org/1999/html" data-bb-effect='fade' style="overflow:hidden" data-bb-scroll-effect="off"> 
+<div data-bb-type="screen" xmlns="http://www.w3.org/1999/html" data-bb-effect='fade' style="overflow:hidden" data-bb-scroll-effect="off">
     <link rel="stylesheet" type="text/css" href="css/invoke-target.css"></link>
-   <div id='view-task-detail' onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
+    <input type="hidden" name="task-id" id='task-id' value="" />
+    <div id='view-task-detail'>
         <div id="view-task-detail-title" class="view-task-detail-sub-field"></div>
         <div id="view-task-detail-meta" class="view-task-detail-sub-field"></div>
+        <div id="task-operation-list">
+            <div id='finish' onclick="UIInvokeTarget.markTaskAsDone($('#task-id').val())">
+                <span id='finish-icon'><img src='resources/image/check_mark.png'></span>
+                <span id='finish-label'>Finish</span>
+            </div>
+            <div id='postpone' onclick='UIInvokeTarget.showPostponeList()'>
+                <span id='postpone-icon'><img src='resources/image/right_arrow.png'></span>
+                <span id='postpone-label'>Later</span>
+            </div>
+            <div id='delete' onclick="UIInvokeTarget.moveTaskToTrash($('#task-id').val())">
+                <span id='delete-icon'><img src='resources/image/close.png'></span>
+                <span id='delete-label'>Delete</span>
+            </div>
+        </div>
+        <div style='clear:both;height:8px'>&nbsp;</div>
+        <div id="task-postpone-list">
+            <div id='tenminutes'>
+                10 Minutes
+            </div>
+            <div id='onehour'>                         
+                One Hour
+            </div>
+            <div id='tomorow'>
+                Tomorow       
+            </div>
+            <div id='custom'>
+                Custom
+            </div>
+        </div>
+        <div style='clear:both;height:8px'>&nbsp;</div>
     </div>
 </div>

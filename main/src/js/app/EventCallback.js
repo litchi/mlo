@@ -1,5 +1,5 @@
 /*jslint browser: true */
-/*global blackberry, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, UITaskReminderUtil, $, JQuery*/
+/*global UIInvokeTarget, blackberry, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, UITaskReminderUtil, $, JQuery*/
 var gWebworksreadyFired = false, gReminders = {};
 var EventCallback = (function () {
     "use strict";
@@ -39,9 +39,13 @@ var EventCallback = (function () {
     }
 
     function setDevTabVisible() {
-        var devTab = document.getElementById('development');
+        var devTab = document.getElementById('development'),
+            invokeSampleTab = document.getElementById('invoke-sample');
         if (!AppConfig.debugMode && Util.notEmpty(devTab)) {
             devTab.style.display = 'none';
+        }
+        if (!AppConfig.debugMode && Util.notEmpty(invokeSampleTab)) {
+            invokeSampleTab.style.display = 'none';
         }
     }
 

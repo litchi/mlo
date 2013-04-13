@@ -1,10 +1,23 @@
 /*jslint browser: true */
+/*jshint unused: false */
 /*global UITaskUtil, TaskModel, blackberry, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, UITaskReminderUtil, $, JQuery*/
 var UIInvokeTarget = (function () {
     "use strict";
 
     function adjustContainerDisplay(container) {
         container.removeAttribute('onclick');
+        $("#task-operation-list").css('display', 'block');
+    }
+
+    function revertTaskStatusToNew(taskId) {
+        UITaskUtil.updateTaskStatus(taskId, SeedData.TaskNewStatus,
+            function (taskId) {
+                Util.showToast(UIConfig.msgForTaskStatusRestore + SeedData.TaskNewStatus,
+                    UIConfig.emptyString,
+                    function () {
+                        bb.popScreen();
+                    }, UIConfig.nothing);
+            });
     }
 
     return {
@@ -26,16 +39,16 @@ var UIInvokeTarget = (function () {
                                 contexts.push(obj.meta_name);
                             } else if (SeedData.ProjectMetaTypeName === metaTypeName) {
                                 project = obj.meta_name;
-                            } else if (SeedData.ReminderMetaTypeName === metaTypeName
-                                        && Util.notEmpty(obj.task_due_date)
-                                        && Util.notEmpty(obj.task_reminder_date)
-                                        && obj.meta_name !== SeedData.OffMetaName) {
+                            } else if (SeedData.ReminderMetaTypeName === metaTypeName &&
+                                Util.notEmpty(obj.task_due_date) &&
+                                Util.notEmpty(obj.task_reminder_date) &&
+                                obj.meta_name !== SeedData.OffMetaName) {
                                 displayReminderIcon = true;
                                 reminderMetaName = obj.meta_name;
                             } else if ((Util.isEmpty(gtdList)) && SeedData.GtdMetaTypeName === metaTypeName) {
                                 gtdList = obj.meta_name;
                             }
-                            //Only get once task due date since it's the same for all the result set 
+                            //Only get once task due date since it's the same for all the result set
                             if (Util.isEmpty(taskDueDate)) {
                                 taskDueDate = obj.task_due_date;
                             }
@@ -57,16 +70,48 @@ var UIInvokeTarget = (function () {
                                         displayReminderIcon);
                                     UITaskUtil.createTaskDetailView(container, taskObj);
                                     adjustContainerDisplay(container);
+                                    $('#task-id').val(taskId);
                                 });
                         } else {
                             taskObj = TaskModel.constructTaskObj(taskId, taskName, gtdList, project, contexts,
-                                taskDueDate, reminderMetaName, taskReminderDate,
-                                displayReminderIcon);
+                                                                 taskDueDate, reminderMetaName, taskReminderDate,
+                                                                 displayReminderIcon);
                             UITaskUtil.createTaskDetailView(container, taskObj);
                             adjustContainerDisplay(container);
+                            $('#task-id').val(taskId);
                         }
                     });
             });
+        },
+
+        showPostponeList : function () {
+            $("#task-postpone-list").css('display', 'block');
+            $("#task-operation-list").css('display', 'none');
+        },
+
+        markTaskAsDone : function (taskId) {
+            UITaskUtil.markTaskAsDone(taskId, function (taskId) {
+                Util.showToast(UIConfig.msgForTaskStatusUpdatePref + SeedData.TaskDoneStatus,
+                    UIConfig.msgUndo,
+                    function () {
+                        bb.popScreen();
+                    }, function () {
+                        revertTaskStatusToNew(taskId);
+                    });
+            });
+        },
+
+        moveTaskToTrash : function (taskId) {
+            UITaskUtil.moveTaskToTrash(taskId, function (taskId) {
+                Util.showToast(UIConfig.msgForTaskMoveToTrash, UIConfig.msgUndo,
+                    function () {
+                        bb.popScreen();
+                    },
+                    function () {
+                        revertTaskStatusToNew(taskId);
+                    });
+            });
         }
+
     };
 }());

@@ -273,7 +273,7 @@ var UITaskUtil = (function () {
                         }
                         if (null === taskDueDate) {
                             DataAccess.runSqlDirectly(tx,
-                               'select due_date, reminder_date from task where id = ?', [id],
+                                'select due_date, reminder_date from task where id = ?', [id],
                                 function (tx, result, objs) {
                                     taskDueDate = result.rows.item(0).due_date;
                                     taskReminderDate = result.rows.item(0).reminder_date;
@@ -470,7 +470,27 @@ var UITaskUtil = (function () {
         clearDueDateField : function () {
             $('#due-date').val(UIConfig.emptyString);
             UITaskReminderUtil.switchReminderPanelDisplay(UIConfig.emptyString);
+        },
+
+        updateTaskStatus : function (taskId, statusKey, successCallback) {
+            DataAccess.task.updateStatus(taskId, statusKey,
+                function (tx, result, rows) {
+                    if (Util.isFunction(successCallback)) {
+                        successCallback(taskId);
+                    }
+                }, function (tx, error) {
+                    log.logSqlError("Failed to update status to [" + statusKey + "] for task[" + taskId + "]", error);
+                });
+        },
+
+        moveTaskToTrash : function (taskId, successCallback) {
+            UITaskUtil.updateTaskStatus(taskId, SeedData.TaskDeletedStatus, successCallback);
+        },
+
+        markTaskAsDone : function (taskId, successCallback) {
+            UITaskUtil.updateTaskStatus(taskId, SeedData.TaskDoneStatus, successCallback);
         }
+
     };
 
 }());

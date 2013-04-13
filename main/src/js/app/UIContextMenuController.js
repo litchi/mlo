@@ -1,4 +1,5 @@
 /*jslint browser: true */
+/*jshint unused:false */
 /*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, UITaskUtil, UIMetaUtil*/
 
 var UIContextMenuController = (function () {
@@ -79,19 +80,11 @@ var UIContextMenuController = (function () {
         if (selectedItem) {
             selectedId = selectedItem.selected.id;
             if (selectedId !== null) {
-                DataAccess.task.updateStatus(selectedId, statusKey,
-                    function (tx, result, rows) {
-                        if (Util.isFunction(successCallback)) {
-                            successCallback(selectedId);
-                        }
-                    }, function (tx, error) {
-                        log.logSqlError("Failed to update status to [" + statusKey + "] for task[" + selectedId + "]", error);
-                    });
+                UITaskUtil.updateTaskStatus(selectedId, statusKey, successCallback);
             }
         }
     }
 
-    //Fixme Actually it's not move but copy, need to fix this.
     function moveTaskToGtdList(metaName) {
         var selectedItem, selectedId,
             context = document.getElementById('task-operation-context-menu');
@@ -123,26 +116,15 @@ var UIContextMenuController = (function () {
             if (selectedItem) {
                 selectedId = selectedItem.selected.id;
                 if (selectedId !== null) {
-                    DataAccess.task.updateStatus(selectedId, SeedData.TaskDeletedStatus,
-                        function (tx, result, rows) {
-                            UIListController.removeTaskFromList(selectedId);
+                    UITaskUtil.moveTaskToTrash(selectedId, SeedData.TaskDeletedStatus,
+                        function (taskId) {
+                            UIListController.removeTaskFromList(taskId);
                             Util.showToast(UIConfig.msgForTaskMoveToTrash, UIConfig.msgUndo, UIConfig.nothing,
                                 function () {
                                 });
-                        }, function (tx, error) {
-                            log.logSqlError("Failed to delete task[" + selectedId + "]", error);
                         });
                 }
             }
-        },
-
-        deleteTaskById : function (id) {
-            DataAccess.task.updateStatus(id, SeedData.TaskDeletedStatus,
-                function (tx, result, rows) {
-                    bb.popScreen();
-                }, function (tx, error) {
-                    log.logSqlError("Failed to delete task[" + id + "]", error);
-                });
         },
 
         editTask : function () {
