@@ -1,0 +1,9 @@
+OUTPUT_DIR="../../target/qa/JsTestDriver/report/xml"
+export OUTPUT_DIR
+
+BROWSER="open"
+export BROWSER
+
+java -jar JsTestDriver.jar --raiseOnFailure true --runnerMode DEBUG --port 4224 --config jsTestDriver.conf --browser %BROWSER% --tests all --testOutput %OUTPUT_DIR%
+
+echo "Done."
