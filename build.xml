@@ -213,9 +213,9 @@
         <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.sh.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.sh" verbose="true"/>
         <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"   tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf" verbose="true"/>
         <antcall target='qa.test.internal.report'>
-            <param name='executable'   value='cmd'/>
-            <param name='osfamily'     value='windows'/>
-            <param name='test.runner'  value="/c ${tools.ci.JsTestDriver.executable}"/>
+            <param name='executable'   value='/bin/bash'/>
+            <param name='osfamily'     value='unix'/>
+            <param name='test.runner'  value="${tools.dev.JsTestDriver.executable}"/>
         </antcall>
     </target>
 
