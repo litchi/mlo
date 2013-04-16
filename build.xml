@@ -32,7 +32,7 @@
     <property name = "env.webworks.installation.dir"  location = "/Users/larry/bin/WebWorks_SDK"/>
     <property name = "env.ripple.remote.user"         value    = "xqliu"/>
     <property name = "env.ripple.remote.password"     value    = "password"/>
-    <property name = "env.ripple.remote.ip"           value    = "172.16.177.141"/>
+    <property name = "env.ripple.remote.ip"           value    = "172.16.177.139"/>
     <property name = "env.ripple.remote.folder"       value    = "/www/gtd"/>
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.138"/>
     <property name = "env.bb10.device.ip"             value    = "192.168.11.6"/>
@@ -49,7 +49,7 @@
 
     <property name = "tools.JsTestDriver.installation"     location = "${build.tools}/JsTestDriver"/>
     <property name = "tools.dev.JsTestDriver.executable"   location = "${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
-    <property name = "tools.ci.JsTestDriver.executable"    location = "${tools.JsTestDriver.installation}/runJsTestDriver.bat"/>
+    <property name = "tools.ci.JsTestDriver.executable"    location = "${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
 
     <!--jgenhtml is used to generate local unit test code coverage report-->
     <!--For Bamboo in the CI server, Sonar is used-->
@@ -104,7 +104,13 @@
         <mkdir dir = "${qa.coverage.target.report.html}"/>
     </target>
 
-    <target name="pre.process.copy" depends="init">
+    <target name="file-checks">
+        <available file = "${build.src}/elements/actionbar.html"         property = "actionbar.file.found"/>
+        <available file = "${build.src}/elements/task-context-menu.html" property = "contextmenu.file.found"/>
+        <available file = "${build.src}/elements/meta-fields.html"       property = "meta-fields.file.found"/>
+    </target>
+
+    <target name="pre.process.copy" depends="init, file-checks">
         <loadfile property="actionbar.content" srcFile="${build.src}/elements/actionbar.html"/>
         <loadfile property="task.context.menu.content" srcFile="${build.src}/elements/task-context-menu.html"/>
         <loadfile property="meta.fields" srcFile="${build.src}/elements/meta-fields.html"/>
@@ -204,7 +210,7 @@
     </target>
 
     <target name="qa.test.report.ci" depends="qa.init, pre.process.copy">
-        <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.bat.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.bat" verbose="true"/>
+        <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.sh.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.sh" verbose="true"/>
         <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"   tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf" verbose="true"/>
         <antcall target='qa.test.internal.report'>
             <param name='executable'   value='cmd'/>
