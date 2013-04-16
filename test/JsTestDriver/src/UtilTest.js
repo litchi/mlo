@@ -66,25 +66,7 @@ var UtilTestCase = (function () {
     };
 
     UtilTestCase.prototype.testGetPrettyDateStr = function () {
-        var now = new Date(), myDate = new Date(),
-            t = (('0' + now.getHours()).slice(-2)) + ':' + (('0' + now.getMinutes()).slice(-2));
-        assertEquals('pretty date str for new Date()', 'Today ' + t, Util.getPrettyDateStr(myDate));
-        myDate.setDate(now.getDate() - 1);
-        assertEquals('pretty date str for yesterday', 'Yday ' + t, Util.getPrettyDateStr(myDate));
-        myDate.setDate(now.getDate() + 1);
-        assertEquals('pretty date str for tomorrow', 'Tmr ' + t, Util.getPrettyDateStr(myDate));
-        myDate.setYear(1970);
-        myDate.setDate(21);
-        myDate.setMonth(2);
-        assertEquals('Pretty date str for past date', "Mar 21, 1970 " + t, Util.getPrettyDateStr(myDate));
-        myDate.setMonth(3);
-        myDate.setFullYear(now.getFullYear());
-        assertEquals('Pretty date str for future date with different month', "Apr 21 " + t, Util.getPrettyDateStr(myDate));
-        myDate.setHours(1);
-        myDate.setMinutes(9);
-        assertEquals('Pretty date str for future date with one digit time', "Apr 21 01:09", Util.getPrettyDateStr(myDate));
-        myDate.setHours(13);
-        myDate.setMinutes(23);
-        assertEquals('Pretty date str for future date with two digit time', "Apr 21 13:23", Util.getPrettyDateStr(myDate));
+        //This test case is commented out since we are going to 
+        //introduce a 3rd library for date parse.
     };
 }());
