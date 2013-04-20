@@ -1,14 +1,10 @@
 /*jslint browser: true*/
-/*global unescape, escape, blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, UIActionBarController, $, jQuery, UITaskUtil*/
+/*global moment, unescape, escape, blackberry, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, UIActionBarController, $, jQuery, UITaskUtil*/
 var Util = (function () {
     "use strict";
 
     function getDetailPageIcon(iconResource) {
         return '<img src="./resources/image/' + iconResource + '" style="width:32px;height:32px;margin-top:13px;margin-right:5px;padding-left:4px;display:inline-block;float:left"/>';
-    }
-
-    function thirtyOneDayMonth(myDate) {
-        return myDate.getMonth % 2 === 0;
     }
 
     Date.prototype.format = function (format) {
@@ -52,8 +48,8 @@ var Util = (function () {
             var result;
             if ((str === null && prefix === null) || (str === '' && prefix === '')) {
                 result = true;
-            } else if (((str === null && prefix !== null) || (str === '' && prefix !== ''))
-                        || ((str !== null && prefix === null) || (str !== '' && prefix === ''))) {
+            } else if (((str === null && prefix !== null) || (str === '' && prefix !== '')) ||
+                    ((str !== null && prefix === null) || (str !== '' && prefix === ''))) {
                 result = false;
             } else {
                 result = str.slice(0, prefix.length) === prefix;
@@ -102,11 +98,11 @@ var Util = (function () {
         },
 
         getFullDateTimeStr : function (myDate) {
-            var resultStr = myDate.getFullYear() + '-'
-                    + ('0' + (myDate.getMonth() + 1)).slice(-2) + '-'
-                    + ('0' + myDate.getDate()).slice(-2) + 'T'
-                    + ('0' + myDate.getHours()).slice(-2) + ':'
-                    + ('0' + myDate.getMinutes()).slice(-2);
+            var resultStr = myDate.getFullYear() + '-' +
+                    ('0' + (myDate.getMonth() + 1)).slice(-2) + '-' +
+                    ('0' + myDate.getDate()).slice(-2) + 'T' +
+                    ('0' + myDate.getHours()).slice(-2) + ':' +
+                    ('0' + myDate.getMinutes()).slice(-2);
             return resultStr;
         },
 
@@ -156,44 +152,8 @@ var Util = (function () {
         },
 
         getPrettyDateStr : function (myDate) {
-            var d, t, now = new Date(), resultStr, weekPrefix, sep = ' ',
-                dayDiff = myDate.getDate() - now.getDate(),
-                monthDiff = myDate.getMonth() - now.getMonth();
-            if (now.getFullYear() === myDate.getFullYear()) {
-                if (monthDiff === 0) {
-                    if (now.getDate() === myDate.getDate()) {
-                        d = 'Today';
-                    } else if (1 === dayDiff) {
-                        d = 'Tmr';
-                    } else if (-1 === dayDiff) {
-                        d = 'Yday';
-                    } else if ((0 === monthDiff && dayDiff <= 7 && dayDiff >= -7)) {
-                        weekPrefix = (dayDiff < 0) ? 'Last' : 'Next';
-                        d = myDate.getDate() + '/' + (myDate.getMonth() + 1) + ' (' + weekPrefix + sep + Util.getNameOfWeekday(myDate) + ')';
-                    } else {
-                        d = Util.getNameOfMonth(myDate) + sep + (myDate.getDate());
-                    }
-                } else {
-                    if ((myDate.getMonth === 2 && monthDiff === -1 && dayDiff < 21 && dayDiff > 15) &&
-                            (thirtyOneDayMonth(myDate) &&  monthDiff === -1 && dayDiff <= 24 && dayDiff >= 18) &&
-                            (!thirtyOneDayMonth(myDate) && monthDiff === -1 && dayDiff <= 23 && dayDiff >= 17)) {
-                        weekPrefix = 'Last';
-                        d = weekPrefix + sep + Util.getNameOfWeekday(myDate);
-                    } else if ((myDate.getMonth === 2 && monthDiff === 1 && dayDiff > -21 && dayDiff < -15) &&
-                            (thirtyOneDayMonth(myDate) &&  monthDiff === 1 && dayDiff >= -24 && dayDiff <= -18) &&
-                            (!thirtyOneDayMonth(myDate) && monthDiff === 1 && dayDiff >= -23 && dayDiff <= -17)) {
-                        weekPrefix = 'Next';
-                        d = weekPrefix + sep + Util.getNameOfWeekday(myDate);
-                    } else {
-                        d = Util.getNameOfMonth(myDate) + sep + (myDate.getDate());
-                    }
-                }
-            } else {
-                d = Util.getNameOfMonth(myDate) + sep + (myDate.getDate()) + ',' + sep + myDate.getFullYear();
-            }
-            t = (('0' + myDate.getHours()).slice(-2)) + ':' + (('0' + myDate.getMinutes()).slice(-2));
-            resultStr =  d + sep + t;
-            return resultStr;
+            var m = moment(myDate);
+            return m.calendar() + "(" + m.fromNow()  + ")";
         },
 
         showToast : function (message, buttonText, onToastDismissed, onButtonSelected) {
@@ -291,11 +251,11 @@ var Util = (function () {
         resizeTextarea : function (elem, charNumberOneLine) {
             var contents = elem.value.split('\n'), newRows = 0, currentLine,
                 currentRows = elem.rows, longLines = 0;
-            if (Util.notEmpty(event)
-                    && Util.notEmpty(event.keyCode)
-                    && Util.notEmpty($('#ctf'))
-                    && Util.notEmpty($('#ctsi'))
-                    && event.keyCode === 13) {
+            if (Util.notEmpty(event) &&
+                    Util.notEmpty(event.keyCode) &&
+                    Util.notEmpty($('#ctf')) &&
+                    Util.notEmpty($('#ctsi')) &&
+                    event.keyCode === 13) {
                 Util.toggleCreateTaskShortcutDisplay();
                 $('#ctsi').val($('#ctsi').val().trim());
                 $('#ctf').submit();
@@ -432,6 +392,10 @@ var Util = (function () {
 
         getOverdueIconStr : function (isOverdue) {
             return isOverdue ? getDetailPageIcon('overdue-alert.png') : '';
+        },
+
+        getOverdueIconStrDetailPage : function (isOverdue) {
+            return isOverdue ? '<img src="./resources/image/overdue-alert.png" style="width:32px;height:32px;margin-left: 10px;vertical-align: middle;">' : '';
         },
 
         getProjectIconStr: function () {

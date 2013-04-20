@@ -1,4 +1,5 @@
 /*jslint browser: true es5: true*/
+/*global moment */
 var UIConfig = (function () {
     "use strict";
     return {
@@ -102,3 +103,17 @@ var AppConfig = (function () {
         debugMode : true
     };
 }());
+
+moment.lang('en', {
+    calendar : {
+        lastDay : '[Yday at] LT',
+        sameDay : '[Today at] LT',
+        nextDay : '[Tmr at] LT',
+        lastWeek : '[last] dddd [at] LT',
+        nextWeek : 'dddd [at] LT',
+        sameElse : 'L'
+    },
+    weekdays : [
+        "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+    ]
+});
