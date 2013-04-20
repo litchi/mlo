@@ -65,8 +65,4 @@ var UtilTestCase = (function () {
         assertEquals('Full Date Time Str for 1900-3-10 10:10 should be 1900-3-10T10:10', '1900-03-10T10:10', Util.getFullDateTimeStr(myDate));
     };
 
-    UtilTestCase.prototype.testGetPrettyDateStr = function () {
-        //This test case is commented out since we are going to 
-        //introduce a 3rd library for date parse.
-    };
 }());
