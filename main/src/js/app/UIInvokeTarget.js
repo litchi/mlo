@@ -1,6 +1,6 @@
 /*jslint browser: true */
 /*jshint unused: false */
-/*global UITaskUtil, TaskModel, blackberry, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, UITaskReminderUtil, $, JQuery*/
+/*global moment, UITaskUtil, TaskModel, blackberry, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, UITaskReminderUtil, $, JQuery*/
 var UIInvokeTarget = (function () {
     "use strict";
 
@@ -111,6 +111,47 @@ var UIInvokeTarget = (function () {
                         revertTaskStatusToNew(taskId);
                     });
             });
+        },
+
+        postponeTask : function (taskId, type, quantity) {
+            DataAccess.appDb.transaction(function (tx) {
+                DataAccess.runSqlDirectly(tx,
+                    'select due_date, reminder_date from task where id = ?',
+                    [taskId], function (tx, result, objs) {
+                        if (Util.notEmpty(objs) && objs.length > 0) {
+                            var newDueMoment, newReminderMoment,
+                                newDueDate, newReminderDate,
+                                dueDate = objs[0].due_date,
+                                reminderDate = objs[0].reminder_date,
+                                dueMoment = moment.unix(dueDate),
+                                reminderMoment = moment.unix(reminderDate);
+                            newDueMoment = dueMoment.add(type, quantity);
+                            newReminderMoment = reminderMoment.add(type, quantity);
+                            newDueDate = newDueMoment.toDate();
+                            newReminderDate = newReminderMoment.toDate();
+                            DataAccess.runSqlDirectly(tx,
+                                'update task set reminder_date = ?, due_date = ? where id = ?',
+                                [
+                                    newReminderDate.getTime() / 1000,
+                                    newDueDate.getTime() / 1000,
+                                    taskId
+                                ],
+                                function(tx, result, objs) {
+                                    type = type.substr(0, type.length - 1) + '(s)';
+                                    Util.showToast('Task postponed by ' + quantity + ' ' + type);
+                                    UITaskReminderUtil.createUIBNotification(
+                                        taskId, $("#view-task-detail-title").text(),
+                                        newDueDate, newReminderDate);
+                                    bb.popScreen();
+                                });
+                        }
+                    });
+
+            });
+        },
+
+        closePage : function () {
+            bb.popScreen();
         }
 
     };

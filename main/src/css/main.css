@@ -44,7 +44,7 @@
 }
 
 .list-overdue, .list-due, .list-project, .list-context, .list-context-last {
-    -webkit-border-radius:10px ;
+    -webkit-border-radius:10px;
     margin: 5px;
     /** Please notice the behaivor of ripple and the actual device is not exactly the same here so we put different number here */
     padding:5px 8px 8px 8px;

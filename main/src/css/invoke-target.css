@@ -29,22 +29,25 @@
     width:400px;
 }
 #task-operation-list {
-    margin-left: 30px;
+    margin-left: 25px;
     display: none;
     position: absolute;
     bottom: 50px;
+    text-align:center;
 }
 #task-postpone-list {
-    margin-left: 30px;
     display: none;
     position: absolute;
     bottom: 50px;
+    width:100%;
+    margin:auto;
+    padding:0 25px 0 25px;
 }
 
 #finish, #postpone, #delete {
     float:left;
-    width:25%;
-    margin: 50px 20px 0 40px;
+    width:23%;
+    margin: 20px 20px 0 40px;
 }
 
 #finish-icon, #postpone-icon, #delete-icon {
@@ -55,10 +58,36 @@
 #finish-label, #postpone-label, #delete-label {
     text-align:center;
     margin:auto;
-    min-width:128px;
+    min-width:81px;
     display:inline-block;
+    color:#555;
 }
 
-#task-postpone-list {
-   display:none;
+#tenminutes, #thirtyminutes, #onehour, #twohours, 
+#afternoon, #evening, #deepnight, #nextday, #nextweek {
+    padding: 10px;
+    float:left;
+    width:25%;
+    margin:10px;
+    text-align:center;
+    font-size:30px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: -webkit-linear-gradient(top, #9E9E9E 0%, rgba(163, 163, 163, 0.5) 100%);
+    border: solid 1px #555555;    
+    color: #555;
+}
+
+#task-due-title, #postpone-title {
+    background: #999;
+    background: -webkit-linear-gradient(top, rgba(162, 162, 162, 0.5) 0%, rgba(163, 163, 163, 0.5) 100%);
+    margin-left: -25px;
+    padding: 20px;
+    margin-bottom: 40px;
+    text-align: center;
+    color: #888;
+}
+
+.invoke-target-close-icon {
+    margin: -20px 0 -20px 0;
 }

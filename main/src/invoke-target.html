@@ -5,34 +5,48 @@
         <div id="view-task-detail-title" class="view-task-detail-sub-field"></div>
         <div id="view-task-detail-meta" class="view-task-detail-sub-field"></div>
         <div id="task-operation-list">
+            <div id="task-due-title">
+                TASK REMINDER
+                <img src="resources/image/bullet_deny.png" class="invoke-target-close-icon" onclick="UIInvokeTarget.closePage()">
+            </div>
             <div id='finish' onclick="UIInvokeTarget.markTaskAsDone($('#task-id').val())">
-                <span id='finish-icon'><img src='resources/image/check_mark.png'></span>
+                <span id='finish-icon'><img src='resources/image/check_mark.png' style="width:81px;height:81px"></span>
                 <span id='finish-label'>Finish</span>
             </div>
             <div id='postpone' onclick='UIInvokeTarget.showPostponeList()'>
-                <span id='postpone-icon'><img src='resources/image/right_arrow.png'></span>
+                <span id='postpone-icon'><img src='resources/image/right_arrow.png' style="width:81px;height:81px"></span>
                 <span id='postpone-label'>Later</span>
             </div>
             <div id='delete' onclick="UIInvokeTarget.moveTaskToTrash($('#task-id').val())">
-                <span id='delete-icon'><img src='resources/image/close.png'></span>
+                <span id='delete-icon'><img src='resources/image/close.png' style="width:81px;height:81px"></span>
                 <span id='delete-label'>Delete</span>
             </div>
         </div>
         <div style='clear:both;height:8px'>&nbsp;</div>
         <div id="task-postpone-list">
-            <div id='tenminutes'>
+            <div id="postpone-title">
+                POSTPONE TASK
+                <img src="resources/image/bullet_deny.png" class="invoke-target-close-icon" onclick="UIInvokeTarget.closePage()">
+            </div>
+            <div id='tenminutes' onclick="UIInvokeTarget.postponeTask($('#task-id').val(), 'minutes', 10)">
                 10 Minutes
             </div>
-            <div id='onehour'>                         
+            <div id='thirtyminutes' onclick="UIInvokeTarget.postponeTask($('#task-id').val(), 'minutes', 30)">
+                30 Minutes
+            </div>
+            <div id='onehour' onclick="UIInvokeTarget.postponeTask($('#task-id').val(), 'hours', 1)">
                 One Hour
             </div>
-            <div id='tomorow'>
-                Tomorow       
+            <div style='clear:both;height:8px'>&nbsp;</div>
+            <div id='twohours' onclick="UIInvokeTarget.postponeTask($('#task-id').val(), 'hours', 2)">
+                Two Hours
             </div>
-            <div id='custom'>
-                Custom
+            <div id='nextday' onclick="UIInvokeTarget.postponeTask($('#task-id').val(), 'days', 1)">
+                Next day
+            </div>
+            <div id='nextweek' onclick="UIInvokeTarget.postponeTask($('#task-id').val(), 'weeks', 1)">
+                Next week
             </div>
         </div>
-        <div style='clear:both;height:8px'>&nbsp;</div>
     </div>
 </div>
