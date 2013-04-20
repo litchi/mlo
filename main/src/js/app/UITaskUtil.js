@@ -377,9 +377,9 @@ var UITaskUtil = (function () {
                 metaContent = metaContent + Util.getReminderIconStr(isFutureReminder);
                 if (Util.notEmpty(taskObj.reminderDate)) {
                     if (isFutureReminder) {
-                        metaContent = metaContent + "<span class='task-detail-future-alarm'>" + Util.getPrettyDateStr(localReminderDate) + " (Future)</span>" + groupSep;
+                        metaContent = metaContent + "<span class='task-detail-future-alarm'>" + Util.getPrettyDateStr(localReminderDate) + "</span>" + groupSep;
                     } else {
-                        metaContent = metaContent + "<span class='task-detail-past-alarm'>" + Util.getPrettyDateStr(localReminderDate) + " (Past)</span>" + groupSep;
+                        metaContent = metaContent + "<span class='task-detail-past-alarm'>" + Util.getPrettyDateStr(localReminderDate) + "</span>" + groupSep;
                     }
                 }
             }
@@ -390,7 +390,7 @@ var UITaskUtil = (function () {
                 localDueDate = new Date(taskObj.dueDate * 1000);
                 isOverdue = localDueDate.getTime() < currentTime;
                 dueClass = isOverdue ? 'task-detail-list-overdue' : 'task-detail-list-due';
-                metaContent = metaContent + Util.getDueIconStr() + "<span class='" + dueClass + "'>" + Util.getPrettyDateStr(localDueDate) + "</span>" + Util.getOverdueIconStr(isOverdue) + groupSep;
+                metaContent = metaContent + Util.getDueIconStr() + "<span class='" + dueClass + "'>" + Util.getPrettyDateStr(localDueDate)  + Util.getOverdueIconStrDetailPage(isOverdue) + "</span>" + groupSep;
             }
             if (Util.notEmpty(taskObj.contexts)) {
                 contextCount = taskObj.contexts.length;

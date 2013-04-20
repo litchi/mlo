@@ -291,9 +291,11 @@
     font-family: 'monospaceTextarea';
     float:left;
     text-align:left;
-    margin-left:30px;
+    margin-left:60px;
     margin-top:3px;
     max-width:420px;
+    width:420px;
+    margin-top:-40px;
 }
 .task-detail-list-overdue {
     margin-right:10px;
