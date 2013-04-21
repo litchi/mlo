@@ -118,6 +118,7 @@ var UIContextMenuController = (function () {
                 if (selectedId !== null) {
                     UITaskUtil.moveTaskToTrash(selectedId, SeedData.TaskDeletedStatus,
                         function (taskId) {
+                            UITaskReminderUtil.removeUIBNotification(taskId);
                             UIListController.removeTaskFromList(taskId);
                             Util.showToast(UIConfig.msgForTaskMoveToTrash, UIConfig.msgUndo, UIConfig.nothing,
                                 function () {
