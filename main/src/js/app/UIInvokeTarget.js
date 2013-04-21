@@ -138,7 +138,7 @@ var UIInvokeTarget = (function () {
                                 ],
                                 function(tx, result, objs) {
                                     type = type.substr(0, type.length - 1) + '(s)';
-                                    Util.showToast('Task postponed by ' + quantity + ' ' + type);
+                                    Util.showToast('Task Postponed by ' + quantity + ' ' + type);
                                     UITaskReminderUtil.createUIBNotification(
                                         taskId, $("#view-task-detail-title").text(),
                                         newDueDate, newReminderDate);
