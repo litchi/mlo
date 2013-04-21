@@ -1,6 +1,6 @@
 /*jslint browser: true */
 /*jshint unused:false */
-/*global Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, UITaskUtil, UIMetaUtil*/
+/*global UITaskReminderUtil, Util, DataAccess, Sql, SeedData, bb, log, console, UIConfig, openDatabase, AppSql, AppConfig, UIListController, UIEditFormController, UIActionBarController, UITaskUtil, UIMetaUtil*/
 
 var UIContextMenuController = (function () {
     "use strict";
@@ -94,9 +94,16 @@ var UIContextMenuController = (function () {
             if (selectedId !== null) {
                 DataAccess.taskMeta.moveTaskToGtdList(selectedId, metaName,
                     function (tx3, result3, rows3) {
-                        var currentMetaName = Util.valueOf('v_meta_name');
-                        if (currentMetaName === SeedData.BasketMetaName || currentMetaName === SeedData.NextActionMetaName || currentMetaName === SeedData.SomedayMetaName) {
+                        var currentMetaName = Util.valueOf('v_meta_name'),
+                            titleSpan = document.getElementById('task-title-' + selectedId),
+                            currentMetaTypeName = Util.valueOf('v_meta_type_name');
+                        if (currentMetaTypeName === SeedData.GtdMetaTypeName &&
+                            (currentMetaName === SeedData.BasketMetaName ||
+                            currentMetaName === SeedData.NextActionMetaName ||
+                            currentMetaName === SeedData.SomedayMetaName)) {
                             document.getElementById('task-' + selectedId).remove();
+                        } else {
+                            titleSpan.setAttribute("class", Util.getGtdListTitleSpanClass(metaName, 'detail-title'));
                         }
                         Util.showToast(UIConfig.msgForTaskMovePref + metaName);
                     },

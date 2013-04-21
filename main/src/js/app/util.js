@@ -445,7 +445,19 @@ var Util = (function () {
             result += taskName + "\n\n";
             result += 'Due on: ' + dueDate.format('MM/dd/yyyy hh:mm') + "\n\n";
             return result;
+        },
+
+        getGtdListTitleSpanClass : function (gtdList, titleSpanClass) {
+            if (SeedData.BasketMetaName === gtdList) {
+                titleSpanClass += ' title-basket';
+            } else if (SeedData.NextActionMetaName === gtdList) {
+                titleSpanClass += ' title-next-action';
+            } else if (SeedData.SomedayMetaName === gtdList) {
+                titleSpanClass += ' title-someday';
+            }
+            return titleSpanClass;
         }
+
     };
 
 }());

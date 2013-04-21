@@ -3,17 +3,6 @@
 var UITaskUtil = (function () {
     "use strict";
 
-    function getGtdListTitleSpanClass(gtdList, titleSpanClass) {
-        if (SeedData.BasketMetaName === gtdList) {
-            titleSpanClass += ' title-basket';
-        } else if (SeedData.NextActionMetaName === gtdList) {
-            titleSpanClass += ' title-next-action';
-        } else if (SeedData.SomedayMetaName === gtdList) {
-            titleSpanClass += ' title-someday';
-        }
-        return titleSpanClass;
-    }
-
     function createSearchMetaElement(keyword) {
         var item = document.createElement('div');
         item.setAttribute('data-bb-type', 'item');
@@ -194,10 +183,10 @@ var UITaskUtil = (function () {
                 item.setAttribute('id', 'task-' + id);
                 if (Util.notEmpty(name)) {
                     if (Util.notEmpty(gtdList)) {
-                        titleSpanClass = getGtdListTitleSpanClass(gtdList, titleSpanClass);
+                        titleSpanClass = Util.getGtdListTitleSpanClass(gtdList, titleSpanClass);
                     }
                     item.setAttribute('title', '<span class="' + titleSpanClass + '">' + name + '</span>');
-                    item.setAttribute('data-bb-title', '<span class="' + titleSpanClass + '">' + name + '</span>');
+                    item.setAttribute('data-bb-title', '<span id="task-title-' + id + '" class="' + titleSpanClass + '">' + name + '</span>');
                 }
                 if (Util.notEmpty(project)) {
                     innerContent = "\n<span class='list-project'>" + project + "</span>";
