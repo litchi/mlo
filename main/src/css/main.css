@@ -440,7 +440,14 @@
 
 #edit-page-clear-due {}
 .edit-page-due-date-input {
-    width: 495px;
+    width: 410px;
+    float:left;
+}
+
+.edit-page-big-reminder-on {
+    margin-top:13px;
+    margin-left:25px;
+    width:60px;
 }
 
 .inline-operation-icon {
@@ -448,7 +455,7 @@
     height: 71px;
     display: inline;
     position: relative;
-    left:425px;
+    left:340px;
     top:5px;
 }
 

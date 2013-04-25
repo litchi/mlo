@@ -8,6 +8,7 @@ var UIConfig = (function () {
         openTaskDetailAction        : 'bb.action.OPEN',
         notificationTitle           : 'Task Due Reminder',
         emptyString                 : '',
+        OKString                    : 'OK',
         leftPanelWidth              : '205',
         rightPanelWidth             : '563',
         rightPanelSmallerLeftMargin : '205',

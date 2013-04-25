@@ -203,7 +203,7 @@ var UITaskReminderUtil = (function () {
             }
         },
 
-        switchReminderPanelDisplay : function (dueDate) {
+        switchReminderPanelDisplay : function (dueDate, showError) {
             var reminderContainer = document.getElementById('reminderContainer'),
                 reminderPanel = document.getElementById('edit-page-sub-panel-reminder');
             if (Util.notEmpty(dueDate)
@@ -212,10 +212,12 @@ var UITaskReminderUtil = (function () {
                     && (reminderPanel.style.display !== 'block' || reminderContainer.style.display !== 'block')) {
                 reminderPanel.style.display = 'block';
                 reminderContainer.style.display = 'block';
-            } else if (Util.isEmpty(dueDate)
-                    && (reminderPanel.style.display !== 'none' || reminderContainer.style.display !== 'none')) {
+            } else if (Util.isEmpty(dueDate)) {
                 reminderPanel.style.display = 'none';
                 reminderContainer.style.display = 'none';
+                if (true === showError) {
+                    Util.showToast('Please set a due date first', UIConfig.OKString); 
+                }
             }
         }
 

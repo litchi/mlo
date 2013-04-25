@@ -1,4 +1,4 @@
-﻿<div data-bb-type="screen" data-bb-effect="slide-left">
+<div data-bb-type="screen" data-bb-effect="slide-left">
     @meta-fields@
     <input type="hidden" value="" id="task-id">
     <div id="foo" data-bb-type="title" data-bb-caption="Edit Task" data-bb-back-caption="Cancel" data-bb-action-caption="Save"
@@ -33,6 +33,7 @@
                         <div class='edit-page-due-date-input'>
                             <input type="datetime-local" value="" id="due-date"/>
                         </div>
+                        <img src="./resources/image/reminder-on.png" class='edit-page-big-reminder-on' onclick="UITaskReminderUtil.switchReminderPanelDisplay(Util.valueOf('due-date'), true)">
                     </td>
                 </tr>
             </table>
