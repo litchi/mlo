@@ -4,6 +4,10 @@ var UITaskContextUtil = (function () {
     "use strict";
     var selectedContextIds = {};
 
+    function clearSelectedContextIds () {
+        selectedContextIds = {}; 
+    }
+
     return {
 
         unSelectClickCallback : function (metaId, metaName) {
@@ -43,6 +47,7 @@ var UITaskContextUtil = (function () {
             var i, max, contextContainer = document.getElementById('contextContainer'),
                 tempDiv = document.createElement('div');
             contextContainer.style.display = 'none';
+            clearSelectedContextIds();
             DataAccess.runSqlDirectly(tx,
                 'select meta_id, meta_name from meta_view where meta_type_name = ?',
                 [SeedData.ContextMetaTypeName],

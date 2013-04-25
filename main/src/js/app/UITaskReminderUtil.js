@@ -4,6 +4,10 @@ var UITaskReminderUtil = (function () {
     "use strict";
     var selectedReminderIds = {};
 
+    function clearSelectedContextIds () {
+        selectedReminderIds = {}; 
+    }
+
     //TODO change to a mapping table implementation to reduce code size
     //like this: offset[SeedData.OneMinMetaName] = 60000
     //And then: new Date(dueDate.getTime(0 - xxx))
@@ -142,6 +146,7 @@ var UITaskReminderUtil = (function () {
                 reminderPanel = document.getElementById('edit-page-sub-panel-reminder'),
                 reminderContainer = document.getElementById('reminderContainer'),
                 tempDiv = document.createElement('div');
+            clearSelectedContextIds();
             if (Util.notEmpty(reminderContainer)) {
                 reminderContainer.style.display = 'none';
                 if (Util.isEmpty(reminderMetaName)) {
