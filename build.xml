@@ -35,13 +35,10 @@
     <property name = "env.ripple.remote.ip"           value    = "172.16.177.139"/>
     <property name = "env.ripple.remote.folder"       value    = "/www/gtd"/>
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.138"/>
-    <!--<property name = "env.bb10.device.ip"             value    = "192.168.11.6"/>-->
-    <property name = "env.bb10.device.ip"             value    = "192.168.50.72"/>
-    <!--
-       -<property name = "env.bb10.device.ip"             value    = "192.168.51.39"/>
-       -<property name = "env.bb10.device.ip"             value    = "172.20.10.14"/>
-    -->
+
+    <property name = "env.bb10.device.ip"             value    = "172.31.8.177"/>
     <property name = "env.bb10.device.password"       value    = "hetaolxq"/>
+    <property name = "env.bb10.device.pin"            value    = "24CB235E"/>
  
     <!-- Tools -->
     <property name = "tools.jslint.installation"           location = "${build.tools}/jslint"/>
@@ -51,6 +48,9 @@
     <property name = "tools.JsTestDriver.installation"     location = "${build.tools}/JsTestDriver"/>
     <property name = "tools.dev.JsTestDriver.executable"   location = "${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
     <property name = "tools.ci.JsTestDriver.executable"    location = "${tools.JsTestDriver.installation}/runJsTestDriver.sh"/>
+
+    <property name = "tools.debugtoken.installation"       location = "${build.tools}/debugtoken"/>
+    <property name = "tools.debugtoken.csj.file"           location = "${tools.debugtoken.installation}/client-PBDT-1973952.csj"/>
 
     <!--jgenhtml is used to generate local unit test code coverage report-->
     <!--For Bamboo in the CI server, Sonar is used-->
@@ -271,14 +271,17 @@
     </target>
 
     <target name="dd" depends="package">
-        <!-- Request token -->
-        <!-- ./blackberry-debugtokenrequest -storepass hetaolxq -devicepin 24CB235E token_2013_03_25.bar -->
-        <!-- blackberry-debugtokenrequest -storepass <KeystorePassword> -devicepin <device PIN> <debug_token_file_name.bar> -->
-        <!-- Deploy debug token -->
-        <!-- ./blackberry-deploy -installDebugToken token_2013_03_25.bar -device 192.168.11.6 -password hetaolxq -->
-        <!-- Deploy to simulator-->
         <exec executable="${env.webworks.installation.dir}/dependencies/tools/bin/blackberry-deploy" dir="${build.target}">
             <arg line='-installApp -password ${env.bb10.device.password} -device ${env.bb10.device.ip} -package "${build.target.output.device.bar}"'/>
+        </exec>
+    </target>
+
+    <target name="dt">
+        <exec executable="${env.webworks.installation.dir}/dependencies/tools/bin/blackberry-debugtokenrequest" dir="${env.webworks.installation.dir}">
+            <arg line="-storepass ${env.bb10.device.password} -devicepin ${env.bb10.device.pin} debugtoken.bar"/>
+        </exec>
+        <exec executable="${env.webworks.installation.dir}/dependencies/tools/bin/blackberry-deploy" dir="${env.webworks.installation.dir}">
+            <arg line="-installDebugToken debugtoken.bar -device ${env.bb10.device.ip} -password ${env.bb10.device.password}"/>
         </exec>
     </target>
 
