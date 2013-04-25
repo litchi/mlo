@@ -231,6 +231,7 @@ var UIContextMenuController = (function () {
         markTaskAsDone : function () {
             updateTaskStatus(SeedData.TaskDoneStatus, function (taskId) {
                 document.getElementById('task-' + taskId).style.textDecoration = 'line-through';
+                UITaskReminderUtil.removeUIBNotification(taskId);
                 Util.showToast(UIConfig.msgForTaskStatusUpdatePref + SeedData.TaskDoneStatus, UIConfig.msgUndo,
                     UIConfig.nothing, function () {
                         DataAccess.task.updateStatus(taskId, SeedData.TaskNewStatus,
