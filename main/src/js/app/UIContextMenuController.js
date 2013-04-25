@@ -123,14 +123,13 @@ var UIContextMenuController = (function () {
             if (selectedItem) {
                 selectedId = selectedItem.selected.id;
                 if (selectedId !== null) {
-                    UITaskUtil.moveTaskToTrash(selectedId, SeedData.TaskDeletedStatus,
-                        function (taskId) {
-                            UITaskReminderUtil.removeUIBNotification(taskId);
-                            UIListController.removeTaskFromList(taskId);
-                            Util.showToast(UIConfig.msgForTaskMoveToTrash, UIConfig.msgUndo, UIConfig.nothing,
-                                function () {
-                                });
-                        });
+                    UITaskUtil.moveTaskToTrash(selectedId, function (taskId) {
+                        UITaskReminderUtil.removeUIBNotification(taskId);
+                        UIListController.removeTaskFromList(taskId);
+                        Util.showToast(UIConfig.msgForTaskMoveToTrash, UIConfig.msgUndo, UIConfig.nothing,
+                            function () {
+                            });
+                    });
                 }
             }
         },
