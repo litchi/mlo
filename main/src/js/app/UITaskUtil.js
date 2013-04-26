@@ -185,8 +185,13 @@ var UITaskUtil = (function () {
                     if (Util.notEmpty(gtdList)) {
                         titleSpanClass = Util.getGtdListTitleSpanClass(gtdList, titleSpanClass);
                     }
-                    item.setAttribute('title', '<span class="' + titleSpanClass + '">' + name + '</span>');
-                    item.setAttribute('data-bb-title', '<span id="task-title-' + id + '" class="' + titleSpanClass + '">' + name + '</span>');
+                    if (true === AppConfig.debugMode) {
+                        item.setAttribute('title', '<span class="' + titleSpanClass + '">' + '[' + taskObj.id +  '] ' + name + '</span>');
+                        item.setAttribute('data-bb-title', '<span id="task-title-' + id + '" class="' + titleSpanClass + '">'  + '[' + taskObj.id +  '] ' + name + '</span>');
+                    } else {
+                        item.setAttribute('title', '<span class="' + titleSpanClass + '">' + name + '</span>');
+                        item.setAttribute('data-bb-title', '<span id="task-title-' + id + '" class="' + titleSpanClass + '">' + name + '</span>');
+                    }
                 }
                 if (Util.notEmpty(project)) {
                     innerContent = "\n<span class='list-project'>" + project + "</span>";
@@ -344,6 +349,9 @@ var UITaskUtil = (function () {
                 groupSep       = "<br/><div style='clear:both;height:8px'>&nbsp;</div>",
                 metaDiv        = document.getElementById('view-task-detail-meta');
             setFieldInTaskDetailPopup(taskObj.name, titleDiv, 'html');
+            if (AppConfig.debugMode === true) {
+                metaDiv.setAttribute("onclick", "bb.pushScreen('invoke-target.html','task-detail-with-oper', {'taskInfo' : {'id' : " + taskObj.id +  "}})")
+            }
             if (Util.notEmpty(taskObj.gtdList)) {
                 gtdList = taskObj.gtdList;
                 if (gtdList === SeedData.BasketMetaName) {

@@ -44,9 +44,6 @@ var EventCallback = (function () {
         if (!AppConfig.debugMode && Util.notEmpty(devTab)) {
             devTab.style.display = 'none';
         }
-        if (!AppConfig.debugMode && Util.notEmpty(invokeSampleTab)) {
-            invokeSampleTab.style.display = 'none';
-        }
     }
 
     function onScreenReadyCallback(element, id) {
