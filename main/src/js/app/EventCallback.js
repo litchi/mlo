@@ -39,7 +39,7 @@ var EventCallback = (function () {
     }
 
     function setDevTabVisible() {
-        var devTab = document.getElementById('development'),
+        var devTab = document.getElementById('development');
         if (!AppConfig.debugMode && Util.notEmpty(devTab)) {
             devTab.style.display = 'none';
         }

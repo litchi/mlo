@@ -101,7 +101,7 @@ var UIFragments = (function () {
 var AppConfig = (function () {
     "use strict";
     return {
-        debugMode : true
+        debugMode : false
     };
 }());
 
