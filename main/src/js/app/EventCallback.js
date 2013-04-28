@@ -40,7 +40,6 @@ var EventCallback = (function () {
 
     function setDevTabVisible() {
         var devTab = document.getElementById('development'),
-            invokeSampleTab = document.getElementById('invoke-sample');
         if (!AppConfig.debugMode && Util.notEmpty(devTab)) {
             devTab.style.display = 'none';
         }
