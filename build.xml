@@ -13,6 +13,8 @@
     </target>
 
     <property name = "build.app.name"                       value = "BB10GTD"/>
+    <property name = "build.version"                        value = "1.1"/>
+    <property name = "build.id"                             value = "2"/>
     <property name = "build.src"                         location = "./main/src"/>
     <property name = "build.tools"                       location = "./tools"/>
     <property name = "build.test"                        location = "./test"/>
@@ -20,8 +22,10 @@
     <property name = "build.target"                      location = "./target"/>
     <property name = "build.target.code"                 location = "${build.target}/src"/>
     <property name = "build.target.output"               location = "${build.target}/output"/>
-    <property name = "build.target.release"              location = "${build.target}/release"/>
     <property name = "build.target.output.src.zip"       location = "${build.target.output}/${build.app.name}.zip"/>
+
+    <property name = "build.release.folder.base"         location = "/opt/data/release"/>
+    <property name = "build.release.folder.current"      location = "${build.release.folder.base}/${build.version}"/>
 
     <property name = "build.target.output.device"        location = "${build.target}/output/device"/>
     <property name = "build.target.output.device.bar"    location = "${build.target.output.device}/${build.app.name}.bar"/>
@@ -30,10 +34,12 @@
     <property name = "build.target.output.simulator.bar" location = "${build.target.output.simulator}/${build.app.name}.bar"/>
 
     <property name = "env.webworks.installation.dir"  location = "/Users/larry/bin/WebWorks_SDK"/>
+
     <property name = "env.ripple.remote.user"         value    = "xqliu"/>
     <property name = "env.ripple.remote.password"     value    = "password"/>
     <property name = "env.ripple.remote.ip"           value    = "172.16.177.139"/>
     <property name = "env.ripple.remote.folder"       value    = "/www/gtd"/>
+
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.138"/>
 
     <property name = "env.bb10.device.ip"             value    = "172.31.8.177"/>
@@ -92,7 +98,7 @@
     <target name="init">
         <mkdir dir = "${build.target.code}"/>
         <mkdir dir = "${build.target.output}"/>
-        <mkdir dir = "${build.target.release}"/>
+        <mkdir dir = "${build.release.folder.base}"/>
     </target>
 
     <target name="qa.init">
@@ -258,8 +264,9 @@
 
         <!-- Create package -->
         <!-- /blackberry-signer -register -csjpin hetaolxq -storepass client-RDK-1973952.csj client-PBDT-1973952.csj-->
+        <mkdir dir = "${build.release.folder.current}"/>
         <exec executable="${env.webworks.installation.dir}/bbwp" dir="${build.target}">
-            <arg line='${build.target.output.src.zip} -g ${release.password} -o ${build.target.release} --buildId 1'/>
+            <arg line='${build.target.output.src.zip} -g ${release.password} -o ${build.release.folder.current} --buildId ${build.id}'/>
         </exec>
     </target>
 
