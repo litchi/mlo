@@ -13,8 +13,8 @@
     </target>
 
     <property name = "build.app.name"                       value = "BB10GTD"/>
-    <property name = "build.version"                        value = "1.1"/>
-    <property name = "build.id"                             value = "2"/>
+    <property name = "build.version"                        value = "1.2"/>
+    <property name = "build.id"                             value = "5"/>
     <property name = "build.src"                         location = "./main/src"/>
     <property name = "build.tools"                       location = "./tools"/>
     <property name = "build.test"                        location = "./test"/>
@@ -42,7 +42,7 @@
 
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.138"/>
 
-    <property name = "env.bb10.device.ip"             value    = "172.31.8.177"/>
+    <property name = "env.bb10.device.ip"             value    = "192.168.11.6"/>
     <property name = "env.bb10.device.password"       value    = "hetaolxq"/>
     <property name = "env.bb10.device.pin"            value    = "24CB235E"/>
  
@@ -263,7 +263,7 @@
         </zip>
 
         <!-- Create package -->
-        <!-- /blackberry-signer -register -csjpin hetaolxq -storepass client-RDK-1973952.csj client-PBDT-1973952.csj-->
+        <!-- /blackberry-signer -register -csjpin 24cb235e -storepass hetaolxq client-RDK-1973952.csj client-PBDT-1973952.csj-->
         <mkdir dir = "${build.release.folder.current}"/>
         <exec executable="${env.webworks.installation.dir}/bbwp" dir="${build.target}">
             <arg line='${build.target.output.src.zip} -g ${release.password} -o ${build.release.folder.current} --buildId ${build.id}'/>
