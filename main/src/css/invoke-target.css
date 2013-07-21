@@ -1,6 +1,7 @@
 #view-task-detail {
     display:block;
-    width:100%;height:100%;
+    width:100%;
+    height:100%;
     -webkit-border-radius:0;
     border-radius:0;
     left:0;
@@ -79,7 +80,7 @@
 }
 
 #task-due-title, #postpone-title {
-    background: #999;
+    background-color: #999;
     background: -webkit-linear-gradient(top, rgba(162, 162, 162, 0.5) 0%, rgba(163, 163, 163, 0.5) 100%);
     margin-left: -25px;
     padding: 20px;
@@ -90,4 +91,31 @@
 
 .invoke-target-close-icon {
     margin: -20px 0 -20px 0;
+}
+
+@media screen and (max-height:720px) {
+    #view-task-detail {
+	height:100%;
+	top:40px;
+	width:740px;
+    }
+    #task-operation-list {
+	bottom:10px;
+    }
+    #task-due-title, #postpone-title {
+	margin-bottom:0px;
+	padding:20px 0 10px 0;
+    }
+    #view-task-detail-title {
+	padding-top: 5px;
+	font-size:36px;
+	line-height:48px;
+    }
+    #view-task-detail-meta {
+	font-size: 30px;
+	line-height:40px;
+    }
+    .px8-clear-sep {
+	height:2px;
+    }
 }

@@ -21,10 +21,11 @@ var UIListController = (function () {
             height = height < 102 ? 102 : height;
             heightString = height + 'px';
             metaListSpaceDiv.style.height = heightString;
-            metaListSpaceDiv.innerText = '>';
+            metaListSpaceDiv.innerHTML = UIConfig.rightArrow;
             metaListSpaceDiv.style.lineHeight = heightString;
         }
     }
+    
 
     function fillMetaInternal(metaTypeId, metaTypeName, metaList, pageType, taskNumbers, callback) {
         DataAccess.meta.getByTypeId(metaTypeId, function (tx, result, arrays) {

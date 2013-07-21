@@ -221,13 +221,13 @@ var Util = (function () {
                 document.getElementById('group').style.width = UIConfig.leftPanelWidth + 'px';
                 document.getElementById(UIConfig.detailListPanelElementId).style.width = UIConfig.rightPanelWidth + 'px';
                 document.getElementById(UIConfig.detailListPanelElementId).style.left = UIConfig.rightPanelSmallerLeftMargin + 'px';
-                document.getElementById('group-space').innerText = '>';
+                document.getElementById('group-space').innerHTML = UIConfig.rightArrow;
                 document.getElementById('create-task-shortcut').style.width = UIConfig.leftPanelWidth + 'px';
             } else {
                 document.getElementById('group').style.width = UIConfig.rightPanelWidth + 'px';
                 document.getElementById(UIConfig.detailListPanelElementId).style.width = UIConfig.leftPanelWidth + 'px';
                 document.getElementById(UIConfig.detailListPanelElementId).style.left = UIConfig.rightPanelLargerLeftMargin + 'px';
-                document.getElementById('group-space').innerText = '<';
+                document.getElementById('group-space').innerHTML = UIConfig.leftArrow;
                 document.getElementById('create-task-shortcut').style.width = UIConfig.rightPanelWidth + 'px';
             }
             if (document.getElementById(UIConfig.detailListPanelElementId).style.left > '350') {

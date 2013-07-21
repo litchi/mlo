@@ -346,7 +346,7 @@ var UITaskUtil = (function () {
                 dueDiv         = document.getElementById(UIConfig.viewTaskDueElementId),
                 contextDiv     = document.getElementById(UIConfig.viewTaskContextElementId),
                 notesDiv       = document.getElementById(UIConfig.viewTaskNotesElementId),
-                groupSep       = "<br/><div style='clear:both;height:8px'>&nbsp;</div>",
+                groupSep       = "<br/><div class='px8-clear-sep'>&nbsp;</div>",
                 metaDiv        = document.getElementById('view-task-detail-meta');
             setFieldInTaskDetailPopup(taskObj.name, titleDiv, 'html');
             if (AppConfig.debugMode === true) {

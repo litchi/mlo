@@ -87,7 +87,7 @@ var EventCallback = (function () {
                 actionBarId = params[UIConfig.paramActionbarId];
             }
         }
-        if (id !== null) {
+        if (id !== null){
             if (id === SeedData.BasketMetaName ||
                     id === SeedData.NextActionMetaName ||
                     id === SeedData.SomedayMetaName) {

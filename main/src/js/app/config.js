@@ -68,7 +68,9 @@ var UIConfig = (function () {
             'restore_task',
             'empty_trash'
         ],
-        smiles : [':-)', '^_^', ':o)', ':c)', ':^)', ':>'],
+        smiles : [':-)', ':o)', ':c)', ':^)', ':>'],
+	leftArrow : "<div class='group_space_icon_left'>&nbsp; </div>",
+	rightArrow : "<div class='group_space_icon_right'>&nbsp; </div>",
         nothing : function () {}
     };
 
@@ -101,7 +103,7 @@ var UIFragments = (function () {
 var AppConfig = (function () {
     "use strict";
     return {
-        debugMode : false
+        debugMode : true
     };
 }());
 

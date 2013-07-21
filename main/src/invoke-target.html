@@ -4,7 +4,7 @@
     <div id='view-task-detail'>
         <div id="view-task-detail-title" class="view-task-detail-sub-field"></div>
         <div id="view-task-detail-meta" class="view-task-detail-sub-field"></div>
-        <div id="task-operation-list">
+        <div id="task-operation-list"> 
             <div id="task-due-title">
                 TASK REMINDER
                 <img src="resources/image/bullet_deny.png" class="invoke-target-close-icon" onclick="UIInvokeTarget.closePage()">
@@ -22,7 +22,7 @@
                 <span id='delete-label'>Delete</span>
             </div>
         </div>
-        <div style='clear:both;height:8px'>&nbsp;</div>
+        <div class="px8-clear-sep">&nbsp;</div>
         <div id="task-postpone-list">
             <div id="postpone-title">
                 POSTPONE TASK
@@ -37,7 +37,7 @@
             <div id='onehour' onclick="UIInvokeTarget.postponeTask($('#task-id').val(), 'hours', 1)">
                 One Hour
             </div>
-            <div style='clear:both;height:8px'>&nbsp;</div>
+            <div class="px8-clear-sep">&nbsp;</div>
             <div id='twohours' onclick="UIInvokeTarget.postponeTask($('#task-id').val(), 'hours', 2)">
                 Two Hours
             </div>
