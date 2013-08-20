@@ -28,6 +28,19 @@
     <div id='view-task-detail' onclick="UITaskUtil.setTaskDetailPanelDisplay('none')">
         <div id="view-task-detail-title" class="view-task-detail-sub-field"></div>
         <div id="view-task-detail-meta" class="view-task-detail-sub-field"></div>
+    </div> 
+    <div id='task-oper-menu'>
+      <div id='mark_task_as_done'><img src="resources/image/mark-as-done.png" onclick ="UIContextMenuController.markTaskAsDone()"></div>
+      <div id='postpone_task'><img src="resources/image/postpone-task.png" onclick ="UIContextMenuController.postponeTask()"></div>
+      <div id ='edit_task'><img id="edit-task-icon" src="resources/image/edit-task.png"></div>
+      <!--<div id='mark_task_as_new'><img src="resources/image/mark-as-new.png"   onclick ="UIContextMenuController.markTaskAsNew()"></div>-->
+      <div id='move_task_to_next_action'><img src="resources/image/star_add.png"      onclick ="UIContextMenuController.moveTaskToNextAction()"></div>
+      <div id='move_task_to_basket'><img src="resources/image/basket_add.png"    onclick ="UIContextMenuController.moveTaskToInBasket()"></div>
+      <div id='move_task_to_someday'><img src="resources/image/someday.png"       onclick ="UIContextMenuController.moveTaskToSomeday()"></div>
+      <div id ='move_task_to_trash'><img src="resources/image/trash-add.png"     onclick ="UIContextMenuController.moveTaskToTrash()"></div>
+      <div id='edit_meta'><img src="resources/image/edit-task.png"     onclick ="UIContextMenuController.editMeta()"></div>
+      <div id='delete_meta'><img src="resources/image/delete-task.png"   onclick ="UIContextMenuController.deleteMeta()"></div>
+      <div id='restore_task'><img src="resources/image/trash-restore.png" onclick ="UIContextMenuController.restoreTaskFromTrash()"></div>
     </div>
     <div id='create-task-input-container'>
         <div id="create-task-placeholder"></div>
@@ -42,7 +55,41 @@
         </form>
     </div>
     <div id="main-content-overlay"></div>
-    @meta-fields@
-    @task-context-menu@
-    @actionbar@
+    <input type='hidden' value="" id="v_meta_id"/>
+    <input type='hidden' value="" id="v_meta_name"/>
+    <input type='hidden' value="" id="v_meta_type_id"/>
+    <input type='hidden' value="" id="v_meta_type_name"/>
+    <input type='hidden' value="" id="v_curr_hl_item"/>
+
+    <div data-bb-type="action-bar" data-bb-back-caption="Back" id="action-bar">
+
+    <div data-bb-type="action" data-bb-style="tab" id="task-by-GTD" data-bb-selected="true"
+        onclick="UIActionBarController.openTaskGroupByMetaPage(SeedData.GtdMetaTypeName);" 
+        data-bb-img="resources/image/gtd-list.png" data-bb-accent-text="List">List</div>
+    
+    <div data-bb-type="action" data-bb-style="tab" id="task-by-Due"
+        onclick="UIActionBarController.openTaskGroupByMetaPage(SeedData.DueMetaTypeName)"
+        data-bb-img="resources/image/due.png"  data-bb-accent-text="Due">Due</div>
+
+    <div data-bb-type="action" data-bb-style="tab" id="task-by-Project"
+        onclick="UIActionBarController.openTaskGroupByMetaPage(SeedData.ProjectMetaTypeName)"
+        data-bb-img="resources/image/folder-project.png"  data-bb-accent-text="Project">Project</div>
+
+    <div data-bb-type="action" data-bb-style="tab" id="task-by-Context"
+        onclick="UIActionBarController.openTaskGroupByMetaPage(SeedData.ContextMetaTypeName)"
+        data-bb-img="resources/image/folder-context.png" data-bb-accent-text="Context">Context</div>
+
+    <div data-bb-type="action" data-bb-style="tab" id="fields" data-bb-overflow="true" 
+        onclick="UIActionBarController.openMetaGroupByTypePage()" 
+        data-bb-img="resources/image/fields.png" data-bb-accent-text="Fields">Fields</div>
+
+    <div data-bb-type="action" data-bb-style="tab" id="TrashBox" data-bb-overflow="true" 
+        onclick="UIActionBarController.openTaskByStatusPage(SeedData.TaskDeletedStatus)" 
+        data-bb-img="resources/image/trash.png" data-bb-accent-text="Trash Box">Trash Box</div>
+
+    <div data-bb-type="action" data-bb-style="tab" id="development" data-bb-overflow="true" 
+        onclick="bb.pushScreen('development.html','development');" 
+        data-bb-img="resources/image/development.png" data-bb-accent-text="Development">Development</div>
+</div>
+
 </div>

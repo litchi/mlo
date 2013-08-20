@@ -75,7 +75,7 @@ var UITaskUtil = (function () {
             }
             element.className = 'view-task-detail-sub-field';
             element.style.display = 'block';
-        } else {
+       } else {
             element.className = '';
             element.style.display = 'none';
         }
@@ -216,14 +216,16 @@ var UITaskUtil = (function () {
                 }
                 item.innerHTML = innerContent;
                 item.onclick = function () {
+
                     var container = document.getElementById(UIConfig.viewTaskDetailElementId);
-                    document.getElementById('task-operation-context-menu').menu.peek({
+                    var data = {
                         title       : UIConfig.msgTaskContextMenuTitle,
                         description : name,
                         selected    : taskObj,
                         type        : 'Task'
-                    });
+                    };		    
                     UITaskUtil.createTaskDetailView(container, taskObj);
+		    UITaskUtil.setTaskDetailPanelDisplay('block', data);
                 };
             }
             return item;
@@ -327,6 +329,11 @@ var UITaskUtil = (function () {
                     && container.style.display !== display) {
                 container.style.display = display;
                 $('#main-content-overlay').css('display', display);
+		if (display === 'block') {
+		    $('#task-oper-menu').css('display', 'inline');
+		} else if (display === 'none') {
+		    $('#task-oper-menu').css('display', 'none');
+		}
             }
             if (display === 'block') {
                 $('#create-task-input-container').css('display', 'none');
@@ -399,7 +406,12 @@ var UITaskUtil = (function () {
                     metaContent += '</span>';
                 }
             }
-
+	    metaContent += '<input type="hidden" id="task-id-detail-div" value="' + taskObj.id + '">';
+	    $("#edit-task-icon").click(
+		function() {
+		    UIContextMenuController.editTask(taskObj);
+		}
+	    );
             setFieldInTaskDetailPopup(metaContent, metaDiv, 'html');
         },
 

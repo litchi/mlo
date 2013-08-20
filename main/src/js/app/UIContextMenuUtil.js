@@ -6,7 +6,7 @@ var UIContextMenuUtil = (function () {
     return {
         filterContextMenu : function (items) {
             var index, menuItems, menuItem, loopItem,
-                contextMenu = document.getElementById('task-operation-context-menu');
+                contextMenu = document.getElementById('task-oper-menu');
             if (Util.isEmpty(items)) {
                 console.warn("Want to display no item in the context map?");
                 return;
@@ -30,21 +30,13 @@ var UIContextMenuUtil = (function () {
             for (index = 0; index < items.length; index += 1) {
                 loopItem = document.getElementById(items[index]);
                 if (Util.notEmpty(loopItem)) {
-                    loopItem.style.display = 'block';
+                    loopItem.style.display = 'inline';
                 }
             }
         },
 
         setMetaContextMenuAction : function (item, metaTypeName, metaId, metaName, metaDesc) {
-            if (Util.isEmpty(metaDesc)) {
-                metaDesc = UIConfig.emptyString;
-            }
-            item.innerHTML = metaDesc;
-            item.setAttribute(
-                'onclick',
-                "document.getElementById('task-operation-context-menu').menu.peek({ title : '" + metaName + " : "  + metaTypeName + "', description : '" + metaDesc + "', selected : '" + metaId + "', type: 'Meta'});"
-            );
-        }
+	}
 
     };
 

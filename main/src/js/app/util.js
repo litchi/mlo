@@ -364,11 +364,13 @@ var Util = (function () {
         showSearchTitle : function (keyword) {
             $("#search-result-title").css('display', 'block');
             $("#search-result-title").html('Search Result <span id="search-keyword-title-span">' + keyword + '</span>');
+	    //TODO Change here for Q10
             $("#detail-list-panel").css('height', '1020px');
         },
 
         hideSearchTitle : function () {
             $("#search-result-title").css('display', 'none');
+	    //TODO Change here for Q10
             $("#detail-list-panel").css('height', '1130px');
             $('#stsi').val(UIConfig.emptyString);
             $("#stsi").blur();

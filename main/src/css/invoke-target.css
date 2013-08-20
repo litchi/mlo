@@ -96,15 +96,17 @@
 @media screen and (max-height:720px) {
     #view-task-detail {
 	height:100%;
-	top:40px;
 	width:740px;
     }
-    #task-operation-list {
+    #task-operation-list,#task-postpone-list {
 	bottom:10px;
     }
     #task-due-title, #postpone-title {
 	margin-bottom:0px;
 	padding:20px 0 10px 0;
+    }
+    #postpone-title {
+	margin-bottom:10px;
     }
     #view-task-detail-title {
 	padding-top: 5px;

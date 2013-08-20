@@ -238,7 +238,7 @@
 .task-detail-list-context {
     -webkit-border-radius:20px ; 
     background-color:lightgray;
-    margin: 8px 20px 10px -10px;
+    margin: 8px 20px 10px 0;
     /** Please notice the behaivor of ripple and the actual device is not exactly the same here so we put different number here */
     padding:0 10px 0 10px;
     border-radius:20px;
@@ -246,7 +246,6 @@
     display:inline-block;
     border: solid 1px #555555;
     background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgb(168, 168, 168)), to(rgba(180, 180, 180, 0.5)));
-    /*background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(128, 128, 128, 0.5)), to(rgba(46, 46, 46, 0.9)));*/
     float:left;
     text-align:left;
 }
@@ -258,11 +257,10 @@
     font-family: 'monospaceTextarea';
     float:left;
     text-align:left;
-    margin-left:60px;
+    margin-left:20px;
     margin-top:3px;
-    max-width:420px;
-    width:420px;
-    margin-top:-40px;
+    max-width:520px;
+    width:520px;
 }
 .task-detail-list-overdue {
     margin-right:10px;
@@ -270,9 +268,9 @@
 
 .task-detail-list-context-container {
     margin-top:0;
-    width:400px;
-    margin-left:38px;
-    max-width:400px;
+    width:480px;
+    margin-left:20px;
+    max-width:480px;
 }
 
 .view-task-detail-sub-field {
@@ -540,7 +538,35 @@
     background-repeat: no-repeat;
     background-position:center;
 }
+
+#task-oper-menu {
+    display:none;
+    position: absolute; 
+    left: 35px; 
+    top: 1040px; 
+    width: 680px; 
+    height:80px;
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(255, 255, 255, 0.6)), to(rgba(163, 163, 163, 0.8)));
+    -webkit-border-top-left-radius: 40px;
+    -webkit-border-top-right-radius: 40px;
+    z-index: 1001;
+    padding-top:22px;
+    text-align:center;
+}
     
+#task-oper-menu div {
+    display:inline-block;
+    max-width:90px;
+    padding: 8px;
+    text-align:center;
+}
+
+#task-oper-menu div img {
+    width: 70px;
+    height: 70px;
+    vertical-align: middle;
+    margin-top: -7px;
+}
 
 @media screen and (max-height:1280px) {
     #group {
@@ -566,16 +592,13 @@
     }
 
     #view-task-detail {
-	height: 1000px; 
+	height: 1020px; 
 	display: none; 
 	position: absolute; 
 	left: 35px; 
-	top: 70px; 
-	width: 580px; 
+	top: 0; 
+	width: 680px; 
 	background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(255, 255, 255, 0.6)), to(rgba(163, 163, 163, 0.8)));
-	/*background: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(255, 255, 255, 0.8)), to(rgba(163, 163, 163, 0)));*/
-	-webkit-border-top-left-radius: 40px;
-	-webkit-border-top-right-radius: 40px;
 	-webkit-border-bottom-left-radius: 40px;
 	-webkit-border-bottom-right-radius: 40px;
 	z-index: 1000;
@@ -611,9 +634,8 @@
     }
     #view-task-detail {
 	height: 550px; 
-	width:550px;
+	width:680px;
 	margin-left:-20px;
-	margin-top:-40px;
     }
     .msg-for-no-task{
 	margin: 50px 70px 0 20px;
@@ -628,8 +650,35 @@
 	width:650px;
     }
     .task-detail-list-context-container {
-	width:380px;
+	width:480px;
 	margin-left:18px;
-	max-width:380px;
+	max-width:480px;
     }
+    #view-task-detail-title {
+	padding-top: 5px;
+    }
+    #view-task-detail-title:first-letter {
+	font-size:48px;
+    }
+    .list-task-number-zero, .list-task-number {
+	margin-top: 8px;
+    }
+    #add-meta-link-Project .list-task-number {
+	margin-top:-5px;
+    }
+    #add-meta-link-Context .list-task-number {
+	margin-top:-20px;
+    }
+    .task-detail-basket, .task-detail-next-action, 
+    .task-detail-someday, .task-detail-list-context-container, 
+    .task-detail-list-project, .task-detail-list-due, 
+    .task-detail-list-overdue, .task-detail-past-alarm, 
+    .task-detail-future-alarm {
+	margin-left: 10px;
+    }
+    #task-oper-menu {
+	left: 15px;
+	top: 520px;
+	height:70px;
+    }    
 }

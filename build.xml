@@ -42,7 +42,7 @@
 
     <property name = "env.bb10.simulator.ip"          value    = "172.16.177.145"/>
 
-    <property name = "env.bb10.device.ip"             value    = "192.168.11.6"/>
+    <property name = "env.bb10.device.ip"             value    = "192.168.11.13"/>
     <property name = "env.bb10.device.password"       value    = "hetaolxq"/>
     <property name = "env.bb10.device.pin"            value    = "24CB235E"/>
  
@@ -113,13 +113,11 @@
 
     <target name="file-checks">
         <available file = "${build.src}/elements/actionbar.html"         property = "actionbar.file.found"/>
-        <available file = "${build.src}/elements/task-context-menu.html" property = "contextmenu.file.found"/>
         <available file = "${build.src}/elements/meta-fields.html"       property = "meta-fields.file.found"/>
     </target>
 
     <target name="pre.process.copy" depends="init, file-checks">
         <loadfile property="actionbar.content" srcFile="${build.src}/elements/actionbar.html"/>
-        <loadfile property="task.context.menu.content" srcFile="${build.src}/elements/task-context-menu.html"/>
         <loadfile property="meta.fields" srcFile="${build.src}/elements/meta-fields.html"/>
         <copy todir="${build.target.code}" encoding="UTF-8" outputencoding="UTF-8">
             <fileset dir="${build.src}">
@@ -144,7 +142,6 @@
             <!--Replace all @xxx@ mark to elements-->
             <filterset begintoken="@" endtoken="@">
                 <filter token = "actionbar"            value = "${actionbar.content}"/>
-                <filter token = "task-context-menu"    value = "${task.context.menu.content}"/>
                 <filter token = "meta-fields"          value = "${meta.fields}"/>
             </filterset>
         </copy>

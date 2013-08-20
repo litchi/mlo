@@ -32,13 +32,8 @@ var UIContextMenuController = (function () {
     function postponeTaskInternal() {
         var selectedItem, selectedId, currDueDateTimestamp, newDueDate,
             currentDate = new Date(),
-            context = document.getElementById('task-operation-context-menu');
-        selectedItem  = context.menu.selected;
-        if (!selectedItem) {
-            console.warn("Selected Item is null");
-            return;
-        }
-        selectedId = selectedItem.selected.id;
+	    idInput = $('#task-id-detail-div');
+	selectedId = idInput.val();
         if (null === selectedId) {
             console.warn("Selected Id is null");
             return;
@@ -71,26 +66,24 @@ var UIContextMenuController = (function () {
         }, function (tx, error) {
             log.logSqlError("Failed to postpone task[" + selectedId + "] to the next day", error);
         });
+	UITaskUtil.setTaskDetailPanelDisplay('none');
     }
 
     function updateTaskStatus(statusKey, successCallback) {
-        var selectedItem, selectedId,
-            context = document.getElementById('task-operation-context-menu');
-        selectedItem  = context.menu.selected;
-        if (selectedItem) {
-            selectedId = selectedItem.selected.id;
+        var selectedItem, selectedId, idInput = $('#task-id-detail-div');
+	if (null !== idInput) {
+	    selectedId = idInput.val();
             if (selectedId !== null) {
-                UITaskUtil.updateTaskStatus(selectedId, statusKey, successCallback);
+		UITaskUtil.updateTaskStatus(selectedId, statusKey, successCallback);
             }
-        }
+	} 
     }
 
     function moveTaskToGtdList(metaName) {
         var selectedItem, selectedId,
-            context = document.getElementById('task-operation-context-menu');
-        selectedItem  = context.menu.selected;
-        if (selectedItem) {
-            selectedId = selectedItem.selected.id;
+	idInput = $('#task-id-detail-div');
+        if (idInput) {
+            selectedId = idInput.val();
             if (selectedId !== null) {
                 DataAccess.taskMeta.moveTaskToGtdList(selectedId, metaName,
                     function (tx3, result3, rows3) {
@@ -112,16 +105,16 @@ var UIContextMenuController = (function () {
                     });
             }
         }
+	UITaskUtil.setTaskDetailPanelDisplay('none');
     }
 
     return {
 
         moveTaskToTrash : function () {
             var selectedItem, selectedId,
-                context = document.getElementById('task-operation-context-menu');
-            selectedItem  = context.menu.selected;
-            if (selectedItem) {
-                selectedId = selectedItem.selected.id;
+                idInput = $('#task-id-detail-div');
+            if (idInput) {
+                selectedId = idInput.val();
                 if (selectedId !== null) {
                     UITaskUtil.moveTaskToTrash(selectedId, function (taskId) {
                         UITaskReminderUtil.removeUIBNotification(taskId);
@@ -132,24 +125,20 @@ var UIContextMenuController = (function () {
                     });
                 }
             }
+	    UITaskUtil.setTaskDetailPanelDisplay('none');
         },
 
-        editTask : function () {
-            var selectedItem, selectedTaskInfo,
-                context = document.getElementById('task-operation-context-menu');
-            selectedItem  = context.menu.selected;
-            if (selectedItem) {
-                selectedTaskInfo = selectedItem.selected;
-                if (selectedTaskInfo !== null) {
-                    bb.pushScreen('edit-task.html', UIConfig.editTaskPagePrefix,
-                        {
-                            'taskInfo'     : selectedTaskInfo,
-                            'metaTypeId'   : Util.valueOf('v_meta_type_id'),
-                            'metaTypeName' : Util.valueOf('v_meta_type_name'),
-                            'metaId'       : Util.valueOf('v_meta_id'),
-                            'metaName'     : Util.valueOf('v_meta_name')
-                        });
-                }
+        editTask : function (taskObj) {
+            if (taskObj !== null) {
+		UITaskUtil.setTaskDetailPanelDisplay('none');
+                bb.pushScreen('edit-task.html', UIConfig.editTaskPagePrefix,
+                              {
+				  'taskInfo'     : taskObj,
+				  'metaTypeId'   : Util.valueOf('v_meta_type_id'),
+				  'metaTypeName' : Util.valueOf('v_meta_type_name'),
+				  'metaId'       : Util.valueOf('v_meta_id'),
+				  'metaName'     : Util.valueOf('v_meta_name')
+                              });
             }
         },
 
@@ -225,6 +214,7 @@ var UIContextMenuController = (function () {
                 document.getElementById('task-' + taskId).remove();
                 Util.showToast(UIConfig.msgForTaskRestore);
             });
+	    UITaskUtil.setTaskDetailPanelDisplay('none');
         },
 
         markTaskAsDone : function () {
@@ -242,6 +232,7 @@ var UIContextMenuController = (function () {
                             });
                     });
             });
+	    UITaskUtil.setTaskDetailPanelDisplay('none');
         },
 
         markTaskAsNew : function () {
@@ -249,6 +240,7 @@ var UIContextMenuController = (function () {
                 document.getElementById('task-' + taskId).style.textDecoration = 'none';
                 Util.showToast(UIConfig.msgForTaskStatusUpdatePref + SeedData.TaskNewStatus);
             });
+	    UITaskUtil.setTaskDetailPanelDisplay('none');
         },
 
         postponeTask         : function () { postponeTaskInternal(); },
