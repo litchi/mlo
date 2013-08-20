@@ -33,6 +33,10 @@
     position:relative;
 }
 
+#delete-meta-button-container {
+    margin:auto;
+}
+
 #contextContainer, #reminderContainer {
     padding-left:10px;
     margin-bottom: -20px;

@@ -117,9 +117,11 @@ var UIListController = (function () {
             if (Util.notEmpty(document.getElementById('selected-group-item'))) {
                 document.getElementById('selected-group-item').setAttribute('id', Util.valueOf('v_curr_hl_item'));
             }
-            document.getElementById(uiId).setAttribute('id', 'selected-group-item');
-            document.getElementById('v_curr_hl_item').value = uiId;
-            UIListController.fillMetaListToPanel(uiId, UIConfig.metaByPagePrefix);
+	    if (Util.notEmpty(uiId) && Util.notEmpty(document.getElementById(uiId))) {
+		document.getElementById(uiId).setAttribute('id', 'selected-group-item');
+		document.getElementById('v_curr_hl_item').value = uiId;
+		UIListController.fillMetaListToPanel(uiId, UIConfig.metaByPagePrefix);
+	    }
             Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin);
         },
 
@@ -214,7 +216,6 @@ var UIListController = (function () {
             if (Util.notEmpty(metaTypeListTitle)) {
                 metaTypeListTitle.innerText = 'Fields';
             }
-            UIContextMenuUtil.filterContextMenu(UIConfig.metaContextMenu);
             DataAccess.metaType.getAll(function (tx, result, arrays) {
                 var index = 0, key, name, id, desc, item, internal, uiId, titleParent, titleSpan, addIcon;
                 if (Util.notEmpty(metaTypeList)) {

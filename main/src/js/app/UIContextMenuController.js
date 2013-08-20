@@ -142,59 +142,51 @@ var UIContextMenuController = (function () {
             }
         },
 
-        editMeta : function () {
-            var selectedItem, selectedId,
-                context = document.getElementById('task-operation-context-menu');
-            selectedItem  = context.menu.selected;
-            if (selectedItem) {
-                selectedId = selectedItem.selected;
-                if (selectedId !== null) {
-                    bb.pushScreen('edit-meta.html', UIConfig.editMetaPagePrefix, {'metaId' : selectedId});
-                }
-            }
-        },
-
         deleteMeta : function () {
             var selectedItem, selectedId,
                 savedMetaTypeId, savedName, savedDescription, savedUIRank,
-                metaTypeName = Util.valueOf('v_meta_type_name'),
-                context = document.getElementById('task-operation-context-menu');
-            selectedItem  = context.menu.selected;
-            if (selectedItem) {
-                selectedId = selectedItem.selected;
-                if (selectedId !== null) {
-                    DataAccess.appDb.transaction(function (tx) {
-                        DataAccess.runSqlDirectly(tx, "select meta_type_id, name, description, ui_rank from meta where id = ?", [selectedId],
-                            function (tx, result, objs) {
-                                if (Util.notEmpty(objs) && objs.length > 0) {
-                                    savedMetaTypeId = objs[0].meta_type_id;
-                                    savedName = objs[0].name;
-                                    savedDescription = objs[0].description;
-                                    savedUIRank = objs[0].ui_rank;
-                                }
-                            });
-                    });
-                    DataAccess.meta.deleteById(selectedId, function (tx, result, rows) {
-                        document.getElementById(UIMetaUtil.getMetaUiId(selectedId)).remove();
-                        Util.showToast(metaTypeName + " " + savedName + " Deleted", UIConfig.msgUndo, UIConfig.nothing,
-                            function () {
-                                DataAccess.appDb.transaction(function (tx) {
-                                    DataAccess.runSqlDirectly(tx, Sql.Meta.InsertById, [selectedId, savedName, savedMetaTypeId, savedDescription, savedUIRank],
-                                        function (tx, result, objs) {
-                                            UIListController.fillMetaListMarkTypeAsSelected(savedMetaTypeId);
-                                            var toastMsg = "Deletion of " + metaTypeName + " " + savedName + " reverted";
-                                            Util.showToast(toastMsg);
-                                        });
-                                });
-                            });
-                    }, function (tx, error) {
-                        log.logSqlError("Failed to delete meta[" + selectedId + "]", error);
-                    });
-                }
+                metaTypeName = $('#meta_type_name').val(),
+                selectedId = $('#id').val();
+	    var confirmDel = confirm('Are you sure to delete this?');
+	    if (false === confirmDel) {
+		return;
+	    }
+            if (selectedId !== null) {
+                DataAccess.appDb.transaction(function (tx) {
+                    DataAccess.runSqlDirectly(tx, "select meta_type_id, name, description, ui_rank from meta where id = ?", [selectedId],
+					      function (tx, result, objs) {
+						  if (Util.notEmpty(objs) && objs.length > 0) {
+						      savedMetaTypeId = objs[0].meta_type_id;
+						      savedName = objs[0].name;
+						      savedDescription = objs[0].description;
+						      savedUIRank = objs[0].ui_rank;
+						  }
+					      });
+                });
+                DataAccess.meta.deleteById(selectedId, function (tx, result, rows) {
+		    bb.popScreen();
+                    Util.showToast(metaTypeName + " " + savedName + " Deleted", UIConfig.msgUndo, UIConfig.nothing,
+				   function () {
+                                       DataAccess.appDb.transaction(function (tx) {
+					   DataAccess.runSqlDirectly(tx, Sql.Meta.InsertById, [selectedId, savedName, savedMetaTypeId, savedDescription, savedUIRank],
+								     function (tx, result, objs) {
+									 UIListController.fillMetaListMarkTypeAsSelected(savedMetaTypeId);
+									 var toastMsg = "Deletion of " + metaTypeName + " " + savedName + " reverted";
+									 Util.showToast(toastMsg);
+								     });
+                                       });
+				   });
+                }, function (tx, error) {
+                    log.logSqlError("Failed to delete meta[" + selectedId + "]", error);
+                });
             }
         },
 
         emptyTrash : function () {
+	    var confirmDel = confirm("Do you really want to empty the trash?");
+	    if (true !== confirmDel) {
+		return;
+	    }
             DataAccess.appDb.transaction(function (tx) {
                 DataAccess.runSqlDirectly(tx, "select id from task where status = ?", [SeedData.TaskDeletedStatus],
                     function (tx, result, objs) {
@@ -204,9 +196,11 @@ var UIContextMenuController = (function () {
                             DataAccess.runSqlDirectly(tx, "delete from task_meta where task_id = ?", [objs[i].id]);
                         }
                         document.getElementById(UIConfig.detailListElementId).clear();
+			document.getElementById(UIConfig.detailListElementId).innerHTML = UIConfig.msgForNoTask;
                         Util.showToast(UIConfig.msgForTrashBoxClean);
                     });
             });
+	    UITaskUtil.setTaskDetailPanelDisplay('none');
         },
 
         restoreTaskFromTrash : function () {

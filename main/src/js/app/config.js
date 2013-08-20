@@ -60,10 +60,6 @@ var UIConfig = (function () {
             'mark_task_as_new',
             'move_task_to_trash'
         ],
-        metaContextMenu : [
-            'edit_meta',
-            'delete_meta'
-        ],
         trashBoxContextMenu : [
             'restore_task',
             'empty_trash'
