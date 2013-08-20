@@ -18,7 +18,7 @@ var UIListController = (function () {
                 metaListDiv.style.height = metaListHeightByNumberOfMeta + 'px';
             }
             height = groupParent.offsetHeight - metaListDiv.offsetHeight;
-            height = height < 102 ? 102 : height;
+            height = height < 70 ? 70 : height;
             heightString = height + 'px';
             metaListSpaceDiv.style.height = heightString;
             metaListSpaceDiv.innerHTML = UIConfig.rightArrow;
@@ -243,7 +243,7 @@ var UIListController = (function () {
                                     'z-index' : '200'
                                 }).click(function (id) {
                                     return function () {
-                                        bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix, {'metaTypeId' : id, 'abc' : 'def' });
+                                        bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix, {'metaTypeId' : id});
                                     };
                                 }(id)).append(addIcon);
 
@@ -274,6 +274,7 @@ var UIListController = (function () {
         },
 
         fillMetaToCreateForm : function (meta_type_id) {
+	    $("#delete-meta-button-container").css('display','none');
             DataAccess.metaType.getById(meta_type_id, function (tx, result, objs) {
                 var metaTypeName = objs[0][Sql.MetaType.Cols.Name], metaTypeId = objs[0][Sql.MetaType.Cols.Id];
                 Util.setMetaDetailPageCaption('New ' + metaTypeName);

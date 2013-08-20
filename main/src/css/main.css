@@ -106,8 +106,9 @@
 
 #group-space {
     text-align: center;
-    height:102px;
-    line-height:102px;
+    height: 70px;
+    line-height:70px;
+    min-height:70px;
     color: #AAA;
 }
 
@@ -616,13 +617,14 @@
 
 @media screen and (max-height:720px) {
     #group {
-	height:486px;
+	height:500px;
     }
     #group-detail-container {
 	height:500px;
     }
     #group-list-panel {
-	max-height:340px;
+	max-height:440px;
+	border-bottom:1px solid #BFBFBF;
     }
     #detail {
 	height:587px;
@@ -646,9 +648,6 @@
     }
     #ctsi, #stsi {
 	width:640px;
-    }
-    #group-space {
-	margin-top:40px;
     }
     #create-task-placeholder, #search-task-placeholder {
 	width:650px;
@@ -685,4 +684,10 @@
 	top: 520px;
 	height:70px;
     }    
+    #create-task-shortcut {
+	min-height:80px; 
+	text-align:center;
+	height: 80px;
+	width:205px;
+    }
 }

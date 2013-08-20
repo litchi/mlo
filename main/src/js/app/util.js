@@ -362,16 +362,28 @@ var Util = (function () {
         },
 
         showSearchTitle : function (keyword) {
+	    var height;
             $("#search-result-title").css('display', 'block');
             $("#search-result-title").html('Search Result <span id="search-keyword-title-span">' + keyword + '</span>');
 	    //TODO Change here for Q10
-            $("#detail-list-panel").css('height', '1020px');
+	    if(bb.is720x720) {
+		height = '480px';
+	    } else if (bb.is1280x720) {
+		height = '1020px';
+	    }
+            $("#detail-list-panel").css('height', height);
         },
 
         hideSearchTitle : function () {
+	    var height;
             $("#search-result-title").css('display', 'none');
 	    //TODO Change here for Q10
-            $("#detail-list-panel").css('height', '1130px');
+	    if(bb.is720x720) {
+		height = '590px';
+	    } else if (bb.is1280x720) {
+		height = '1130px';
+	    }
+            $("#detail-list-panel").css('height', height);
             $('#stsi').val(UIConfig.emptyString);
             $("#stsi").blur();
         },

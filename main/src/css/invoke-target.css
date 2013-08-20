@@ -94,6 +94,15 @@
 }
 
 @media screen and (max-height:720px) {
+
+    .task-detail-basket, .task-detail-next-action, .task-detail-someday,
+    .task-detail-list-context-container, .task-detail-list-project,
+    .task-detail-list-due, .task-detail-list-overdue,
+    .task-detail-past-alarm, .task-detail-future-alarm {
+	max-width:545px;
+	width:545px;
+    }
+
     #view-task-detail {
 	height:100%;
 	width:740px;
