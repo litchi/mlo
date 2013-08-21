@@ -83,8 +83,8 @@ var UIFragments = (function () {
                 '<div id="group-space" onclick="Util.togglePanelWidth();"></div>' +
             '</div>' +
             '<div id="create-task-shortcut">' +
-                '<img id="create-task-shortcut-add" src="resources/image/bullet_add.png" onclick="Util.toggleCreateTaskShortcutDisplay();"/>' +
-                '<img id="create-task-shortcut-search" src="resources/image/search.png" onclick="Util.toggleSearchTaskTaskShortcutDisplay();"/>' +
+                '<div id="create-task-shortcut-add" onclick="Util.toggleCreateTaskShortcutDisplay();"/>CREATE TASK</div>' +
+                '<div id="create-task-shortcut-search" onclick="Util.toggleSearchTaskTaskShortcutDisplay();"/>SEARCH TASK</div>' +
             '</div>' +
             '<div id="detail" onclick="Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">' +
                 '<div id="search-result-title"></div>' +

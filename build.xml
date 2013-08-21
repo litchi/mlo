@@ -40,7 +40,7 @@
     <property name = "env.ripple.remote.ip"           value    = "172.16.177.139"/>
     <property name = "env.ripple.remote.folder"       value    = "/www/gtd"/>
 
-    <property name = "env.bb10.simulator.ip"          value    = "172.16.177.145"/>
+    <property name = "env.bb10.simulator.ip"          value    = "172.16.177.154"/>
 
     <property name = "env.bb10.device.ip"             value    = "192.168.11.13"/>
     <property name = "env.bb10.device.password"       value    = "hetaolxq"/>

@@ -106,10 +106,11 @@
 
 #group-space {
     text-align: center;
-    height: 70px;
-    line-height:70px;
-    min-height:70px;
-    color: #AAA;
+    height: 110px;
+    line-height:110px;
+    min-height:110px;
+    background: #DDD;
+    border-top: 1px solid #CCC;
 }
 
 #detail {
@@ -147,21 +148,16 @@
 }
 
 #ctsi, #stsi {
-    width:700px;
-    border: 15px solid rgba(78, 187, 96, 0.56);
+    width:650px;
+    border: 15px solid rgba(248, 155, 0, 0.56);
     /*height: 120px;*/
-    background-color: rgba(168, 223, 117, 0.51);
-    color:white;  
+    background-color: rgba(255,249, 174, 1);
     font-family:monospaceTextarea;
     font-size:48px;
     margin: 3px 5px 3px 5px;
     padding: 5px;
     font-size:48px;
     line-height:150%;
-}
-
-#stsi {
-    height: 110px;
 }
 
 @font-face {
@@ -333,23 +329,27 @@
 }
 
 #create-task-shortcut {
-    min-height:141px; 
     text-align:center;
-    height: 141px;
-    background: #EEE;
+    background: #ddd;
     width:205px;
-    padding-top:25px;
+    font-size: 24px;
 }
 
-#create-task-shortcut-search {
-    padding-left: 10px;
+#create-task-shortcut-add {
+    border-bottom: 1px solid #CCC;
+    border-top: 1px solid #CCC;
 }
 
+#create-task-shortcut-search, 
+#create-task-shortcut-add {
+    height: 110px;
+    line-height: 110px;
+}
 
 #create-task-placeholder,
 #search-task-placeholder {
     background: transparent;
-    color: rgba(218, 253, 167, 0.51);
+    color: #FFFFFF;
     width: 700px;
     margin-left: 10px;
     margin: auto;
@@ -575,26 +575,23 @@
 
 @media screen and (max-height:1280px) {
     #group {
-	height:1016px;
+	height:926px;
     }
     #group-detail-container {
-	height:1060px;
+	height:970px;
     }
     #group-list-panel {
-	max-height:900px;
+	max-height:820px;
     }
     #detail {
 	height:1147px;
     }
+
     #task-list-container{height:1048px;}
 
-    #detail-list{
-	height:1130px;
-    }
+    #detail-list{height:1130px;}
 
-    #detail-list-panel {
-	height:1130px;
-    }
+    #detail-list-panel {height:1130px;}
 
     #view-task-detail {
 	height: 1020px; 
@@ -647,7 +644,7 @@
 	margin: 50px 70px 0 20px;
     }
     #ctsi, #stsi {
-	width:640px;
+	width:600px;
     }
     #create-task-placeholder, #search-task-placeholder {
 	width:650px;
@@ -685,9 +682,7 @@
 	height:70px;
     }    
     #create-task-shortcut {
-	min-height:80px; 
 	text-align:center;
-	height: 80px;
 	width:205px;
     }
 }
