@@ -595,7 +595,7 @@
     #detail-list-panel {height:1130px;}
 
     #view-task-detail {
-	height: 1020px; 
+	height: 1033px; 
 	display: none; 
 	position: absolute; 
 	left: 35px; 
@@ -621,7 +621,7 @@
 	height:500px;
     }
     #group-list-panel {
-	max-height:440px;
+	max-height:445px;
 	border-bottom:1px solid #BFBFBF;
     }
     #detail {
@@ -637,7 +637,7 @@
 	height:570px;
     }
     #view-task-detail {
-	height: 550px; 
+	height: 515px; 
 	width:680px;
 	margin-left:-20px;
     }
@@ -685,5 +685,22 @@
     #create-task-shortcut {
 	text-align:center;
 	width:205px;
+    }
+
+    #group-space {
+	min-height: 55px;
+	height: 55px;
+    }
+    #create-task-shortcut-search, 
+    #create-task-shortcut-add {
+	height: 55px;
+	line-height: 55px;
+    }
+    .task-detail-basket, .task-detail-next-action, .task-detail-someday, 
+    .task-detail-list-context-container, .task-detail-list-project, 
+    .task-detail-list-due, .task-detail-list-overdue, 
+    .task-detail-past-alarm, .task-detail-future-alarm {
+	width: 530px;
+	max-width: 530px;
     }
 }

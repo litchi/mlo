@@ -76,7 +76,6 @@ var UIEditFormController = (function () {
                 DataAccess.runSqlDirectly(tx, Sql.Task.UpdateById, [name, id]);
                 UITaskDueUtil.saveDueInfo(tx, id, dueDate);
                 UITaskReminderUtil.saveReminderInfo(tx, id, name, dueDate, projectName);
-                //FIXME If project id is zero, then we should delete the task-project link in task_meta table.
                 if (projectId !== '0') {
                     UITaskProjectUtil.saveProjectInfo(tx, id, projectId);
                 }

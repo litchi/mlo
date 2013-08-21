@@ -18,7 +18,11 @@ var UIListController = (function () {
                 metaListDiv.style.height = metaListHeightByNumberOfMeta + 'px';
             }
             height = groupParent.offsetHeight - metaListDiv.offsetHeight;
-            height = height < 110 ? 110 : height;
+	    if (Util.isQ10()) {
+		height = height < 55 ? 55 : height;
+	    } else if (Util.isZ10()) {
+		height = height < 110 ? 110 : height;
+	    }
             heightString = height + 'px';
             metaListSpaceDiv.style.height = heightString;
             metaListSpaceDiv.innerHTML = UIConfig.rightArrow;

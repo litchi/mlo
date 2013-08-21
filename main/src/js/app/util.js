@@ -361,14 +361,21 @@ var Util = (function () {
             return '%' + keyword + '%';
         },
 
+	isQ10 : function () {
+	    return bb.device.is720x720;
+	},
+
+	isZ10 : function () {
+	    return bb.device.is1280x720;
+	},
+
         showSearchTitle : function (keyword) {
 	    var height;
             $("#search-result-title").css('display', 'block');
             $("#search-result-title").html('Search Result <span id="search-keyword-title-span">' + keyword + '</span>');
-	    //TODO Change here for Q10
-	    if(bb.is720x720) {
+	    if(Util.isQ10()) {
 		height = '480px';
-	    } else if (bb.is1280x720) {
+	    } else if (Util.isZ10()) {
 		height = '1020px';
 	    }
             $("#detail-list-panel").css('height', height);
@@ -377,10 +384,9 @@ var Util = (function () {
         hideSearchTitle : function () {
 	    var height;
             $("#search-result-title").css('display', 'none');
-	    //TODO Change here for Q10
-	    if(bb.is720x720) {
+	    if(Util.isQ10()) {
 		height = '590px';
-	    } else if (bb.is1280x720) {
+	    } else if (Util.isZ10()) {
 		height = '1130px';
 	    }
             $("#detail-list-panel").css('height', height);
