@@ -69,7 +69,7 @@ var UIListController = (function () {
     }
 
     function setCreateTaskInputPlaceHolder(metaName, metaTypeName) {
-        var placeholder = 'New task';
+        var placeholder = 'Create Task';
         if (Util.notEmpty(metaName) &&
                 Sql.FilterAllMeta !== metaName &&
                 SeedData.DueMetaTypeName !== metaTypeName) {

@@ -148,16 +148,17 @@
 }
 
 #ctsi, #stsi {
-    width:650px;
-    border: 15px solid rgba(248, 155, 0, 0.56);
-    /*height: 120px;*/
-    background-color: rgba(255,249, 174, 1);
+    width:660px;
+    background-color: transparent;
     font-family:monospaceTextarea;
     font-size:48px;
     margin: 3px 5px 3px 5px;
     padding: 5px;
     font-size:48px;
     line-height:150%;
+    color:#FFF;
+    border-style:none;
+    border-bottom: 5px solid rgba(248, 155, 0, 1);
 }
 
 @font-face {
@@ -203,7 +204,7 @@
 #create-task-input-container, #search-task-input-container {
     display:none;
     position: absolute; 
-    left: 26px; 
+    left: 30px; 
     top: 50px; 
     z-index: 1000;
     width:0;

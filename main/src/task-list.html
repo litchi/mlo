@@ -13,8 +13,8 @@
             <div id='group-space' onclick="Util.togglePanelWidth();"></div>
         </div>
         <div id="create-task-shortcut">
-          <div id="create-task-shortcut-add" onclick="Util.toggleCreateTaskShortcutDisplay();"/>New Task</div>
-          <div id="create-task-shortcut-search" onclick="Util.toggleSearchTaskTaskShortcutDisplay();"/>Search Task</div>
+          <div id="create-task-shortcut-add" onclick="Util.toggleCreateTaskShortcutDisplay();"/>CREATE TASK</div>
+          <div id="create-task-shortcut-search" onclick="Util.toggleSearchTaskTaskShortcutDisplay();"/>SEARCH TASK</div>
         </div>
         <div id="detail" onclick="Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin)">
             <div id='search-result-title'></div>
@@ -43,11 +43,11 @@
     <div id='create-task-input-container'>
         <div id="create-task-placeholder"></div>
         <form name="ctf" id="ctf" onSubmit="return UITaskUtil.createTask(Util.valueOf('ctsi'), Util.valueOf('v_meta_type_name'), Util.valueOf('v_meta_id'));">
-            <textarea id="ctsi" rows='1' oninput="Util.resizeTextarea(this, 26)" ontextinput="Util.resizeTextarea(this, 26)" onkeyup="Util.resizeTextarea(this, 26)"></textarea>
+            <textarea id="ctsi" placeholder="Task Detail" rows='1' oninput="Util.resizeTextarea(this, 26)" ontextinput="Util.resizeTextarea(this, 26)" onkeyup="Util.resizeTextarea(this, 26)"></textarea>
         </form>
     </div>
     <div id='search-task-input-container'>
-        <div id="search-task-placeholder">Search for task</div>
+        <div id="search-task-placeholder">Search Task</div>
         <form name="stf" id="stf" onSubmit="return UITaskUtil.searchTask(Util.valueOf('stsi'));">
             <input id="stsi" type="text" placeholder="Keywords" required="required"/>
         </form>
