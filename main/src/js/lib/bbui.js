@@ -1362,11 +1362,13 @@ bb.actionBar = {
 		actionBar.setBackCaption = actionBar.setBackCaption.bind(actionBar);  
 		
 		// Add setSelectedTab function
-		actionBar.setSelectedTab = function(tab) {
+                actionBar.setSelectedTab = function(tab, invokeOnClick) {
 					if (tab.getAttribute('data-bb-style') != 'tab') return;
 					bb.actionBar.highlightAction(tab);
-					if (tab.onclick) {
-						tab.onclick();
+                                        if (tab.onclick && false !== invokeOnClick) {
+					    if (tab.onclick) {
+							      tab.onclick();
+							     }
 					}
 				};
 		actionBar.setSelectedTab = actionBar.setSelectedTab.bind(actionBar);  

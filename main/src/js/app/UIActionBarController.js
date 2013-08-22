@@ -34,9 +34,7 @@ var UIActionBarController = (function () {
             UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);
             UIListController.fillMetaTypeToPanel(metaTypeId);
             if (Util.isEmpty(metaTypeId)) {
-                UIListController.fillAllMetaToPanel(UIConfig.metaByPagePrefix);
-            } else {
-                UIListController.fillMetaListToPanel(metaTypeId, UIConfig.metaByPagePrefix);
+		$("#detail-list").html(UIConfig.msgForMetaListDefaultPage);
             }
         },
 

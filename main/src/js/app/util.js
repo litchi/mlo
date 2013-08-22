@@ -366,7 +366,7 @@ var Util = (function () {
 	},
 
 	isZ10 : function () {
-	    return bb.device.is1280x720;
+	    return bb.device.is1280x768;
 	},
 
         showSearchTitle : function (keyword) {

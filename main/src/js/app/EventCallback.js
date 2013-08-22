@@ -29,7 +29,7 @@ var EventCallback = (function () {
             actionBarItem = document.getElementById(actionBarId);
         if (Util.notEmpty(actionBarId)) {
             if (actionBarId === UIConfig.screenIdField) {
-                actionBarDiv.setSelectedTab(actionBarItem);
+		actionBarDiv.setSelectedTab(actionBarItem);
             } else {
                 if (Util.notEmpty(document.getElementById(actionBarItem))) {
                     actionBarDiv.setSelectedTab(actionBarItem, false);
@@ -87,6 +87,11 @@ var EventCallback = (function () {
                 actionBarId = params[UIConfig.paramActionbarId];
             }
         }
+	if (id === 'setting') {
+            actionBarId = 'setting';
+	}
+        setActionBarSelected(actionBarId);
+        setDevTabVisible();
         if (id !== null){
             if (id === SeedData.BasketMetaName ||
                     id === SeedData.NextActionMetaName ||
@@ -105,13 +110,10 @@ var EventCallback = (function () {
             } else if (id === SeedData.TaskDeletedStatus) {
                 UIListController.fillTasksToGroupByStatusKey(id);
             } else if (id === 'setting') {
-                actionBarId = 'setting';
                 UIActionBarController.openSettingsPage();
             } else if (id === UIConfig.taskWithOperPagePrefix) {
                 UIInvokeTarget.pageProcesser(taskInfo);
             }
-            setActionBarSelected(actionBarId);
-            setDevTabVisible();
             showAndClearToastMsg(toastMsg, params);
         }
     }

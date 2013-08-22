@@ -271,7 +271,9 @@ var UIListController = (function () {
                 }
                 setCreateTaskInputPlaceHolder(UIConfig.emptyString, UIConfig.emptyString);
                 setGroupPanelEmptyHeight();
-                UIListController.fillMetaListMarkTypeAsSelected(metaTypeId);
+		if (Util.notEmpty(metaTypeId)) {
+                    UIListController.fillMetaListMarkTypeAsSelected(metaTypeId);
+		}
             }, function (tx, error) {
                 log.logSqlError("Error getting all meta type", error);
             });
@@ -311,44 +313,6 @@ var UIListController = (function () {
             }
         },
 
-        fillAllMetaToPanel : function (pageType) {
-            var metaTypeName, metaTypeInternal,
-                detailListTitle  = document.getElementById('detail-title-text'),
-                metaList = UIMetaUtil.getMetaListElement(pageType);
-            metaList.innerHTML = UIConfig.emptyString;
-            DataAccess.appDb.transaction(function (tx) {
-                DataAccess.runSqlDirectly(tx, "select distinct meta_id as id, meta_name as name, meta_description as description, meta_type_name from meta_view where meta_type_internal = 0",
-                    [], function (tx, result, objs) {
-                        var key, name, id, desc, item, metaTypeName;
-                        for (key in objs) {
-                            if (objs.hasOwnProperty(key)) {
-                                name = objs[key][Sql.Meta.Cols.Name];
-                                id   = objs[key][Sql.Meta.Cols.Id];
-                                desc = objs[key][Sql.Meta.Cols.Description];
-                                metaTypeName = objs[key].meta_type_name;
-                                item = document.createElement('div');
-                                item.setAttribute('data-bb-type', 'item');
-                                item.setAttribute('data-bb-style', 'stretch');
-                                if (Util.notEmpty(id)) {
-                                    item.setAttribute('id', UIMetaUtil.getMetaUiId(id));
-                                    if (Util.notEmpty(name)) {
-                                        item.setAttribute('title', '<span class="detail-title">' + metaTypeName + ": " + name + '</span>');
-                                        item.setAttribute('data-bb-title', '<span class="detail-title">' + metaTypeName + ": " + name + '</span>');
-                                    }
-                                    UIContextMenuUtil.setMetaContextMenuAction(item, metaTypeName, id, name, desc);
-                                    metaList.appendItem(item);
-                                }
-                            }
-                        }
-                        if (Util.notEmpty(detailListTitle)) {
-                            detailListTitle.style.display  = 'none';
-                        }
-                        setGroupPanelEmptyHeight();
-                    });
-            }, function (tx, error) {
-                log.logSqlError("Error getting all meta list", error);
-            });
-        },
 
         fillMetaListToPanel : function (metaTypeId, pageType, callback) {
             var metaTypeName, metaTypeInternal, taskNumbers,

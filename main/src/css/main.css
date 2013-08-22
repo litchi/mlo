@@ -179,9 +179,9 @@
     display:none;
 }
 
-.msg-for-no-task{
+.msg-for-no-task, .msg-for-default-meta-list {
     text-align: center; 
-    margin: 50px 20px 0 20px;
+    margin: 70px 20px 0 20px;
     min-width: 450px;
 }
 
@@ -642,7 +642,7 @@
 	margin-left:-20px;
     }
     .msg-for-no-task{
-	margin: 50px 70px 0 20px;
+	margin: 70px 70px 0 20px;
     }
     #ctsi, #stsi {
 	width:600px;
