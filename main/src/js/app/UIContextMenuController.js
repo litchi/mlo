@@ -32,8 +32,8 @@ var UIContextMenuController = (function () {
     function postponeTaskInternal() {
         var selectedItem, selectedId, currDueDateTimestamp, newDueDate,
             currentDate = new Date(),
-	    idInput = $('#task-id-detail-div');
-	selectedId = idInput.val();
+	        idInput = $('#task-id-detail-div');
+	    selectedId = idInput.val();
         if (null === selectedId) {
             console.warn("Selected Id is null");
             return;
@@ -66,22 +66,22 @@ var UIContextMenuController = (function () {
         }, function (tx, error) {
             log.logSqlError("Failed to postpone task[" + selectedId + "] to the next day", error);
         });
-	UITaskUtil.setTaskDetailPanelDisplay('none');
+	    UITaskUtil.setTaskDetailPanelDisplay('none');
     }
 
     function updateTaskStatus(statusKey, successCallback) {
         var selectedItem, selectedId, idInput = $('#task-id-detail-div');
-	if (null !== idInput) {
-	    selectedId = idInput.val();
+	    if (null !== idInput) {
+	        selectedId = idInput.val();
             if (selectedId !== null) {
-		UITaskUtil.updateTaskStatus(selectedId, statusKey, successCallback);
+	            UITaskUtil.updateTaskStatus(selectedId, statusKey, successCallback);
             }
-	} 
+	    }
     }
 
     function moveTaskToGtdList(metaName) {
         var selectedItem, selectedId,
-	idInput = $('#task-id-detail-div');
+	        idInput = $('#task-id-detail-div');
         if (idInput) {
             selectedId = idInput.val();
             if (selectedId !== null) {
@@ -91,9 +91,9 @@ var UIContextMenuController = (function () {
                             titleSpan = document.getElementById('task-title-' + selectedId),
                             currentMetaTypeName = Util.valueOf('v_meta_type_name');
                         if (currentMetaTypeName === SeedData.GtdMetaTypeName &&
-                            (currentMetaName === SeedData.BasketMetaName ||
-                            currentMetaName === SeedData.NextActionMetaName ||
-                            currentMetaName === SeedData.SomedayMetaName)) {
+                                (currentMetaName === SeedData.BasketMetaName ||
+                                 currentMetaName === SeedData.NextActionMetaName ||
+                                 currentMetaName === SeedData.SomedayMetaName)) {
                             document.getElementById('task-' + selectedId).remove();
                         } else {
                             titleSpan.setAttribute("class", Util.getGtdListTitleSpanClass(metaName, 'detail-title'));
@@ -105,7 +105,7 @@ var UIContextMenuController = (function () {
                     });
             }
         }
-	UITaskUtil.setTaskDetailPanelDisplay('none');
+        UITaskUtil.setTaskDetailPanelDisplay('none');
     }
 
     return {
@@ -125,12 +125,12 @@ var UIContextMenuController = (function () {
                     });
                 }
             }
-	    UITaskUtil.setTaskDetailPanelDisplay('none');
+	        UITaskUtil.setTaskDetailPanelDisplay('none');
         },
 
         editTask : function (taskObj) {
             if (taskObj !== null) {
-		UITaskUtil.setTaskDetailPanelDisplay('none');
+		        UITaskUtil.setTaskDetailPanelDisplay('none');
                 bb.pushScreen('edit-task.html', UIConfig.editTaskPagePrefix,
                               {
 				  'taskInfo'     : taskObj,
@@ -168,13 +168,13 @@ var UIContextMenuController = (function () {
                     Util.showToast(metaTypeName + " " + savedName + " Deleted", UIConfig.msgUndo, UIConfig.nothing,
 				   function () {
                                        DataAccess.appDb.transaction(function (tx) {
-					   DataAccess.runSqlDirectly(tx, Sql.Meta.InsertById, [selectedId, savedName, savedMetaTypeId, savedDescription, savedUIRank],
-								     function (tx, result, objs) {
-									 UIListController.fillMetaListMarkTypeAsSelected(savedMetaTypeId);
-									 var toastMsg = "Deletion of " + metaTypeName + " " + savedName + " reverted";
-									 Util.showToast(toastMsg);
-								     });
-                                       });
+					                       DataAccess.runSqlDirectly(tx, Sql.Meta.InsertById, [selectedId, savedName, savedMetaTypeId, savedDescription, savedUIRank],
+								               function (tx, result, objs) {
+									               UIListController.fillMetaListMarkTypeAsSelected(savedMetaTypeId);
+									               var toastMsg = "Deletion of " + metaTypeName + " " + savedName + " reverted";
+									               Util.showToast(toastMsg);
+								               });
+                                        });
 				   });
                 }, function (tx, error) {
                     log.logSqlError("Failed to delete meta[" + selectedId + "]", error);
@@ -183,10 +183,10 @@ var UIContextMenuController = (function () {
         },
 
         emptyTrash : function () {
-	    var confirmDel = confirm("Do you really want to empty the trash?");
-	    if (true !== confirmDel) {
-		return;
-	    }
+	        var confirmDel = confirm("Do you really want to empty the trash?");
+	        if (true !== confirmDel) {
+		        return;
+	        }
             DataAccess.appDb.transaction(function (tx) {
                 DataAccess.runSqlDirectly(tx, "select id from task where status = ?", [SeedData.TaskDeletedStatus],
                     function (tx, result, objs) {
@@ -196,11 +196,11 @@ var UIContextMenuController = (function () {
                             DataAccess.runSqlDirectly(tx, "delete from task_meta where task_id = ?", [objs[i].id]);
                         }
                         document.getElementById(UIConfig.detailListElementId).clear();
-			document.getElementById(UIConfig.detailListElementId).innerHTML = UIConfig.msgForNoTask;
+			            document.getElementById(UIConfig.detailListElementId).innerHTML = UIConfig.msgForNoTask;
                         Util.showToast(UIConfig.msgForTrashBoxClean);
                     });
             });
-	    UITaskUtil.setTaskDetailPanelDisplay('none');
+	        UITaskUtil.setTaskDetailPanelDisplay('none');
         },
 
         restoreTaskFromTrash : function () {
@@ -208,7 +208,7 @@ var UIContextMenuController = (function () {
                 document.getElementById('task-' + taskId).remove();
                 Util.showToast(UIConfig.msgForTaskRestore);
             });
-	    UITaskUtil.setTaskDetailPanelDisplay('none');
+	        UITaskUtil.setTaskDetailPanelDisplay('none');
         },
 
         markTaskAsDone : function () {
@@ -226,7 +226,7 @@ var UIContextMenuController = (function () {
                             });
                     });
             });
-	    UITaskUtil.setTaskDetailPanelDisplay('none');
+	        UITaskUtil.setTaskDetailPanelDisplay('none');
         },
 
         markTaskAsNew : function () {
@@ -234,7 +234,7 @@ var UIContextMenuController = (function () {
                 document.getElementById('task-' + taskId).style.textDecoration = 'none';
                 Util.showToast(UIConfig.msgForTaskStatusUpdatePref + SeedData.TaskNewStatus);
             });
-	    UITaskUtil.setTaskDetailPanelDisplay('none');
+	        UITaskUtil.setTaskDetailPanelDisplay('none');
         },
 
         postponeTask         : function () { postponeTaskInternal(); },

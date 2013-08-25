@@ -4,8 +4,8 @@ var UITaskContextUtil = (function () {
     "use strict";
     var selectedContextIds = {};
 
-    function clearSelectedContextIds () {
-        selectedContextIds = {}; 
+    function clearSelectedContextIds() {
+        selectedContextIds = {};
     }
 
     return {

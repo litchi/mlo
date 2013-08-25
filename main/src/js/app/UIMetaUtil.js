@@ -93,13 +93,13 @@ var UIMetaUtil = (function () {
             span.setAttribute('id', metaId);
             selected = Util.notEmpty(selectedMetaNames) && (selectedMetaNames.indexOf(metaName) !== -1);
             if (selected) {
-                //FIXME The meta type name should also be set as class to enable custom UI for differnt meta type. 
+                //FIXME The meta type name should also be set as class to enable custom UI for differnt meta type.
                 span.setAttribute('class', 'selectedMeta');
                 span.setAttribute('onclick', unSelectClickCallback(metaId, metaName));
                 currentSelectedContainer[metaId] = metaName;
                 icon = Util.createMetaSelectedIcon(metaId, 'deleteIcon');
             } else {
-                //FIXME The meta type name should also be set as class to enable custom UI for differnt meta type. 
+                //FIXME The meta type name should also be set as class to enable custom UI for differnt meta type.
                 span.setAttribute('class', 'meta');
                 span.setAttribute('onclick', selectClickCallback(metaId, metaName));
             }

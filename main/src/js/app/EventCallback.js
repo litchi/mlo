@@ -29,7 +29,7 @@ var EventCallback = (function () {
             actionBarItem = document.getElementById(actionBarId);
         if (Util.notEmpty(actionBarId)) {
             if (actionBarId === UIConfig.screenIdField) {
-		actionBarDiv.setSelectedTab(actionBarItem);
+		        actionBarDiv.setSelectedTab(actionBarItem);
             } else {
                 if (Util.notEmpty(document.getElementById(actionBarItem))) {
                     actionBarDiv.setSelectedTab(actionBarItem, false);
@@ -87,12 +87,12 @@ var EventCallback = (function () {
                 actionBarId = params[UIConfig.paramActionbarId];
             }
         }
-	if (id === 'setting') {
+	    if (id === 'setting') {
             actionBarId = 'setting';
-	}
+	    }
         setActionBarSelected(actionBarId);
         setDevTabVisible();
-        if (id !== null){
+        if (id !== null) {
             if (id === SeedData.BasketMetaName ||
                     id === SeedData.NextActionMetaName ||
                     id === SeedData.SomedayMetaName) {
@@ -158,7 +158,7 @@ var EventCallback = (function () {
                 taskId = Util.b64_to_utf8(invokeRequest.data);
                 bb.pushScreen('invoke-target.html', UIConfig.taskWithOperPagePrefix, {
                     'taskInfo' : {id: taskId}
-                })
+                });
             }
         }
 
