@@ -29,7 +29,7 @@ var EventCallback = (function () {
             actionBarItem = document.getElementById(actionBarId);
         if (Util.notEmpty(actionBarId)) {
             if (actionBarId === UIConfig.screenIdField) {
-		        actionBarDiv.setSelectedTab(actionBarItem);
+                actionBarDiv.setSelectedTab(actionBarItem);
             } else {
                 if (Util.notEmpty(document.getElementById(actionBarItem))) {
                     actionBarDiv.setSelectedTab(actionBarItem, false);
@@ -87,9 +87,9 @@ var EventCallback = (function () {
                 actionBarId = params[UIConfig.paramActionbarId];
             }
         }
-	    if (id === 'setting') {
+        if (id === 'setting') {
             actionBarId = 'setting';
-	    }
+        }
         setActionBarSelected(actionBarId);
         setDevTabVisible();
         if (id !== null) {

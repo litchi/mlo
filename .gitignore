@@ -4,6 +4,7 @@
 *.idea
 *.bak
 *.vim
+*.log
 atlassian-ide-plugin.xml
 jsTestDriver.conf
 runJsTestDriver.sh
