@@ -1,17 +1,17 @@
 {
-    "Name" : "Mind like water GTD App",
-    "version" : "1.2",
-    "author" : "Lawrence Liu <smartlitchi@gmail.com>",
+    "name"        : "MindLikeWater",
+    "version"     : "1.2.0",
+    "author"      : "Lawrence Liu <smartlitchi@gmail.com>",
     "description" : "Mind like water GTD app for blackberry 10 plafform, build on HTML5 + Javascript + CSS",
     "contributors" : [
         {
-            "name" : "Lawrence Liu",
+            "name"  : "Lawrence Liu",
             "email" : "smartlitchi@gmail.com"
         }
     ],
     "repository": {
-        "type": "git",
-        "url": "https://github.com/litchi/mio.git"
+        "type" : "git",
+        "url"  : "https://github.com/litchi/mio.git"
     },
     "keywords": [
         "gtd",
