@@ -36,10 +36,10 @@ var UIContextMenuUtil = (function () {
         },
 
         setMetaContextMenuAction : function (item, metaTypeName, metaId, metaName, metaDesc) {
-	    item.onclick = function () {
-		bb.pushScreen('edit-meta.html', UIConfig.editMetaPagePrefix, {'metaId' : metaId});
-	    }
-	}
+            item.onclick = function () {
+                bb.pushScreen('edit-meta.html', UIConfig.editMetaPagePrefix, {'metaId' : metaId});
+            };
+        }
 
     };
 

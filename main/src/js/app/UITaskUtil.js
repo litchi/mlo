@@ -1,5 +1,5 @@
 /*jslint browser: true es5: true*/
-/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, $, jQuery, UIListController, UIMetaUtil, TaskModel, UITaskReminderUtil*/
+/*global DataAccess, Sql, SeedData, bb, log, console, UIConfig, UIFragments, Util, $, jQuery, UIListController, UIMetaUtil, TaskModel, UITaskReminderUtil, UIContextMenuController*/
 var UITaskUtil = (function () {
     "use strict";
 
@@ -223,9 +223,9 @@ var UITaskUtil = (function () {
                         description : name,
                         selected    : taskObj,
                         type        : 'Task'
-                    };		    
+                    };
                     UITaskUtil.createTaskDetailView(container, taskObj);
-		    UITaskUtil.setTaskDetailPanelDisplay('block', data);
+                    UITaskUtil.setTaskDetailPanelDisplay('block', data);
                 };
             }
             return item;
@@ -259,7 +259,7 @@ var UITaskUtil = (function () {
                             } else if ((Util.isEmpty(gtdList)) && SeedData.GtdMetaTypeName === metaTypeName) {
                                 gtdList = obj.meta_name;
                             }
-                            //Only get once task due date since it's the same for all the result set 
+                            //Only get once task due date since it's the same for all the result set
                             if (Util.isEmpty(taskDueDate)) {
                                 taskDueDate = obj.task_due_date;
                             }
@@ -324,15 +324,14 @@ var UITaskUtil = (function () {
         setTaskDetailPanelDisplay : function (display, data) {
             var taskListContainer,
                 container = document.getElementById(UIConfig.viewTaskDetailElementId);
-            if ((Util.isEmpty(data) || (data.type === 'Task'))
-                    && Util.notEmpty(container)
-                    && container.style.display !== display) {
+            if ((Util.isEmpty(data) || (data.type === 'Task')) &&
+                Util.notEmpty(container) && container.style.display !== display) {
                 container.style.display = display;
                 $('#main-content-overlay').css('display', display);
 		if (display === 'block') {
-		    $('#task-oper-menu').css('display', 'inline');
+            $('#task-oper-menu').css('display', 'inline');
 		} else if (display === 'none') {
-		    $('#task-oper-menu').css('display', 'none');
+            $('#task-oper-menu').css('display', 'none');
 		}
             }
             if (display === 'block') {
@@ -357,7 +356,7 @@ var UITaskUtil = (function () {
                 metaDiv        = document.getElementById('view-task-detail-meta');
             setFieldInTaskDetailPopup(taskObj.name, titleDiv, 'html');
             if (AppConfig.debugMode === true) {
-                metaDiv.setAttribute("onclick", "bb.pushScreen('invoke-target.html','task-detail-with-oper', {'taskInfo' : {'id' : " + taskObj.id +  "}})")
+                metaDiv.setAttribute("onclick", "bb.pushScreen('invoke-target.html','task-detail-with-oper', {'taskInfo' : {'id' : " + taskObj.id +  "}})");
             }
             if (Util.notEmpty(taskObj.gtdList)) {
                 gtdList = taskObj.gtdList;
@@ -406,12 +405,12 @@ var UITaskUtil = (function () {
                     metaContent += '</span>';
                 }
             }
-	    metaContent += '<input type="hidden" id="task-id-detail-div" value="' + taskObj.id + '">';
-	    $("#edit-task-icon").click(
-		function() {
-		    UIContextMenuController.editTask(taskObj);
-		}
-	    );
+            metaContent += '<input type="hidden" id="task-id-detail-div" value="' + taskObj.id + '">';
+            $("#edit-task-icon").click(
+                function() {
+                    UIContextMenuController.editTask(taskObj);
+                }
+            );
             setFieldInTaskDetailPopup(metaContent, metaDiv, 'html');
         },
 

@@ -5,7 +5,7 @@ var UITaskReminderUtil = (function () {
     var selectedReminderIds = {};
 
     function clearSelectedContextIds () {
-        selectedReminderIds = {}; 
+        selectedReminderIds = {};
     }
 
     //TODO change to a mapping table implementation to reduce code size
@@ -211,17 +211,16 @@ var UITaskReminderUtil = (function () {
         switchReminderPanelDisplay : function (dueDate, showError) {
             var reminderContainer = document.getElementById('reminderContainer'),
                 reminderPanel = document.getElementById('edit-page-sub-panel-reminder');
-            if (Util.notEmpty(dueDate)
-                    && Util.notEmpty(reminderPanel)
-                    && Util.notEmpty(reminderContainer)
-                    && (reminderPanel.style.display !== 'block' || reminderContainer.style.display !== 'block')) {
+            if (Util.notEmpty(dueDate) && Util.notEmpty(reminderPanel) &&
+                Util.notEmpty(reminderContainer) &&
+                (reminderPanel.style.display !== 'block' || reminderContainer.style.display !== 'block')) {
                 reminderPanel.style.display = 'block';
                 reminderContainer.style.display = 'block';
             } else if (Util.isEmpty(dueDate)) {
                 reminderPanel.style.display = 'none';
                 reminderContainer.style.display = 'none';
                 if (true === showError) {
-                    Util.showToast('Please set a due date first', UIConfig.OKString); 
+                    Util.showToast('Please set a due date first', UIConfig.OKString);
                 }
             }
         }

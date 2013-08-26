@@ -94,7 +94,7 @@ var UIEditFormController = (function () {
                 taskContexts     = taskInfo.contexts,
                 dueDate          = taskInfo.dueDate,
                 reminderMetaName = taskInfo.reminderMetaName;
-            //This transaction is created here to make all the methods 
+            //This transaction is created here to make all the methods
             //share the same transaction for performance consideration
             DataAccess.appDb.transaction(function (tx) {
                 DataAccess.runSqlDirectly(tx,

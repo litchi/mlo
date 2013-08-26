@@ -109,13 +109,13 @@ var Util = (function () {
 
         /**
         * Converts a Unicode/UTF8 string to Base64.
-        * 
+        *
         * This function is a workaround because the atob and btoa browser functions that should convert between a binary string and a
         * Base64 encoded ASCII string blow up when faced with Unicode with a INVALID_CHARACTER_ERR: DOM Exception 5.
-        * 
+        *
         * http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
         * http://monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
-        * 
+        *
         * @param str
         *            the Unicode string to base64 encode
         * @returns the base64 encoded Unicode string
@@ -126,13 +126,13 @@ var Util = (function () {
 
         /**
         * Converts a Base64 string to Unicode/UTF8 string.
-        * 
+        *
         * This function is a workaround because the atob and btoa browser functions that should convert between a binary string and a
         * Base64 encoded ASCII string blow up when faced with Unicode with a INVALID_CHARACTER_ERR: DOM Exception 5.
-        * 
+        *
         * http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
         * http://monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
-        * 
+        *
         * @param str
         *            the base64 Unicode encoded string
         * @returns the Unicode string
@@ -361,34 +361,34 @@ var Util = (function () {
             return '%' + keyword + '%';
         },
 
-	isQ10 : function () {
-	    return bb.device.is720x720;
-	},
+        isQ10 : function () {
+            return bb.device.is720x720;
+        },
 
-	isZ10 : function () {
-	    return bb.device.is1280x768;
-	},
+        isZ10 : function () {
+            return bb.device.is1280x768;
+        },
 
         showSearchTitle : function (keyword) {
-	    var height;
+            var height;
             $("#search-result-title").css('display', 'block');
             $("#search-result-title").html('Search Result <span id="search-keyword-title-span">' + keyword + '</span>');
-	    if(Util.isQ10()) {
-		height = '480px';
-	    } else if (Util.isZ10()) {
-		height = '1020px';
-	    }
+            if(Util.isQ10()) {
+                height = '480px';
+            } else if (Util.isZ10()) {
+                height = '1020px';
+            }
             $("#detail-list-panel").css('height', height);
         },
 
         hideSearchTitle : function () {
-	    var height;
+            var height;
             $("#search-result-title").css('display', 'none');
-	    if(Util.isQ10()) {
-		height = '590px';
-	    } else if (Util.isZ10()) {
-		height = '1130px';
-	    }
+            if(Util.isQ10()) {
+                height = '590px';
+            } else if (Util.isZ10()) {
+                height = '1130px';
+            }
             $("#detail-list-panel").css('height', height);
             $('#stsi').val(UIConfig.emptyString);
             $("#stsi").blur();

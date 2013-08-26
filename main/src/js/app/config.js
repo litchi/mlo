@@ -29,7 +29,7 @@ var UIConfig = (function () {
         viewTaskContextElementId    : 'view-task-detail-context',
         viewTaskNotesElementId      : 'view-task-detail-notes',
         msgForNoTask                : '<div class="msg-for-no-task">Wow, great, all tasks are done, you can take a break now.</div>',
-	    msgForMetaListDefaultPage   : '<div class="msg-for-default-meta-list">Please select project or context on the left to edit them.</div>',
+        msgForMetaListDefaultPage   : '<div class="msg-for-default-meta-list">Please select project or context on the left to edit them.</div>',
         msgForSuccessfulTaskUpdate  : 'Task successfully updated',
         msgForTaskStatusUpdatePref  : 'Task marked as ',
         msgForTaskMovePref          : 'Task moved to list ',

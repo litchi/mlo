@@ -28,7 +28,7 @@ var UIActionBarController = (function () {
             });
             $("[id^=add-meta-link-]").remove();
         },
- 
+
         openMetaGroupByTypePage : function (metaTypeId) {
             UITaskUtil.setTaskDetailPanelDisplay('none');
             UIListController.switchDisplayToMode(UIConfig.masterDetailDisplayMode);

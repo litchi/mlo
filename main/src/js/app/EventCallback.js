@@ -120,7 +120,7 @@ var EventCallback = (function () {
 
     return {
         webworksReadyCallback : function (e) {
-            //Init on bbUI should before any other code loads.  
+            //Init on bbUI should before any other code loads.
             if (gWebworksreadyFired) {
                 return;
             }

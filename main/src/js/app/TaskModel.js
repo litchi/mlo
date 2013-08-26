@@ -5,18 +5,18 @@ var TaskModel = (function () {
 
     return {
 	constructTaskObj : function (id, name, gtdList, project, contexts,
-				 dueDate, reminderMetaName, reminderDate, displayReminderIcon) {
-	    return {
-		'id'                  : id,
-		'name'                : name,
-		'gtdList'             : gtdList,
-		'project'             : project,
-		'contexts'            : contexts,
-		'dueDate'             : dueDate,
-		'reminderDate'        : reminderDate,
-		'reminderMetaName'    : reminderMetaName,
-		'displayReminderIcon' : displayReminderIcon
-	    };
+                                 dueDate, reminderMetaName, reminderDate, displayReminderIcon) {
+        return {
+            'id'                  : id,
+            'name'                : name,
+            'gtdList'             : gtdList,
+            'project'             : project,
+            'contexts'            : contexts,
+            'dueDate'             : dueDate,
+            'reminderDate'        : reminderDate,
+            'reminderMetaName'    : reminderMetaName,
+            'displayReminderIcon' : displayReminderIcon
+        };
 	}
     };
 }());

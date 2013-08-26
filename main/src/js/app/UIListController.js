@@ -18,18 +18,17 @@ var UIListController = (function () {
                 metaListDiv.style.height = metaListHeightByNumberOfMeta + 'px';
             }
             height = groupParent.offsetHeight - metaListDiv.offsetHeight;
-	    if (Util.isQ10()) {
-		height = height < 55 ? 55 : height;
-	    } else if (Util.isZ10()) {
-		height = height < 110 ? 110 : height;
-	    }
+            if (Util.isQ10()) {
+                height = height < 55 ? 55 : height;
+            } else if (Util.isZ10()) {
+                height = height < 110 ? 110 : height;
+            }
             heightString = height + 'px';
             metaListSpaceDiv.style.height = heightString;
             metaListSpaceDiv.innerHTML = UIConfig.rightArrow;
             metaListSpaceDiv.style.lineHeight = heightString;
         }
     }
-    
 
     function fillMetaInternal(metaTypeId, metaTypeName, metaList, pageType, taskNumbers, callback) {
         DataAccess.meta.getByTypeId(metaTypeId, function (tx, result, arrays) {
@@ -121,11 +120,11 @@ var UIListController = (function () {
             if (Util.notEmpty(document.getElementById('selected-group-item'))) {
                 document.getElementById('selected-group-item').setAttribute('id', Util.valueOf('v_curr_hl_item'));
             }
-	    if (Util.notEmpty(uiId) && Util.notEmpty(document.getElementById(uiId))) {
-		document.getElementById(uiId).setAttribute('id', 'selected-group-item');
-		document.getElementById('v_curr_hl_item').value = uiId;
-		UIListController.fillMetaListToPanel(uiId, UIConfig.metaByPagePrefix);
-	    }
+            if (Util.notEmpty(uiId) && Util.notEmpty(document.getElementById(uiId))) {
+                document.getElementById(uiId).setAttribute('id', 'selected-group-item');
+                document.getElementById('v_curr_hl_item').value = uiId;
+                UIListController.fillMetaListToPanel(uiId, UIConfig.metaByPagePrefix);
+            }
             Util.expandDetailPanel(UIConfig.leftPanelWidth, UIConfig.rightPanelWidth, UIConfig.rightPanelSmallerLeftMargin);
         },
 
@@ -249,7 +248,7 @@ var UIListController = (function () {
                                     return function () {
                                         bb.pushScreen('edit-meta.html', UIConfig.createMetaPagePrefix, {'metaTypeId' : id});
                                     };
-                                }(id)).append(addIcon);
+                                } (id)).append(addIcon);
 
                                 titleParent = document.createElement('div');
                                 titleSpan = document.createElement('span');
@@ -280,7 +279,7 @@ var UIListController = (function () {
         },
 
         fillMetaToCreateForm : function (meta_type_id) {
-	    $("#delete-meta-button-container").css('display','none');
+            $("#delete-meta-button-container").css('display','none');
             DataAccess.metaType.getById(meta_type_id, function (tx, result, objs) {
                 var metaTypeName = objs[0][Sql.MetaType.Cols.Name], metaTypeId = objs[0][Sql.MetaType.Cols.Id];
                 Util.setMetaDetailPageCaption('New ' + metaTypeName);
