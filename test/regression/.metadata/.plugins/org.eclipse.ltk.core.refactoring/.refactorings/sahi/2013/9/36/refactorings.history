@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;sahi/scenarios/Default Page Elements Existing.scn&apos; to &apos;DefaultPageElementsExisting.scn&apos;" description="Rename resource &apos;Default Page Elements Existing.scn&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="scenarios/Default Page Elements Existing.scn" name="DefaultPageElementsExisting.scn" stamp="1378022231348" updateReferences="true"/>
-</session>
