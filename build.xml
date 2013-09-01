@@ -110,7 +110,6 @@
         <mkdir dir = "${qa.JsTestDriver.target.report.html}"/>
         <mkdir dir = "${qa.coverage.target.report.dat}"/>
         <mkdir dir = "${qa.coverage.target.report.html}"/>
-        <mkdir dir = "${qa.regression.target.report}"/>
     </target>
 
     <target name="file-checks">
