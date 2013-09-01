@@ -66,7 +66,7 @@ var UIConfig = (function () {
             'empty_trash'
         ],
         smiles : [':-)', ':o)', ':c)', ':^)', ':>'],
-	    leftArrow : "<div class='group_space_icon_left'>&nbsp; </div>",
+        leftArrow : "<div class='group_space_icon_left'>&nbsp; </div>",
         rightArrow : "<div class='group_space_icon_right'>&nbsp; </div>",
         nothing : function () {}
     };
