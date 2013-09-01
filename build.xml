@@ -1,4 +1,5 @@
 <project default="ws" basedir=".">
+
     <target name="help">
         <echo>ant ws                             to deploy to remote server for ripple</echo>
         <echo>ant package                        to build bar package for simulator and device</echo>
@@ -95,13 +96,13 @@
     <taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="${tools.jslint.taskdef.classpath}"/>
     <taskdef name="jgenhtml" classname="com.googlecode.jgenhtml.ant.JGenHtmlTask" classpath="${tools.jgenhtml.taskdef.classpath}"/>
 
-    <target name="init">
+    <target name="init" description="Init the build process">
         <mkdir dir = "${build.target.code}"/>
         <mkdir dir = "${build.target.output}"/>
         <mkdir dir = "${build.release.folder.base}"/>
     </target>
 
-    <target name="qa.init">
+    <target name="qa.init" description="Init the QA build process">
         <mkdir dir = "${qa.jslint.target.report.xml}"/>
         <mkdir dir = "${qa.jslint.target.report.html}"/>
         <mkdir dir = "${qa.JsTestDriver.target.testcase.src}"/>
@@ -109,6 +110,7 @@
         <mkdir dir = "${qa.JsTestDriver.target.report.html}"/>
         <mkdir dir = "${qa.coverage.target.report.dat}"/>
         <mkdir dir = "${qa.coverage.target.report.html}"/>
+        <mkdir dir = "${qa.regression.target.report}"/>
     </target>
 
     <target name="file-checks">
@@ -157,7 +159,7 @@
         </jslint>
     </target>       
 
-    <target name="qa.jslint.report" depends="qa.jslint.run">    
+    <target name="qa.jslint.report" depends="qa.jslint.run" description="Run jslint check and generate report">    
         <xslt in="${qa.jslint.target.report.xml}/result.xml" out="${qa.jslint.target.report.html}/report.html" style="${tools.jslint.report.template}"/>    
         <exec executable="${env.dev.browser.executable}" spawn="yes"> 
             <arg value="${qa.jslint.target.report.html}/report.html"/> 
@@ -183,7 +185,7 @@
         </junitreport>
     </target>
 
-    <target name="qa.test.coverage.report.dev" depends="qa.init, pre.process.copy">
+    <target name="qa.test.coverage.report.dev" depends="qa.init, pre.process.copy" description="Generate unit test code coverage report in dev environment">
         <antcall target='qa.test.internal.report'>
             <param name='executable'   value='/bin/bash'/>
             <param name='osfamily'     value='unix'/>
@@ -202,7 +204,7 @@
         <jgenhtml in="${qa.JsTestDriver.target.report.xml}/jsTestDriver.conf-coverage.dat" outdir="${qa.coverage.target.report.html}"/>
     </target>
 
-    <target name="qa.test.report.dev" depends="qa.init, pre.process.copy">
+    <target name="qa.test.report.dev" depends="qa.init, pre.process.copy" description="Generate unit test report in dev environment">
         <antcall target='qa.test.internal.report'>
             <param name='executable'   value='/bin/bash'/>
             <param name='osfamily'     value='unix'/>
@@ -213,7 +215,7 @@
         </exec>
     </target>
 
-    <target name="qa.test.report.ci" depends="qa.init, pre.process.copy">
+    <target name="qa.test.report.ci" depends="qa.init, pre.process.copy" description="Generate unit test report in build server">
         <copy file="${tools.JsTestDriver.installation}/runJsTestDriver.sh.server" tofile="${tools.JsTestDriver.installation}/runJsTestDriver.sh" verbose="true"/>
         <copy file="${tools.JsTestDriver.installation}/jsTestDriver.conf.server"   tofile="${tools.JsTestDriver.installation}/jsTestDriver.conf" verbose="true"/>
         <antcall target='qa.test.internal.report'>
@@ -223,7 +225,7 @@
         </antcall>
     </target>
 
-    <target name="ws" depends="pre.process.copy">
+    <target name="ws" depends="pre.process.copy" description="Deploy app to remote web server">
         <echo>Remote: ${env.ripple.remote.ip}, Source: ${build.target.code}, Remote folder: ${env.ripple.remote.folder}</echo>
         <!--
            -<scp todir="${env.ripple.remote.user}:${env.ripple.remote.password}@${env.ripple.remote.ip}:${env.ripple.remote.folder}" trust="true">
@@ -235,7 +237,7 @@
            </copy>                 
     </target>
 
-    <target name="package" depends="pre.process.copy">
+    <target name="package" depends="pre.process.copy" description="Package app to bar file">
         <!-- Create zip file -->
         <zip destfile="${build.target.output.src.zip}">
             <fileset dir="${build.target.code}">
@@ -250,7 +252,7 @@
         </exec>
     </target>
 
-    <target name="release" depends="pre.process.copy">
+    <target name="release" depends="pre.process.copy" description="Release a stable version of the app">
         <!-- Create zip file -->
         <zip destfile="${build.target.output.src.zip}">
             <fileset dir="${build.target.code}">
@@ -267,20 +269,20 @@
         </exec>
     </target>
 
-    <target name="ds" depends="package">
+    <target name="ds" depends="package" description="Deploy app to to local simulator">
         <!-- Deploy to simulator-->
         <exec executable="${env.webworks.installation.dir}/dependencies/tools/bin/blackberry-deploy" dir="${build.target}">
             <arg line='-installApp -launchApp -device ${env.bb10.simulator.ip} "${build.target.output.simulator.bar}"'/>
         </exec>
     </target>
 
-    <target name="dd" depends="package">
+    <target name="dd" depends="package" description="Deploy app to physical device">
         <exec executable="${env.webworks.installation.dir}/dependencies/tools/bin/blackberry-deploy" dir="${build.target}">
             <arg line='-installApp -password ${env.bb10.device.password} -device ${env.bb10.device.ip} -package "${build.target.output.device.bar}"'/>
         </exec>
     </target>
 
-    <target name="dt">
+    <target name="dt" description="Deploy debug token to physical device">
         <exec executable="${env.webworks.installation.dir}/dependencies/tools/bin/blackberry-debugtokenrequest" dir="${env.webworks.installation.dir}">
             <arg line="-storepass ${env.bb10.device.password} -devicepin ${env.bb10.device.pin} debugtoken.bar"/>
         </exec>
@@ -289,11 +291,11 @@
         </exec>
     </target>
 
-    <target name="clean">
+    <target name="clean" description="Clean the build target folder">
         <delete dir="${build.target}"/>
     </target>
 
-    <target name="qa.clean">
+    <target name="qa.clean" description="Clean the QA build target folder">
         <delete dir="${qa.build.target}"/>
     </target>
 

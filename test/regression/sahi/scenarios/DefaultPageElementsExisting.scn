@@ -1,0 +1,43 @@
+Tags:common
+Preconditions:
+h1.Verify all the elements exist in the default page.
+
+App Navigation, CommonVerify:
+#Open the app "http://z10" in browser
+#Verify div with id "task-by-GTD" exists
+#Verify div with id "task-by-Due" exists
+#Verify div with id "task-by-Project" exists
+#Verify div with id "task-by-Context" exists
+#Verify div with id "fields" exists
+#Verify div with id "TrashBox" exists
+#Verify div with id "development" exists
+#Verify div with id "group-list" exists
+#Verify div with id "group-space" exists
+#Verify div with id "detail-list-panel" exists
+#Verify div with id "view-task-detail" exists
+#Verify div with id "task-oper-menu" exists
+#Verify div with id "mark_task_as_done" exists
+#Verify div with id "postpone_task" exists
+#Verify div with id "edit_task" exists
+#Verify div with id "move_task_to_next_action" exists
+#Verify div with id "move_task_to_basket" exists
+#Verify div with id "move_task_to_someday" exists
+#Verify div with id "move_task_to_trash" exists
+#Verify div with id "restore_task" exists
+#Verify div with id "empty_trash" exists
+#Verify content of div "create-task-shortcut-add" is "CREATE TASK" 
+#Verify content of div "create-task-shortcut-search" is "SEARCH TASK" 
+#Verify div with id "create-task-input-container" exists
+#Verify div with id "create-task-input-container" is not display
+#Verify div with id "create-task-placeholder" exists
+#Verify div with id "create-task-placeholder" is not display
+#Verify textarea with id "ctsi"  exists
+#Verify div with id "search-task-input-container" exists
+#Verify div with id "search-task-placeholder" exists
+#Verify text box with id exists "stsi"
+#Verify hidden input with id exists "v_meta_id"
+#Verify hidden input with id exists "v_meta_name"
+#Verify hidden input with id exists "v_meta_type_id"
+#Verify hidden input with id exists "v_meta_type_name"
+#Verify hidden input with id exists "v_curr_hl_item"
+

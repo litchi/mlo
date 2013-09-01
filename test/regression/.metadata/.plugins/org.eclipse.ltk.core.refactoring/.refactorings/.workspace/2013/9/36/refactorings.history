@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;Sahi&apos; to &apos;sahi&apos;" description="Rename resource &apos;Sahi&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/Sahi" name="sahi" stamp="1377999403555" updateReferences="true"/>&#x0A;<refactoring comment="Delete resource &apos;sahi/scenarios/Readme.scn&apos;" deleteContents="false" description="Delete resource &apos;sahi/scenarios/Readme.scn&apos;" element1="/sahi/scenarios/Readme.scn" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1378022113247"/>
+</session>

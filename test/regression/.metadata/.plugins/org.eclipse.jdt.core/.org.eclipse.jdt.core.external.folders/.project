@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>.org.eclipse.jdt.core.external.folders</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>.link0</name>
+			<type>2</type>
+			<location>/Applications/twist/plugins/com.thoughtworks.twist.driver.sahi_3.0.0.13193-028f6c1e74ed51</location>
+		</link>
+		<link>
+			<name>.link1</name>
+			<type>2</type>
+			<location>/Applications/twist/plugins/com.thoughtworks.twist.driver.sahi_3.0.0.13193-028f6c1e74ed51/sahi/src</location>
+		</link>
+	</linkedResources>
+</projectDescription>

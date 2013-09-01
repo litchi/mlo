@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbench version="2.0">
+<workbenchAdvisor/>
+<window height="1019" maximized="true" width="1656" x="-1676" y="24">
+<fastViewData fastViewLocation="1024"/>
+<perspectiveBar>
+<itemSize x="160"/>
+</perspectiveBar>
+<coolbarLayout>
+<coolItem id="group.file" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="106" y="22"/>
+<coolItem id="additions" itemType="typeGroupMarker"/>
+<coolItem id="com.thoughtworks.twist.eclipse.ui.actionSet" itemType="typeToolBarContribution" x="54" y="22"/>
+<coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="100" y="22"/>
+<coolItem id="org.eclipse.jdt.ui.JavaElementCreationActionSet" itemType="typeToolBarContribution" x="62" y="22"/>
+<coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="62" y="22"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="98" y="22"/>
+<coolItem id="group.nav" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="152" y="22"/>
+<coolItem id="group.editor" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.jdt.ui.CompilationUnitEditor" itemType="typeToolBarContribution" x="-1" y="-1"/>
+<coolItem id="scenarioEditorNew" itemType="typeToolBarContribution" x="-1" y="-1"/>
+<coolItem id="group.help" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
+</coolbarLayout>
+<page aggregateWorkingSetId="Aggregate for window 1377998783662" focus="true" label="Workspace - Twist">
+<editors>
+<editorArea activeWorkbook="DefaultEditorWorkbook">
+<info part="DefaultEditorWorkbook">
+<folder appearance="1" expanded="2">
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+</presentation>
+</folder>
+</info>
+</editorArea>
+<editor activePart="true" focus="true" id="scenarioEditorNew" name="Default Page Elements Existing.scn" partName="Default Page Elements Existing.scn" path="/Users/larry/Text/Projects/BB10/gtd/codes/test/regression/Sahi/scenarios/Default Page Elements Existing.scn" title="Default Page Elements Existing.scn" tooltip="Sahi/scenarios/Default Page Elements Existing.scn" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/Sahi/scenarios/Default Page Elements Existing.scn"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="124" selectionTopPixel="0"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="AppNavigation.java" partName="AppNavigation.java" path="/Users/larry/Text/Projects/BB10/gtd/codes/test/regression/Sahi/src/mobi/lifebetter/test/common/AppNavigation.java" title="AppNavigation.java" tooltip="Sahi/src/mobi/lifebetter/test/common/AppNavigation.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/Sahi/src/mobi/lifebetter/test/common/AppNavigation.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="256" selectionTopPixel="0"/>
+</editor>
+</editors>
+<views>
+<view id="com.thoughtworks.twist.eclipse.ui.views.ScenarioView" partName="Scenarios">
+<viewState LINK_NAVIGATOR_TO_EDITOR="0" sorter="1">
+<filters>
+<filter element="*.class" isEnabled="false"/>
+<filter element=".*" isEnabled="false"/>
+</filters>
+<expanded>
+<element path="/Sahi"/>
+</expanded>
+<selection>
+<element path="/Sahi"/>
+</selection>
+</viewState>
+</view>
+<view id="org.eclipse.search.ui.views.SearchView" partName="Search"/>
+<view id="com.thoughtworks.twist.eclipse.ui.ConceptsView" partName="Concepts">
+<viewState LINK_NAVIGATOR_TO_EDITOR="0" sorter="1">
+<filters>&#x0A;<filter element="*.class" isEnabled="false"/>
+<filter element=".*" isEnabled="false"/>
+</filters>
+<expanded>&#x0A;<element path="/Sahi"/>
+</expanded>
+<selection>&#x0A;<element path="/Sahi"/>
+</selection>
+</viewState>
+</view>
+<view id="org.eclipse.ui.views.ProblemView" partName="Problems">
+<viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
+<columnWidths org.eclipse.ui.ide.locationField="90" org.eclipse.ui.ide.markerType="90" org.eclipse.ui.ide.pathField="120" org.eclipse.ui.ide.resourceField="90" org.eclipse.ui.ide.severityAndDescriptionField="300"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.pathField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.locationField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.markerType"/>
+</viewState>
+</view>
+<view id="org.eclipse.ui.console.ConsoleView" partName="Console"/>
+<view id="org.eclipse.jdt.ui.SourceView" partName="Declaration"/>
+</views>
+<perspectives activePart="com.thoughtworks.twist.eclipse.ui.views.ScenarioView" activePerspective="com.thoughtworks.twist.eclipse.ui.perspectives.TwistPerspective">
+<perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
+<descriptor class="com.thoughtworks.twist.eclipse.ui.perspectives.TwistPerspective" id="com.thoughtworks.twist.eclipse.ui.perspectives.TwistPerspective" label="Twist"/>
+<alwaysOnActionSet id="com.thoughtworks.twist.eclipse.ui.actionSet"/>
+<alwaysOnActionSet id="com.thoughtworks.twist.eclipse.examples.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.annotationNavigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.navigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo"/>
+<alwaysOnActionSet id="org.eclipse.ui.externaltools.ExternalToolsSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.launchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.debugActionSet"/>
+<alwaysOnActionSet id="org.eclipse.jdt.ui.JavaActionSet"/>
+<alwaysOnActionSet id="org.eclipse.jdt.ui.JavaElementCreationActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
+<new_wizard_action id="com.thoughtworks.twist.newProjectWizard"/>
+<new_wizard_action id="com.thoughtworks.twist.eclipse.ui.wizards.newScenarioWizard"/>
+<new_wizard_action id="com.thoughtworks.twist.eclipse.ui"/>
+<hide_toolbar_item_id id="org.eclipse.jdt.ui.actions.OpenProjectWizard"/>
+<hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
+<view id="com.thoughtworks.twist.eclipse.ui.views.ScenarioView"/>
+<view id="com.thoughtworks.twist.eclipse.ui.ConceptsView"/>
+<fastViewBars>
+<fastViewBar fastViewLocation="1024" id="org.eclipse.ui.internal.ViewStack@605df3c5" orientation="256" selectedTabId="org.eclipse.ui.views.ProblemView" style="0">
+<fastViews>
+<view id="org.eclipse.ui.views.ProblemView" ratio="0.3"/>
+<view id="org.eclipse.jdt.ui.SourceView" ratio="0.3"/>
+<view id="org.eclipse.ui.console.ConsoleView" ratio="0.3"/>
+<view id="org.eclipse.search.ui.views.SearchView" ratio="0.3"/>
+</fastViews>
+</fastViewBar>
+</fastViewBars>
+<viewLayoutRec closeable="false" id="com.thoughtworks.twist.eclipse.ui.views.ScenarioView" moveable="false"/>
+<viewLayoutRec closeable="false" id="com.thoughtworks.twist.eclipse.ui.ConceptsView" moveable="false"/>
+<viewLayoutRec closeable="false" id="org.eclipse.search.ui.views.SearchView" moveable="false"/>
+<viewLayoutRec closeable="false" id="org.eclipse.ui.views.ProblemView" moveable="false"/>
+<viewLayoutRec id="com.thoughtworks.twist.eclipse.ui.datatable.ParameterTableView" moveable="false" showTitle="true" standalone="true"/>
+<viewLayoutRec closeable="false" id="org.eclipse.ui.console.ConsoleView" moveable="false"/>
+<viewLayoutRec closeable="false" id="org.eclipse.jdt.ui.SourceView" moveable="false"/>
+<layout>
+<mainWindow>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@5e87512">
+<folder activePageID="com.thoughtworks.twist.eclipse.ui.views.ScenarioView" appearance="2" expanded="2">
+<page content="com.thoughtworks.twist.eclipse.ui.views.ScenarioView" label="Scenarios"/>
+<page content="com.thoughtworks.twist.eclipse.ui.ConceptsView" label="Concepts"/>
+<page content="com.thoughtworks.twist.eclipse.ui.views.ScenarioExecutionView" label="Scenario Execution"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@4b48f7e0" ratio="0.75" ratioLeft="762" ratioRight="254" relationship="2" relative="org.eclipse.ui.internal.ViewStack@5e87512">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+<page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+</folder>
+</info>
+<info part="org.eclipse.ui.editorss" ratio="0.25" ratioLeft="254" ratioRight="762" relationship="2" relative="org.eclipse.ui.internal.ViewStack@5e87512"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@605df3c5" ratio="0.49926794" ratioLeft="341" ratioRight="342" relationship="4" relative="org.eclipse.ui.editorss">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.ui.views.ProblemView" label="LabelNotFound"/>
+<page content="org.eclipse.jdt.ui.SourceView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.console.ConsoleView" label="LabelNotFound"/>
+<page content="org.eclipse.search.ui.views.SearchView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+</folder>
+</info>
+<info folder="true" part="com.thoughtworks.twist.eclipse.ui.datatable.ParameterTableView.standalonefolder" ratio="0.7992126" ratioLeft="609" ratioRight="153" relationship="2" relative="org.eclipse.ui.editorss">
+<folder appearance="3" expanded="2">
+<page content="com.thoughtworks.twist.eclipse.ui.datatable.ParameterTableView" label="LabelNotFound"/>
+</folder>
+</info>
+</mainWindow>
+</layout>
+</perspective>
+</perspectives>
+<workingSets/>
+<navigationHistory>
+<editors>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scenarioEditorNew" path="/Sahi/scenarios/Default Page Elements Existing.scn"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Sahi/src/mobi/lifebetter/test/common/AppNavigation.java"/>
+</editors>
+<item historyLabel="Default Page Elements Existing.scn" index="0"/>
+<item historyLabel="AppNavigation.java" index="1">
+<position info="not_deleted" x="256" y="0"/>
+</item>
+<item historyLabel="Default Page Elements Existing.scn" index="0"/>
+<item historyLabel="AppNavigation.java" index="1">
+<position info="not_deleted" x="256" y="0"/>
+</item>
+<item active="true" historyLabel="Default Page Elements Existing.scn" index="0"/>
+</navigationHistory>
+<input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
+</page>
+<workbenchWindowAdvisor/>
+<actionBarAdvisor/>
+<trimLayout>
+<trimArea IMemento.internal.id="128">
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
+</trimArea>
+<trimArea IMemento.internal.id="1024">
+<trimItem IMemento.internal.id="org.eclise.ui.internal.FastViewBar"/>
+<trimItem IMemento.internal.id="org.eclipse.jface.action.StatusLineManager"/>
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.progress.ProgressRegion"/>
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.ViewStack@605df3c5"/>
+</trimArea>
+</trimLayout>
+</window>
+<mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="AppNavigation.java" tooltip="Sahi/src/mobi/lifebetter/test/common/AppNavigation.java">
+<persistable path="/Sahi/src/mobi/lifebetter/test/common/AppNavigation.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scenarioEditorNew" name="Default Page Elements Existing.scn" tooltip="Sahi/scenarios/Default Page Elements Existing.scn">
+<persistable path="/Sahi/scenarios/Default Page Elements Existing.scn"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scenarioEditorNew" name="NewScenario.scn" tooltip="Sahi/scenarios/NewScenario.scn">
+<persistable path="/Sahi/scenarios/NewScenario.scn"/>
+</file>
+</mruList>
+</workbench>
