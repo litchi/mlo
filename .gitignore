@@ -13,6 +13,7 @@ test/regression/sahi/bin
 test/regression/sahi/logs
 test/regression/sahi/reports
 test/regression/.metadata/*
+test/regression/*
 *~
 [#]*[#]
 .\#*
